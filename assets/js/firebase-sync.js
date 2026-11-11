@@ -16,8 +16,15 @@
     subscribed: false,
     saveTimer: null,
     pendingData: null,
-    unsubscribe: null
+    unsubscribe: null,
+    auth: null,
+    authMod: null,
+    user: null
   };
+
+  function authEnabled() {
+    return Boolean(config.auth && config.auth.enabled);
+  }
 
   var SDK_VERSION = '10.12.5';
   var BASE = 'https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/';
@@ -60,6 +67,13 @@
       }
 
       state.initialized = true;
+      if (authEnabled()) {
+        try {
+          await initAuth();
+        } catch (authError) {
+          console.warn('[NeonCloud] تعذر تهيئة تسجيل الدخول:', authError);
+        }
+      }
       emit('connected');
       return state;
     } catch (error) {
@@ -90,6 +104,12 @@
 
   async function save(data) {
     if (!isConfigured()) return false;
+    if (authEnabled() && !state.user) {
+      emit('auth-required');
+      var authError = new Error('يجب تسجيل الدخول بحساب المشرف أولًا ليتم حفظ التغييرات في السحابة.');
+      authError.code = 'AUTH_REQUIRED';
+      throw authError;
+    }
     state.pendingData = data;
     if (state.saveTimer) clearTimeout(state.saveTimer);
     return new Promise(function (resolve, reject) {
@@ -134,6 +154,7 @@
 
   async function uploadImage(dataUrl, folder) {
     if (!isConfigured() || !dataUrl || dataUrl.indexOf('data:') !== 0) return dataUrl;
+    if (authEnabled() && !state.user) return dataUrl;
     await init();
     if (!state.storage || !state.mods.storage) return dataUrl;
     try {
@@ -151,6 +172,42 @@
       console.warn('[NeonCloud] فشل رفع الصورة — سيتم حفظها محليًا.', error);
       return dataUrl;
     }
+  }
+
+  async function initAuth() {
+    if (!authEnabled() || state.authMod) return;
+    var authMod = await import(BASE + 'firebase-auth.js');
+    state.authMod = authMod;
+    state.auth = authMod.getAuth(state.app);
+    try {
+      await authMod.setPersistence(state.auth, authMod.browserLocalPersistence);
+    } catch (persistenceError) {
+      console.warn('[NeonCloud] تعذر تثبيت الجلسة:', persistenceError);
+    }
+    authMod.onAuthStateChanged(state.auth, function (user) {
+      state.user = user || null;
+      emit(user ? 'auth-in' : 'auth-out');
+    });
+  }
+
+  async function signIn(email, password) {
+    if (!authEnabled()) throw new Error('تسجيل الدخول غير مفعّل في الإعدادات.');
+    await init();
+    await initAuth();
+    if (!state.authMod) throw new Error('تعذر تحميل وحدة تسجيل الدخول.');
+    await state.authMod.signInWithEmailAndPassword(state.auth, String(email || '').trim(), String(password || ''));
+    return state.user;
+  }
+
+  async function signOutAdmin() {
+    if (!state.authMod || !state.auth) return;
+    await state.authMod.signOut(state.auth);
+    state.user = null;
+    emit('auth-out');
+  }
+
+  function isSignedIn() {
+    return Boolean(state.user);
   }
 
   async function testConnection() {
@@ -174,6 +231,11 @@
     stop: stop,
     uploadImage: uploadImage,
     testConnection: testConnection,
+    signIn: signIn,
+    signOut: signOutAdmin,
+    isSignedIn: isSignedIn,
+    isAuthEnabled: authEnabled,
+    getUser: function () { return state.user; },
     getState: function () { return state; },
     config: config
   };

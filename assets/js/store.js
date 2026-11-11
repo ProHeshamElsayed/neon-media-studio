@@ -1064,8 +1064,8 @@
     }
     if (options.showErrors !== false) lastLocalSave = Date.now();
     if (cloudEnabled && options.cloud !== false && window.NeonCloud && window.NeonCloud.save) {
-      window.NeonCloud.save(data).catch(function () {
-        setCloudStatus('error');
+      window.NeonCloud.save(data).catch(function (error) {
+        setCloudStatus(error && error.code === 'AUTH_REQUIRED' ? 'auth-required' : 'error');
       });
     }
     notify(options.source || 'local');
