@@ -1,0 +1,346 @@
+/* ==========================================================================
+   NEON MEDIA — Marketing & CRM features
+   Promo banner · notifications · welcome popup · loyalty hints
+   Loaded after extras.css on public pages only.
+   ========================================================================== */
+
+/* ------------------------------- PROMO BANNER ---------------------------- */
+.promo-banner {
+  position: relative;
+  margin: 0 auto 1.6rem;
+  width: min(1200px, calc(100% - 2rem));
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+  background:
+    radial-gradient(120% 160% at 100% 0%, rgba(var(--accent-rgb), 0.22), transparent 55%),
+    radial-gradient(120% 160% at 0% 100%, rgba(var(--accent-3-rgb), 0.18), transparent 55%),
+    var(--glass-strong);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), 0 0 40px rgba(var(--accent-rgb), 0.08);
+  overflow: hidden;
+}
+.promo-banner[hidden] { display: none !important; }
+.promo-stack {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto 1.6rem;
+  display: grid;
+  gap: 0.9rem;
+}
+.promo-stack .promo-banner { width: 100%; margin: 0; }
+.promo-banner__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.4rem 1.6rem;
+}
+.promo-banner__content { min-width: 0; }
+.promo-banner__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+.promo-banner__kicker::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.9);
+}
+.promo-banner__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.4vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0 0 0.35rem;
+  color: var(--text);
+}
+.promo-banner__text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.promo-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.promo-banner__code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.7rem;
+  border: 1px dashed rgba(var(--accent-rgb), 0.5);
+  background: rgba(var(--accent-rgb), 0.08);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  direction: ltr;
+}
+.promo-banner__countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.promo-banner__close {
+  position: absolute;
+  top: 0.55rem;
+  inset-inline-end: 0.55rem;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.promo-banner__close:hover { color: var(--text); border-color: var(--accent); transform: rotate(90deg); }
+.promo-banner__media {
+  width: 150px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 0.9rem;
+  border: 1px solid var(--line);
+}
+.promo-banner--image .promo-banner__inner { grid-template-columns: auto minmax(0, 1fr) auto; }
+
+@media (max-width: 767.98px) {
+  .promo-stack { width: calc(100% - 1.25rem); margin-bottom: 1rem; }
+  .promo-banner { width: calc(100% - 1.25rem); margin-bottom: 1rem; }
+  .promo-stack .promo-banner { width: 100%; }
+  .promo-banner__inner,
+  .promo-banner--image .promo-banner__inner { grid-template-columns: 1fr; gap: 0.9rem; padding: 1.1rem 1.05rem 1.2rem; }
+  .promo-banner__actions { justify-content: flex-start; }
+  .promo-banner__media { width: 100%; height: 130px; grid-row: 1; }
+  .promo-banner__close { top: 0.45rem; inset-inline-end: 0.45rem; }
+}
+
+/* ------------------------------ NOTIFICATIONS ---------------------------- */
+.notif-wrap { position: relative; }
+.notif-bell { position: relative; }
+.notif-bell__badge {
+  position: absolute;
+  top: -3px;
+  inset-inline-end: -3px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: var(--accent-3);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  box-shadow: 0 0 12px rgba(var(--accent-3-rgb), 0.7);
+}
+.notif-bell__badge[hidden] { display: none; }
+.notif-bell.is-ringing svg { animation: notifRing 0.8s ease; }
+@keyframes notifRing {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-14deg); }
+  40% { transform: rotate(12deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(5deg); }
+}
+
+.notif-panel {
+  position: fixed;
+  top: 78px;
+  inset-inline-end: max(1rem, calc((100vw - 1200px) / 2));
+  z-index: 1045;
+  width: min(390px, calc(100vw - 1.5rem));
+  max-height: min(560px, calc(100vh - 100px));
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--glass-strong);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5), 0 0 40px rgba(var(--accent-rgb), 0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+  overflow: hidden;
+}
+.notif-panel.is-open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.notif-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.notif-panel__head h3 { font-size: 0.95rem; font-weight: 800; margin: 0; }
+.notif-panel__head button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.notif-panel__list { overflow: auto; padding: 0.5rem; display: grid; gap: 0.45rem; }
+.notif-item {
+  display: block;
+  padding: 0.75rem 0.8rem;
+  border-radius: 0.8rem;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.025);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.notif-item:hover { border-color: rgba(var(--accent-rgb), 0.35); background: rgba(var(--accent-rgb), 0.05); }
+.notif-item.is-unread { border-color: rgba(var(--accent-rgb), 0.2); background: rgba(var(--accent-rgb), 0.06); }
+.notif-item h4 { margin: 0 0 0.25rem; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 0.4rem; }
+.notif-item p { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.65; }
+.notif-item time { display: block; margin-top: 0.35rem; color: var(--muted); font-size: 0.68rem; opacity: 0.75; }
+.notif-item__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: 0 0 auto; }
+.notif-item__type { font-size: 0.65rem; font-weight: 800; color: var(--accent); }
+.notif-empty { padding: 1.6rem 1rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+.notif-panel__foot { padding: 0.65rem 1rem; border-top: 1px solid var(--line); text-align: center; }
+.notif-panel__foot a { font-size: 0.75rem; color: var(--accent); font-weight: 700; text-decoration: none; }
+
+html[data-theme='light'] .notif-panel { background: rgba(250, 253, 255, 0.98); }
+html[data-theme='light'] .notif-item { background: rgba(20, 40, 70, 0.03); }
+html[data-theme='light'] .promo-banner { background: linear-gradient(140deg, #f4f9ff, #eaf4ff); }
+
+/* ------------------------------ WELCOME POPUP ---------------------------- */
+.neon-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 10055;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(2, 6, 15, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.neon-pop.is-open { opacity: 1; visibility: visible; }
+.neon-pop__card {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: calc(100vh - 2.5rem);
+  overflow: auto;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(var(--accent-rgb), 0.32);
+  background: var(--glass-strong);
+  box-shadow: 0 45px 140px rgba(0, 0, 0, 0.6), 0 0 70px rgba(var(--accent-rgb), 0.12);
+  padding: 2rem 1.8rem 1.6rem;
+  text-align: center;
+  transform: translateY(18px) scale(0.96);
+  transition: transform 0.4s var(--ease-spring);
+}
+.neon-pop.is-open .neon-pop__card { transform: translateY(0) scale(1); }
+.neon-pop__card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(var(--accent-rgb), 0.7), transparent 35%, transparent 65%, rgba(var(--accent-3-rgb), 0.55));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.neon-pop__media {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  margin-bottom: 1.1rem;
+}
+.neon-pop__icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 0.9rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+  background: rgba(var(--accent-rgb), 0.08);
+  box-shadow: 0 0 28px rgba(var(--accent-rgb), 0.18);
+}
+.neon-pop__icon svg { width: 26px; height: 26px; }
+.neon-pop h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 0 0 0.6rem;
+}
+.neon-pop p { color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin: 0 0 1.2rem; }
+.neon-pop__actions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+.neon-pop__close {
+  position: absolute;
+  top: 0.65rem;
+  inset-inline-end: 0.65rem;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.neon-pop__close:hover { color: var(--text); border-color: var(--accent); }
+html[data-theme='light'] .neon-pop { background: rgba(225, 236, 250, 0.75); }
+html[data-theme='light'] .neon-pop__card { background: #fff; }
+
+/* ------------------------------- LOYALTY -------------------------------- */
+.order-loyalty {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.55rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.7rem;
+  border: 1px dashed rgba(var(--accent-rgb), 0.35);
+  background: rgba(var(--accent-rgb), 0.06);
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.order-loyalty[hidden] { display: none; }
+.order-loyalty svg { width: 15px; height: 15px; flex: 0 0 auto; }
+.order-loyalty b { color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-banner, .notif-panel, .neon-pop, .neon-pop__card { transition: none; }
+  .notif-bell.is-ringing svg { animation: none; }
+}

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="مشروع تصوير منتجات">
+  <defs>
+    <linearGradient id="pr1" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse"><stop stop-color="#070c15"/><stop offset=".55" stop-color="#090713"/><stop offset="1" stop-color="#130719"/></linearGradient>
+    <linearGradient id="pr2" x1="320" y1="120" x2="500" y2="480" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff"/><stop offset=".55" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/></linearGradient>
+    <linearGradient id="pr3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff3ddc" stop-opacity=".5"/><stop offset=".5" stop-color="#8b5cff" stop-opacity=".35"/><stop offset="1" stop-color="#22e7ff" stop-opacity=".5"/></linearGradient>
+    <radialGradient id="pr4" cx="0" cy="0" r="1" gradientTransform="translate(400 250) rotate(90) scale(320)" gradientUnits="userSpaceOnUse"><stop stop-color="#8b5cff" stop-opacity=".25"/><stop offset="1" stop-color="#8b5cff" stop-opacity="0"/></radialGradient>
+    <filter id="pr5" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="pr6"><feGaussianBlur stdDeviation="38"/></filter>
+    <pattern id="pr7" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0v54" fill="none" stroke="#7dd3fc" stroke-opacity=".05"/></pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#pr1)"/><rect width="800" height="600" fill="url(#pr4)"/><rect width="800" height="600" fill="url(#pr7)"/>
+  <ellipse cx="400" cy="505" rx="250" ry="42" fill="#000" fill-opacity=".55"/>
+  <ellipse cx="400" cy="492" rx="185" ry="26" fill="#22e7ff" fill-opacity=".08" filter="url(#pr6)"/>
+  <circle cx="200" cy="200" r="170" fill="#22e7ff" fill-opacity=".1" filter="url(#pr6)"/>
+  <circle cx="610" cy="390" r="170" fill="#ff3ddc" fill-opacity=".1" filter="url(#pr6)"/>
+  <g transform="translate(400 268)">
+    <rect x="-86" y="-156" width="172" height="250" rx="26" fill="#0a0e18" stroke="url(#pr2)" stroke-width="2"/>
+    <rect x="-86" y="-156" width="172" height="250" rx="26" fill="url(#pr3)" fill-opacity=".1"/>
+    <rect x="-54" y="-196" width="108" height="48" rx="12" fill="#0a0e18" stroke="#8b5cff" stroke-opacity=".45" stroke-width="2"/>
+    <rect x="-54" y="-196" width="108" height="14" rx="7" fill="#ffffff" fill-opacity=".06"/>
+    <rect x="-38" y="-158" width="76" height="22" rx="4" fill="#050810" stroke="#22e7ff" stroke-opacity=".35"/>
+    <g filter="url(#pr5)">
+      <text x="0" y="-46" text-anchor="middle" fill="#f2fdff" font-family="Cairo, Tajawal, Arial, sans-serif" font-size="30" font-weight="800">NOOR</text>
+      <text x="0" y="-26" text-anchor="middle" fill="#22e7ff" font-family="Tajawal, Arial, sans-serif" font-size="9" letter-spacing="3">PARFUM</text>
+    </g>
+    <path d="M-54 -6h108" stroke="#ffffff" stroke-opacity=".1"/>
+    <text x="0" y="28" text-anchor="middle" fill="#dffaff" font-family="Tajawal, Arial, sans-serif" font-size="14">عطر النور</text>
+    <text x="0" y="48" text-anchor="middle" fill="#ffffff" fill-opacity=".3" font-family="Tajawal, Arial, sans-serif" font-size="9">EAU DE PARFUM · 100ML</text>
+    <rect x="-28" y="70" width="56" height="4" rx="2" fill="#8b5cff" fill-opacity=".5"/>
+  </g>
+  <g stroke="#ffffff" stroke-opacity=".35" stroke-width="1.4">
+    <path d="M250 160v40M230 180h40M588 330v30M573 345h30"/>
+  </g>
+  <g fill="#22e7ff"><circle cx="182" cy="382" r="2.5"/><circle cx="640" cy="160" r="2"/></g>
+  <g fill="#ff3ddc"><circle cx="220" cy="120" r="2"/><circle cx="590" cy="470" r="2.6"/></g>
+  <g transform="translate(84 486)">
+    <rect width="154" height="46" rx="23" fill="#0b1220" stroke="#22e7ff" stroke-opacity=".22"/>
+    <circle cx="26" cy="23" r="8" fill="none" stroke="#22e7ff" stroke-width="2"/><circle cx="26" cy="23" r="3" fill="#22e7ff"/>
+    <text x="88" y="28" text-anchor="middle" fill="#dffaff" font-family="Tajawal, Arial, sans-serif" font-size="13">تصوير احترافي</text>
+  </g>
+  <text x="42" y="52" fill="#7dd3fc" fill-opacity=".55" font-family="Tajawal, Arial, sans-serif" font-size="12" letter-spacing="2">PRODUCT SHOT / 2026</text>
+  <text x="758" y="562" text-anchor="end" fill="#ffffff" fill-opacity=".28" font-family="Tajawal, Arial, sans-serif" font-size="11" letter-spacing="2">NEON MEDIA</text>
+</svg>

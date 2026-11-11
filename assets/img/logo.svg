@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="شعار نيون ميديا">
+  <defs>
+    <linearGradient id="nmg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e7ff"/>
+      <stop offset=".5" stop-color="#8b5cff"/>
+      <stop offset="1" stop-color="#ff3ddc"/>
+    </linearGradient>
+    <linearGradient id="nmg2" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset=".6" stop-color="#22e7ff"/>
+      <stop offset="1" stop-color="#ff3ddc"/>
+    </linearGradient>
+    <filter id="nmglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M32 2.8 58 17.2v29.6L32 61.2 6 46.8V17.2L32 2.8Z" fill="#060a14" stroke="url(#nmg)" stroke-width="2.2"/>
+  <path d="M32 7.5 53.7 19.6v25L32 56.5 10.3 44.6v-25L32 7.5Z" stroke="#ffffff" stroke-opacity=".09" stroke-width="1"/>
+  <g filter="url(#nmglow)">
+    <path d="M21 44V20.5l22 23V20" stroke="url(#nmg2)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <circle cx="49.5" cy="13" r="2.4" fill="#22e7ff"/>
+  <circle cx="14" cy="51" r="1.6" fill="#ff3ddc"/>
+  <path d="M50 5.5v5M47.5 8h5" stroke="#ffffff" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>
+</svg>

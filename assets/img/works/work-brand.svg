@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="مشروع هوية بصرية لكافيه">
+  <defs>
+    <linearGradient id="b1" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse"><stop stop-color="#07111c"/><stop offset=".55" stop-color="#0b0714"/><stop offset="1" stop-color="#15081b"/></linearGradient>
+    <linearGradient id="b2" x1="180" y1="120" x2="650" y2="520" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff"/><stop offset=".5" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/></linearGradient>
+    <linearGradient id="b3" x1="260" y1="180" x2="540" y2="470" gradientUnits="userSpaceOnUse"><stop stop-color="#0d2536"/><stop offset="1" stop-color="#161028"/></linearGradient>
+    <radialGradient id="b4" cx="0" cy="0" r="1" gradientTransform="translate(400 280) rotate(90) scale(300)" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff" stop-opacity=".18"/><stop offset="1" stop-color="#22e7ff" stop-opacity="0"/></radialGradient>
+    <filter id="b5" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="b6"><feGaussianBlur stdDeviation="30"/></filter>
+    <pattern id="b7" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0v50" fill="none" stroke="#7dd3fc" stroke-opacity=".06"/></pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#b1)"/><rect width="800" height="600" fill="url(#b4)"/><rect width="800" height="600" fill="url(#b7)"/>
+  <circle cx="120" cy="500" r="160" fill="#ff3ddc" fill-opacity=".1" filter="url(#b6)"/>
+  <circle cx="690" cy="110" r="130" fill="#22e7ff" fill-opacity=".1" filter="url(#b6)"/>
+  <g transform="translate(400 274)">
+    <circle r="152" fill="#080d17" stroke="url(#b2)" stroke-width="2"/>
+    <circle r="132" fill="none" stroke="#22e7ff" stroke-opacity=".18" stroke-dasharray="3 10"/>
+    <g filter="url(#b5)">
+      <path d="M-46-52h84v58c0 36-19 60-42 60S-46 42-46 6v-58Z" fill="url(#b3)" stroke="#22e7ff" stroke-width="2.5"/>
+      <path d="M38-26h18c18 0 28 12 28 28s-10 28-28 28H34" fill="none" stroke="#ff3ddc" stroke-width="3" stroke-linecap="round"/>
+      <path d="M-32-84c-12-16 10-24 0-40M0-84c-12-16 10-24 0-40M32-84c-12-16 10-24 0-40" fill="none" stroke="#22e7ff" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <text y="118" text-anchor="middle" fill="#e9fcff" font-family="Cairo, Tajawal, Arial, sans-serif" font-size="24" font-weight="800">كافيه نون</text>
+    <text y="140" text-anchor="middle" fill="#7dd3fc" font-family="Tajawal, Arial, sans-serif" font-size="10" letter-spacing="3">COFFEE &amp; MORE</text>
+  </g>
+  <g transform="translate(152 424)">
+    <rect x="-56" y="-34" width="112" height="68" rx="14" fill="#0b1220" stroke="#22e7ff" stroke-opacity=".2"/>
+    <circle cx="-30" cy="-4" r="16" fill="#22e7ff" fill-opacity=".22"/><circle cx="0" cy="-4" r="16" fill="#8b5cff" fill-opacity=".25"/><circle cx="30" cy="-4" r="16" fill="#ff3ddc" fill-opacity=".22"/>
+    <rect x="-38" y="20" width="76" height="5" rx="2.5" fill="#ffffff" fill-opacity=".12"/>
+  </g>
+  <g transform="translate(650 438)">
+    <rect x="-62" y="-30" width="124" height="60" rx="12" fill="#0b1220" stroke="#ff3ddc" stroke-opacity=".2"/>
+    <text x="0" y="6" text-anchor="middle" fill="#ffd7f7" font-family="Tajawal, Arial, sans-serif" font-size="14">هوية متكاملة</text>
+    <text x="0" y="22" text-anchor="middle" fill="#ffffff" fill-opacity=".35" font-family="Tajawal, Arial, sans-serif" font-size="9">BRAND IDENTITY</text>
+  </g>
+  <text x="42" y="52" fill="#7dd3fc" fill-opacity=".55" font-family="Tajawal, Arial, sans-serif" font-size="12" letter-spacing="2">BRANDING / 2026</text>
+  <text x="758" y="562" text-anchor="end" fill="#ffffff" fill-opacity=".28" font-family="Tajawal, Arial, sans-serif" font-size="11" letter-spacing="2">NEON MEDIA</text>
+</svg>

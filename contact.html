@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark" data-accent="cyan">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#04060c">
+  <meta name="description" content="تواصل مع استوديو نِيون ميديا — واتساب، هاتف، بريد إلكتروني، أو نموذج مباشر. نرد خلال ساعات العمل ونبدأ مشروعك في أسرع وقت.">
+  <meta name="keywords" content="تواصل معنا, نيون ميديا, طلب خدمة, واتساب, تسويق رقمي, تصميم">
+  <meta name="author" content="نِيون ميديا">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ar_EG">
+  <meta property="og:title" content="الاتصال والمساعدة | نِيون ميديا">
+  <meta property="og:description" content="نحن هنا لمساعدتك. تواصل معنا عبر واتساب أو النموذج المباشر.">
+  <meta property="og:image" content="assets/img/og-cover.svg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <title>الاتصال والمساعدة | نِيون ميديا</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="apple-touch-icon" href="assets/img/logo.svg">
+  <link rel="manifest" href="site.webmanifest">
+
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var theme = localStorage.getItem('neonTheme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+        var accent = localStorage.getItem('neonAccent');
+        if (accent && ['cyan', 'magenta', 'violet', 'lime'].indexOf(accent) !== -1) document.documentElement.setAttribute('data-accent', accent);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+  <script src="assets/js/file-origin-guard.js" data-page="contact.html"></script>
+
+  <link rel="preload" href="assets/fonts/Cairo-arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Tajawal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/extras.css">
+  <link rel="stylesheet" href="assets/css/features.css">
+  <noscript>
+    <style>
+      #preloader { display: none !important; }
+      html.js [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+      body.is-loading { overflow: auto !important; }
+    </style>
+  </noscript>
+</head>
+
+<body class="is-loading" data-fixed-meta>
+  <noscript><div class="noscript-note">يرجى تفعيل JavaScript لتجربة الموقع كاملة.</div></noscript>
+
+  <a class="skip-link" href="#main">تخطي إلى المحتوى الرئيسي</a>
+
+  <div class="preloader" id="preloader" role="status" aria-live="polite" aria-label="جارٍ تحميل الموقع">
+    <div class="preloader__inner">
+      <div class="loader-mark">
+        <img src="assets/img/logo.svg" alt="شعار نِيون ميديا">
+      </div>
+      <div class="preloader__title">
+        نِيون ميديا
+        <span>NEON MEDIA · CREATIVE STUDIO</span>
+      </div>
+      <div class="loader-bar"><span id="loaderProgress"></span></div>
+      <div class="preloader__percent" id="loaderPercent">0%</div>
+      <p class="preloader__hint">نجهّز لك تجربة تلمع… لحظات</p>
+    </div>
+  </div>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+  <div class="scroll-progress"><span id="scrollProgress"></span></div>
+
+  <div class="bg-effects" aria-hidden="true">
+    <span class="aurora aurora--1"></span>
+    <span class="aurora aurora--2"></span>
+    <span class="aurora aurora--3"></span>
+  </div>
+
+  <div class="announcement" data-announcement>
+    <div class="container">
+      <div class="announcement__inner">
+        <span class="announcement__dot" aria-hidden="true"></span>
+        <span data-announcement-text>عرض الافتتاح · خصم 15% على باقة إدارة السوشيال ميديا</span>
+        <a href="index.html#packages" data-announcement-link>اكتشف العرض <span aria-hidden="true">←</span></a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <nav class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <span class="brand-mark"><img src="assets/img/logo.svg" alt="" data-logo></span>
+          <span class="brand-text">
+            <strong data-bind="settings.siteName">نِيون ميديا</strong>
+            <span data-bind="settings.brandLatin">NEON MEDIA</span>
+          </span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html">الرئيسية</a>
+          <a href="index.html#about">نبذة عنا</a>
+          <a href="index.html#services">خدماتنا</a>
+          <a href="index.html#works">أعمالنا</a>
+          <a href="index.html#clients">عملائنا</a>
+          <a href="contact.html" class="is-active">الاتصال والمساعدة</a>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="icon-btn" data-audio-toggle aria-label="تشغيل التلاوة" aria-pressed="false" title="تشغيل التلاوة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          </button>
+          <button type="button" class="icon-btn" data-theme-toggle aria-label="تفعيل الوضع الفاتح" aria-pressed="false" title="الوضع الفاتح">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          </button>
+          <a class="nav-whatsapp" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد الاستفسار عن خدماتكم." target="_blank" rel="noopener noreferrer" aria-label="تواصل واتساب">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+            <span>اطلب الآن</span>
+          </a>
+          
+          <button type="button" class="nav-toggle" id="navToggle" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu"><span></span></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu__nav">
+      <a href="index.html">الرئيسية <span>01</span></a>
+      <a href="index.html#about">نبذة عنا <span>02</span></a>
+      <a href="index.html#services">خدماتنا <span>03</span></a>
+      <a href="index.html#works">أعمالنا <span>04</span></a>
+      <a href="index.html#clients">عملائنا <span>05</span></a>
+      <a href="contact.html">الاتصال والمساعدة <span>06</span></a>
+    </div>
+    <div class="mobile-menu__footer">
+      <span>© <span data-year>2026</span> نِيون ميديا</span>
+      <div class="mobile-menu__socials">
+        <a class="social-btn" data-social="instagram" href="#" aria-label="إنستجرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a class="social-btn" data-social="tiktok" href="#" aria-label="تيك توك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a5.4 5.4 0 0 1-1.1-3.3h-3.1v12.1a2.5 2.5 0 1 1-1.8-2.4V9a5.6 5.6 0 1 0 4.9 5.5V9.3a8.6 8.6 0 0 0 4.6 1.4V7.6a5.5 5.5 0 0 1-3.5-1.8Z"/></svg></a>
+        <a class="social-btn" data-social="facebook" href="#" aria-label="فيسبوك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V10c0-.6.4-1 1-1Z"/></svg></a>
+        <a class="social-btn" data-social="snapchat" href="#" aria-label="سناب شات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 0 4.5 2.2 4.5 5v2.3c.7.2 1.4 0 2 .5.3.3 0 .8-.4 1.1-.7.5-1.7.7-1.7 1.5 0 1.6 2.3 3.1 3.3 3.4.5.2.4.8-.2 1.1-.8.4-2 .5-2.4.9-.2.2-.1.6-.5.8-.5.2-1.4-.4-2.5-.1-1.1.3-1.6 1.5-2.6 1.5s-1.5-1.2-2.6-1.5c-1.1-.3-2 .3-2.5.1-.4-.2-.3-.6-.5-.8-.4-.4-1.6-.5-2.4-.9-.6-.3-.7-.9-.2-1.1 1-.3 3.3-1.8 3.3-3.4 0-.8-1-1-1.7-1.5-.4-.3-.7-.8-.4-1.1.6-.5 1.3-.3 2-.5V8c0-2.8 1.5-5 4.5-5Z"/></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="مسار التنقل">
+          <a href="index.html">الرئيسية</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          <span>الاتصال والمساعدة</span>
+        </nav>
+        <span class="eyebrow"><span class="pulse-dot"></span> <span data-bind="settings.contactPageKicker">نحن هنا من أجلك</span></span>
+        <h1><span data-bind="settings.contactPageTitle">خلّينا نبدأ</span> <span class="text-gradient" data-bind="settings.contactPageTitleAccent">مشروعك</span></h1>
+        <p data-bind="settings.contactPageText">سؤال، فكرة، أو طلب عرض سعر؟ تواصل معنا بالطريقة اللي تناسبك. فريق نِيون ميديا جاهز لمساعدتك.</p>
+      </div>
+    </section>
+
+    <section class="contact-page">
+      <div class="container">
+        <div class="contact-grid">
+          <div class="contact-page__side">
+            <div class="contact-panel" data-reveal="left">
+              <h2 data-bind="settings.contactChannelsTitle">قنوات التواصل المباشر</h2>
+              <div class="contact-methods">
+                <a class="contact-method" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد التحدث عن مشروعي." target="_blank" rel="noopener noreferrer">
+                  <span class="contact-method__icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg></span>
+                  <span class="contact-method__body"><span>واتساب — الأسرع</span><strong>تحدث معنا الآن</strong></span>
+                  <span class="contact-method__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></span>
+                </a>
+                <a class="contact-method" href="tel:+201000000000" data-phone-link>
+                  <span class="contact-method__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3 6.2 2 2 0 0 1 5 4Z"/></svg></span>
+                  <span class="contact-method__body"><span>اتصال هاتفي</span><strong data-bind="settings.phoneDisplay">0100 000 0000</strong></span>
+                  <span class="contact-method__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></span>
+                </a>
+                <a class="contact-method" href="mailto:hello@neonmedia.example" data-email-link>
+                  <span class="contact-method__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+                  <span class="contact-method__body"><span>البريد الإلكتروني</span><strong data-bind="settings.email">hello@neonmedia.example</strong></span>
+                  <span class="contact-method__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></span>
+                </a>
+              </div>
+              <div class="social-row">
+                <a class="social-btn" data-social="instagram" href="#" aria-label="إنستجرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+                <a class="social-btn" data-social="tiktok" href="#" aria-label="تيك توك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a5.4 5.4 0 0 1-1.1-3.3h-3.1v12.1a2.5 2.5 0 1 1-1.8-2.4V9a5.6 5.6 0 1 0 4.9 5.5V9.3a8.6 8.6 0 0 0 4.6 1.4V7.6a5.5 5.5 0 0 1-3.5-1.8Z"/></svg></a>
+                <a class="social-btn" data-social="facebook" href="#" aria-label="فيسبوك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V10c0-.6.4-1 1-1Z"/></svg></a>
+                <a class="social-btn" data-social="snapchat" href="#" aria-label="سناب شات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 0 4.5 2.2 4.5 5v2.3c.7.2 1.4 0 2 .5.3.3 0 .8-.4 1.1-.7.5-1.7.7-1.7 1.5 0 1.6 2.3 3.1 3.3 3.4.5.2.4.8-.2 1.1-.8.4-2 .5-2.4.9-.2.2-.1.6-.5.8-.5.2-1.4-.4-2.5-.1-1.1.3-1.6 1.5-2.6 1.5s-1.5-1.2-2.6-1.5c-1.1-.3-2 .3-2.5.1-.4-.2-.3-.6-.5-.8-.4-.4-1.6-.5-2.4-.9-.6-.3-.7-.9-.2-1.1 1-.3 3.3-1.8 3.3-3.4 0-.8-1-1-1.7-1.5-.4-.3-.7-.8-.4-1.1.6-.5 1.3-.3 2-.5V8c0-2.8 1.5-5 4.5-5Z"/></svg></a>
+              </div>
+            </div>
+
+            <div class="contact-panel" data-reveal="left">
+              <h2 data-bind="settings.contactHoursTitle">ساعات العمل</h2>
+              <ul class="hours-list">
+                <li><strong>السبت – الخميس</strong><span>10:00 ص – 8:00 م</span></li>
+                <li><strong>الجمعة</strong><span>بالمواعيد المسبقة فقط</span></li>
+                <li><strong>الدعم على واتساب</strong><span class="is-open">متاح الآن</span></li>
+              </ul>
+              <p class="form-footnote" style="margin-top:1rem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span data-bind="settings.workingHours">السبت – الخميس · 10 ص – 8 م</span>
+              </p>
+            </div>
+
+            <div class="map-cta" data-reveal="left">
+              <span class="map-cta__pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/></svg></span>
+              <div class="map-cta__body">
+                <strong>تعال قابلنا في الاستوديو</strong>
+                <span data-bind="settings.address">القاهرة، مصر</span>
+                <a href="https://maps.google.com/?q=Cairo" data-site-href="settings.mapUrl" target="_blank" rel="noopener noreferrer">
+                  افتح الموقع على الخريطة
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-form-card" data-reveal="right">
+            <span class="contact-availability"><i aria-hidden="true"></i> نرد عادة خلال ساعتين</span>
+            <h2 data-bind="settings.contactFormTitle">أرسل لنا تفاصيل مشروعك</h2>
+            <p>كل ما تكتبه هنا يصلنا على واتساب فورًا، ويُحفظ محليًا في لوحة التحكم.</p>
+
+            <form class="js-contact-form" id="contactForm" novalidate>
+              <div class="form-grid">
+                <div>
+                  <label class="form-label" for="contactName">الاسم الكامل <span class="req">*</span></label>
+                  <input class="form-control" type="text" id="contactName" name="name" placeholder="اسمك الكريم" required minlength="2" autocomplete="name">
+                  <div class="invalid-feedback">اكتب اسمك من فضلك.</div>
+                </div>
+                <div>
+                  <label class="form-label" for="contactPhone">رقم الهاتف / واتساب <span class="req">*</span></label>
+                  <input class="form-control" type="tel" id="contactPhone" name="phone" placeholder="01xxxxxxxxx" required pattern="[0-9+\s\-]{8,20}" autocomplete="tel">
+                  <div class="invalid-feedback">اكتب رقم هاتف صحيح.</div>
+                </div>
+                <div>
+                  <label class="form-label" for="contactEmail">البريد الإلكتروني</label>
+                  <input class="form-control" type="email" id="contactEmail" name="email" placeholder="name@email.com" autocomplete="email">
+                  <div class="invalid-feedback">اكتب بريدًا صحيحًا.</div>
+                </div>
+                <div>
+                  <label class="form-label" for="contactService">الخدمة المطلوبة</label>
+                  <select class="form-select" id="contactService" name="service">
+                    <option value="">اختر الخدمة (اختياري)</option>
+                  </select>
+                </div>
+                <div class="full">
+                  <label class="form-label" for="contactMessage">تفاصيل المشروع <span class="req">*</span></label>
+                  <textarea class="form-control" id="contactMessage" name="message" rows="5" placeholder="احكيلنا عن فكرتك، جمهورك، والموعد اللي محتاجه…" required minlength="10"></textarea>
+                  <div class="invalid-feedback">اكتب 10 أحرف على الأقل.</div>
+                </div>
+              </div>
+              <div class="d-flex flex-wrap gap-2 mt-3">
+                <button type="submit" class="btn-neon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></svg>
+                  إرسال ومتابعة على واتساب
+                </button>
+                <a class="btn-ghost" href="index.html#faq">شاهد الأسئلة الشائعة</a>
+              </div>
+              <p class="form-footnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+                بياناتك محفوظة على جهازك فقط ولا تُرسل لأي جهة خارجية.
+              </p>
+            </form>
+          </div>
+        </div>
+
+        <div class="faq-wrap" style="margin-top:3.2rem" data-reveal>
+          <div class="section-head" style="margin-bottom:1.6rem">
+            <h2 style="font-size:clamp(1.4rem,3vw,2rem)"><span data-bind="settings.quickFaqTitle">أسئلة</span> <span class="text-gradient" data-bind="settings.quickFaqTitleAccent">سريعة</span></h2>
+          </div>
+          <div class="accordion" id="contactFaqAccordion"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="index.html">
+            <span class="brand-mark"><img src="assets/img/logo.svg" alt="" data-logo></span>
+            <span>
+              <strong data-bind="settings.siteName">نِيون ميديا</strong>
+              <span data-bind="settings.brandLatin">NEON MEDIA</span>
+            </span>
+          </a>
+          <p class="footer-about" data-bind="settings.tagline">استوديو التسويق الرقمي والإبداع البصري.</p>
+          <p class="footer-about" data-bind="settings.footerNote">نصنع أفكارًا تُرى، ونتائج تُقاس.</p>
+          <div class="footer-socials" role="group" aria-label="حسابات التواصل الاجتماعي">
+            <a class="social-btn" data-social="instagram" href="#" aria-label="إنستجرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a class="social-btn" data-social="tiktok" href="#" aria-label="تيك توك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a5.4 5.4 0 0 1-1.1-3.3h-3.1v12.1a2.5 2.5 0 1 1-1.8-2.4V9a5.6 5.6 0 1 0 4.9 5.5V9.3a8.6 8.6 0 0 0 4.6 1.4V7.6a5.5 5.5 0 0 1-3.5-1.8Z"/></svg></a>
+            <a class="social-btn" data-social="facebook" href="#" aria-label="فيسبوك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V10c0-.6.4-1 1-1Z"/></svg></a>
+            <a class="social-btn" data-social="snapchat" href="#" aria-label="سناب شات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 0 4.5 2.2 4.5 5v2.3c.7.2 1.4 0 2 .5.3.3 0 .8-.4 1.1-.7.5-1.7.7-1.7 1.5 0 1.6 2.3 3.1 3.3 3.4.5.2.4.8-.2 1.1-.8.4-2 .5-2.4.9-.2.2-.1.6-.5.8-.5.2-1.4-.4-2.5-.1-1.1.3-1.6 1.5-2.6 1.5s-1.5-1.2-2.6-1.5c-1.1-.3-2 .3-2.5.1-.4-.2-.3-.6-.5-.8-.4-.4-1.6-.5-2.4-.9-.6-.3-.7-.9-.2-1.1 1-.3 3.3-1.8 3.3-3.4 0-.8-1-1-1.7-1.5-.4-.3-.7-.8-.4-1.1.6-.5 1.3-.3 2-.5V8c0-2.8 1.5-5 4.5-5Z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>روابط سريعة</h3>
+          <div class="footer-links">
+            <a href="index.html">الرئيسية</a>
+            <a href="index.html#about">نبذة عنا</a>
+            <a href="index.html#services">خدماتنا</a>
+            <a href="index.html#works">أعمالنا</a>
+            <a href="index.html#clients">عملائنا</a>
+            <a href="contact.html">الاتصال والمساعدة</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>خدماتنا</h3>
+          <div class="footer-links">
+            <a href="index.html#services">تصميم الجرافيك</a>
+            <a href="index.html#services">إدارة السوشيال ميديا</a>
+            <a href="index.html#services">التصوير الاحترافي</a>
+            <a href="index.html#services">التسويق الإلكتروني</a>
+            <a href="index.html#services">المواقع والمنيوهات</a>
+            <a href="index.html#services">المطبوعات والدعاية</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>تواصل معنا</h3>
+          <ul class="footer-contact">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3 6.2 2 2 0 0 1 5 4Z"/></svg><a href="tel:+201000000000" data-phone-link data-bind="settings.phoneDisplay">0100 000 0000</a></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:hello@neonmedia.example" data-email-link data-bind="settings.email">hello@neonmedia.example</a></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-bind="settings.address">القاهرة، مصر</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-bind="settings.workingHours">السبت – الخميس · 10 ص – 8 م</span></li>
+          </ul>
+          <a class="btn-neon btn-sm mt-3" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد طلب خدمة." target="_blank" rel="noopener noreferrer">اطلب الآن</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> <span data-bind="settings.siteName">نِيون ميديا</span> — جميع الحقوق محفوظة.</p>
+        <div class="footer-bottom__links">
+          <a href="index.html#faq">الأسئلة الشائعة</a>
+          <a href="index.html#payment">طرق الدفع</a>
+          
+        </div>
+        <p class="footer-made">صُنع بـ <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9A5.5 5.5 0 0 1 12 6.6 5.5 5.5 0 0 1 21.6 12c-2.1 4.4-9.6 9-9.6 9Z"/></svg> في القاهرة</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="floating-stack">
+    <button type="button" class="float-btn float-audio" data-audio-toggle aria-label="تشغيل التلاوة" aria-pressed="false" title="تشغيل التلاوة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+    <a class="float-btn" href="index.html#services" aria-label="اطلب خدمة" title="اطلب خدمة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 4 6v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-2-4H6Z"/><path d="M4 6h16M16 10a4 4 0 0 1-8 0"/></svg>
+    </a>
+    <a class="float-btn float-wa" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد التحدث عن مشروعي." target="_blank" rel="noopener noreferrer" data-label="تحدث معنا على واتساب" aria-label="تحدث معنا على واتساب">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+    </a>
+    <button type="button" class="float-btn float-top" data-back-top aria-label="العودة لأعلى" title="العودة لأعلى">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+    </button>
+  </div>
+
+  <audio id="quranAudio" preload="none" loop aria-hidden="true"></audio>
+
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/firebase-sync.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/contact.js"></script>
+  <script src="assets/js/extras.js"></script>
+  <script src="assets/js/features.js"></script>
+</body>
+</html>

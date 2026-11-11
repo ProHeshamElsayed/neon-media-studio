@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="مشروع تصميم مطبوعات وكروت شخصية">
+  <defs>
+    <linearGradient id="pt1" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse"><stop stop-color="#070c15"/><stop offset=".5" stop-color="#080614"/><stop offset="1" stop-color="#120719"/></linearGradient>
+    <linearGradient id="pt2" x1="180" y1="100" x2="640" y2="520" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff"/><stop offset=".5" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/></linearGradient>
+    <linearGradient id="pt3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132337"/><stop offset="1" stop-color="#160e26"/></linearGradient>
+    <linearGradient id="pt4" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ff3ddc" stop-opacity=".7"/><stop offset="1" stop-color="#8b5cff" stop-opacity=".3"/></linearGradient>
+    <radialGradient id="pt5" cx="0" cy="0" r="1" gradientTransform="translate(400 300) rotate(90) scale(330)" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff" stop-opacity=".16"/><stop offset="1" stop-color="#22e7ff" stop-opacity="0"/></radialGradient>
+    <filter id="pt6"><feGaussianBlur stdDeviation="32"/></filter>
+    <filter id="pt7" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="pt8" width="46" height="46" patternUnits="userSpaceOnUse"><path d="M46 0H0v46" fill="none" stroke="#7dd3fc" stroke-opacity=".05"/></pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#pt1)"/><rect width="800" height="600" fill="url(#pt5)"/><rect width="800" height="600" fill="url(#pt8)"/>
+  <circle cx="130" cy="470" r="160" fill="#22e7ff" fill-opacity=".1" filter="url(#pt6)"/><circle cx="680" cy="130" r="150" fill="#ff3ddc" fill-opacity=".1" filter="url(#pt6)"/>
+  <g transform="translate(220 160) rotate(-12 160 110)">
+    <rect width="300" height="210" rx="14" fill="url(#pt3)" stroke="#22e7ff" stroke-opacity=".3"/>
+    <path d="M0 150h300v46a14 14 0 0 1-14 14H14a14 14 0 0 1-14-14v-46Z" fill="#070b14"/>
+    <path d="M300 0v150H0V0h286a14 14 0 0 1 14 0Z" fill="url(#pt4)" fill-opacity=".14"/>
+    <g filter="url(#pt7)">
+      <path d="M42 80V36l46 46V34" fill="none" stroke="url(#pt2)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="120" y="62" fill="#eafcff" font-family="Cairo, Arial, sans-serif" font-size="20" font-weight="800">نِيون ميديا</text>
+    <text x="120" y="82" fill="#7dd3fc" font-family="Tajawal, Arial, sans-serif" font-size="8" letter-spacing="2">CREATIVE STUDIO</text>
+    <text x="42" y="186" fill="#ffffff" fill-opacity=".7" font-family="Tajawal, Arial, sans-serif" font-size="11">اسمك هنا · مدير الإبداع</text>
+    <text x="42" y="202" fill="#ffffff" fill-opacity=".32" font-family="Tajawal, Arial, sans-serif" font-size="8">+20 100 000 0000 · hello@neon.media</text>
+    <circle cx="254" cy="188" r="8" fill="none" stroke="#22e7ff" stroke-opacity=".4"/><circle cx="254" cy="188" r="3" fill="#22e7ff" fill-opacity=".6"/>
+  </g>
+  <g transform="translate(390 350) rotate(7 120 70)">
+    <rect width="240" height="140" rx="12" fill="url(#pt3)" stroke="#ff3ddc" stroke-opacity=".3"/>
+    <path d="M0 0h240v50H0z" fill="#ff3ddc" fill-opacity=".1"/>
+    <text x="24" y="34" fill="#ffd9f8" font-family="Cairo, Arial, sans-serif" font-size="16" font-weight="800">NEON</text>
+    <text x="119" y="82" fill="#ffffff" fill-opacity=".5" font-family="Tajawal, Arial, sans-serif" font-size="10">بطاقات · استيكر · فلكس</text>
+    <rect x="24" y="104" width="76" height="6" rx="3" fill="#22e7ff" fill-opacity=".35"/>
+    <rect x="24" y="118" width="48" height="6" rx="3" fill="#ff3ddc" fill-opacity=".25"/>
+  </g>
+  <g transform="translate(560 110)">
+    <path d="M-46 20h92l-8 108c-1 12-10 20-22 20h-32c-12 0-21-8-22-20L-46 20Z" fill="#0b1220" stroke="#8b5cff" stroke-opacity=".3"/>
+    <path d="M-52 20h104" stroke="#8b5cff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M34 42c24 0 24 50 0 50" fill="none" stroke="#8b5cff" stroke-width="3"/>
+    <text x="0" y="84" text-anchor="middle" fill="#e2d7ff" font-family="Tajawal, Arial, sans-serif" font-size="10">NEON</text>
+  </g>
+  <g transform="translate(106 120)">
+    <circle r="46" fill="#0b1220" stroke="#22e7ff" stroke-opacity=".25"/>
+    <path d="M-22 14V-16l44 46V-18" fill="none" stroke="url(#pt2)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(628 300)">
+    <rect x="-40" y="-24" width="80" height="48" rx="10" fill="#0b1220" stroke="#ff3ddc" stroke-opacity=".28"/>
+    <text x="0" y="6" text-anchor="middle" fill="#ffd9f8" font-family="Tajawal, Arial, sans-serif" font-size="12">استيكر</text>
+  </g>
+  <text x="42" y="52" fill="#7dd3fc" fill-opacity=".55" font-family="Tajawal, Arial, sans-serif" font-size="12" letter-spacing="2">PRINT DESIGN / 2026</text>
+  <text x="758" y="562" text-anchor="end" fill="#ffffff" fill-opacity=".28" font-family="Tajawal, Arial, sans-serif" font-size="11" letter-spacing="2">NEON MEDIA</text>
+</svg>

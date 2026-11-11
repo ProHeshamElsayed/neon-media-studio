@@ -1,0 +1,8 @@
+# robots.txt — نِيون ميديا
+# استبدل your-domain.com بالنطاق الفعلي بعد النشر.
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://your-domain.com/sitemap.xml

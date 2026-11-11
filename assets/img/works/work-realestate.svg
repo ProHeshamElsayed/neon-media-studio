@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="مشروع تسويق وكمباين عقاري">
+  <defs>
+    <linearGradient id="re1" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse"><stop stop-color="#060b16"/><stop offset=".52" stop-color="#080614"/><stop offset="1" stop-color="#120719"/></linearGradient>
+    <linearGradient id="re2" x1="180" y1="80" x2="620" y2="540" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff"/><stop offset=".5" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/></linearGradient>
+    <linearGradient id="re3" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0d1b2c"/><stop offset="1" stop-color="#080b14"/></linearGradient>
+    <radialGradient id="re4" cx="0" cy="0" r="1" gradientTransform="translate(420 210) rotate(90) scale(320)" gradientUnits="userSpaceOnUse"><stop stop-color="#ff3ddc" stop-opacity=".2"/><stop offset="1" stop-color="#ff3ddc" stop-opacity="0"/></radialGradient>
+    <filter id="re5"><feGaussianBlur stdDeviation="35"/></filter>
+    <filter id="re6" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="re7" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0v50" fill="none" stroke="#7dd3fc" stroke-opacity=".05"/></pattern>
+    <pattern id="re8" width="22" height="26" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="10" height="14" rx="1" fill="#22e7ff" fill-opacity=".25"/></pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#re1)"/><rect width="800" height="600" fill="url(#re4)"/><rect width="800" height="600" fill="url(#re7)"/>
+  <circle cx="670" cy="470" r="170" fill="#ff3ddc" fill-opacity=".1" filter="url(#re5)"/><circle cx="140" cy="130" r="160" fill="#22e7ff" fill-opacity=".09" filter="url(#re5)"/>
+  <g transform="translate(190 96)">
+    <rect x="0" y="120" width="130" height="330" rx="6" fill="url(#re3)" stroke="#ffffff" stroke-opacity=".08"/>
+    <rect x="130" y="40" width="180" height="410" rx="6" fill="url(#re3)" stroke="#22e7ff" stroke-opacity=".2"/>
+    <rect x="310" y="150" width="130" height="300" rx="6" fill="url(#re3)" stroke="#ffffff" stroke-opacity=".08"/>
+    <rect x="172" y="70" width="96" height="260" rx="3" fill="url(#re8)"/>
+    <rect x="166" y="330" width="108" height="110" rx="3" fill="url(#re8)" opacity=".65"/>
+    <rect x="26" y="150" width="78" height="240" rx="3" fill="url(#re8)" opacity=".42"/>
+    <rect x="336" y="180" width="80" height="230" rx="3" fill="url(#re8)" opacity=".35"/>
+    <rect x="184" y="52" width="72" height="8" rx="4" fill="#ff3ddc" fill-opacity=".6" filter="url(#re6)"/>
+    <rect x="26" y="110" width="130" height="4" rx="2" fill="#22e7ff" fill-opacity=".4"/>
+    <rect x="310" y="140" width="130" height="4" rx="2" fill="#8b5cff" fill-opacity=".4"/>
+    <rect x="0" y="446" width="440" height="4" rx="2" fill="#22e7ff" fill-opacity=".25"/>
+    <path d="M-20 482h480" stroke="#ffffff" stroke-opacity=".08"/>
+    <g transform="translate(220 300)">
+      <circle r="60" fill="#050a12" fill-opacity=".55" stroke="#22e7ff" stroke-opacity=".3"/>
+      <path d="M-22 12 0-14 22 12v24h-44z" fill="none" stroke="#22e7ff" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M-7 36V20h14v16" fill="none" stroke="#22e7ff" stroke-width="2"/>
+    </g>
+  </g>
+  <g transform="translate(620 170)">
+    <rect x="-88" y="-44" width="176" height="88" rx="16" fill="#0b1220" stroke="#22e7ff" stroke-opacity=".25"/>
+    <text x="0" y="-10" text-anchor="middle" fill="#dffaff" font-family="Cairo, Arial, sans-serif" font-size="18" font-weight="800">RESIDENCE</text>
+    <text x="0" y="10" text-anchor="middle" fill="#22e7ff" font-family="Tajawal, Arial, sans-serif" font-size="10" letter-spacing="2">LUXURY LIVING</text>
+    <text x="0" y="30" text-anchor="middle" fill="#ffffff" fill-opacity=".35" font-family="Tajawal, Arial, sans-serif" font-size="9">استثمار المستقبل</text>
+  </g>
+  <g transform="translate(650 330)">
+    <circle r="42" fill="#0b1220" stroke="#ff3ddc" stroke-opacity=".3"/>
+    <path d="M-14 18 0-6 14 18" fill="none" stroke="#ff3ddc" stroke-width="2" stroke-linecap="round"/>
+    <text x="0" y="34" text-anchor="middle" fill="#ffd9f8" font-family="Tajawal, Arial, sans-serif" font-size="9">+32% قيمة</text>
+  </g>
+  <g transform="translate(112 510)">
+    <rect width="180" height="46" rx="23" fill="#0b1220" stroke="#ff3ddc" stroke-opacity=".22"/>
+    <circle cx="25" cy="23" r="7" fill="none" stroke="#ff3ddc" stroke-width="2"/>
+    <text x="102" y="28" text-anchor="middle" fill="#ffd9f8" font-family="Tajawal, Arial, sans-serif" font-size="12">تسويق عقاري متكامل</text>
+  </g>
+  <text x="42" y="52" fill="#7dd3fc" fill-opacity=".55" font-family="Tajawal, Arial, sans-serif" font-size="12" letter-spacing="2">REAL ESTATE / 2026</text>
+  <text x="758" y="562" text-anchor="end" fill="#ffffff" fill-opacity=".28" font-family="Tajawal, Arial, sans-serif" font-size="11" letter-spacing="2">NEON MEDIA</text>
+</svg>
