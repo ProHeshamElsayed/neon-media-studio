@@ -948,6 +948,10 @@
   function loadLocal() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw && window.NEON_SEED_DATA && typeof window.NEON_SEED_DATA === 'object') {
+        // بيانات أولية مدمجة مع الموقع (نسخة معتمدة) — تُستخدم فقط عند عدم وجود بيانات محفوظة
+        raw = JSON.stringify(window.NEON_SEED_DATA);
+      }
       if (!raw) return null;
       var parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object') return null;
