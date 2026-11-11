@@ -110,6 +110,13 @@
       authError.code = 'AUTH_REQUIRED';
       throw authError;
     }
+    var payloadSize = 0;
+    try { payloadSize = JSON.stringify(data).length; } catch (sizeProbeError) { payloadSize = 0; }
+    if (payloadSize > 900000) {
+      var sizeError = new Error('حجم المحتوى ' + Math.round(payloadSize / 1024) + ' كيلوبايت — قريب من الحد الأقصى (1 ميجابايت). صغّر الصور أو استخدم روابط صور.');
+      sizeError.code = 'DOC_TOO_LARGE';
+      throw sizeError;
+    }
     state.pendingData = data;
     if (state.saveTimer) clearTimeout(state.saveTimer);
     return new Promise(function (resolve, reject) {

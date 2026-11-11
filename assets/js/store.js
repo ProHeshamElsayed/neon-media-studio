@@ -1065,7 +1065,8 @@
     if (options.showErrors !== false) lastLocalSave = Date.now();
     if (cloudEnabled && options.cloud !== false && window.NeonCloud && window.NeonCloud.save) {
       window.NeonCloud.save(data).catch(function (error) {
-        setCloudStatus(error && error.code === 'AUTH_REQUIRED' ? 'auth-required' : 'error');
+        var code = error && error.code;
+        setCloudStatus(code === 'AUTH_REQUIRED' ? 'auth-required' : code === 'DOC_TOO_LARGE' ? 'too-large' : 'error');
       });
     }
     notify(options.source || 'local');
