@@ -149,7 +149,7 @@
   /* ---------------------------------------------------------------------- */
   function servicesText() {
     var services = list('services');
-    if (!services.length) return 'الخدمات هتظهر هنا فور إضافتها من لوحة التحكم.';
+    if (!services.length) return 'الخدمات هتظهر هنا قريبًا.';
     return '<strong>الخدمات المتاحة</strong><div class="chatbot-list">' + services.slice(0, 8).map(function (service) {
       return '<div class="chatbot-list__row"><span>' + esc(service.title) + '</span><b>' + esc(money(service.price)) + (service.unit ? ' ' + esc(service.unit) : '') + '</b></div>';
     }).join('') + '</div><span class="chatbot-note">الأسعار تقديرية — التفاصيل النهائية تُتفق عليها في الطلب.</span>';
@@ -157,7 +157,7 @@
 
   function packagesText() {
     var packages = list('packages');
-    if (!packages.length) return 'الباقات الشهرية هتظهر هنا فور إضافتها من لوحة التحكم.';
+    if (!packages.length) return 'الباقات الشهرية هتظهر هنا قريبًا.';
     return '<strong>الباقات</strong><div class="chatbot-list">' + packages.slice(0, 6).map(function (pkg) {
       return '<div class="chatbot-list__row"><span>' + esc(pkg.name) + '</span><b>' + esc(money(pkg.price)) + (pkg.period ? ' / ' + esc(pkg.period) : '') + '</b></div>';
     }).join('') + '</div>';
