@@ -21,6 +21,7 @@
     authMod: null,
     user: null
   };
+  var counterUnavailable = false;
 
   function authEnabled() {
     return Boolean(config.auth && config.auth.enabled);
@@ -139,6 +140,32 @@
     });
   }
 
+  async function reserveOrderNumber(startValue) {
+    if (!isConfigured() || counterUnavailable) return null;
+    await init();
+    var fs = state.mods.firestore;
+    if (!fs || !fs.runTransaction) return null;
+    var ref = fs.doc(state.db, 'counters', 'orders');
+    try {
+      return await fs.runTransaction(state.db, async function (transaction) {
+        var snapshot = await transaction.get(ref);
+        var current = snapshot.exists() ? (Number(snapshot.data().value) || 0) : 0;
+        var next = Math.max(current + 1, Math.floor(Number(startValue) || 1));
+        if (snapshot.exists()) {
+          transaction.update(ref, { value: next, updatedAt: fs.serverTimestamp() });
+        } else {
+          transaction.set(ref, { value: next, updatedAt: fs.serverTimestamp() });
+        }
+        return next;
+      });
+    } catch (error) {
+      // القواعد قد تمنع العدّاد قبل نشرها — نكمل بالترقيم المحلي بدون تعطيل الطلب
+      counterUnavailable = true;
+      console.warn('[NeonCloud] عدّاد الطلبات غير متاح — سيتم استخدام الترقيم المحلي.', error && error.code ? error.code : error);
+      return null;
+    }
+  }
+
   function subscribe(callback) {
     if (!isConfigured() || state.subscribed) return;
     init().then(function () {
@@ -234,6 +261,7 @@
     init: init,
     load: load,
     save: save,
+    reserveOrderNumber: reserveOrderNumber,
     subscribe: subscribe,
     stop: stop,
     uploadImage: uploadImage,

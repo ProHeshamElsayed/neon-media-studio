@@ -414,6 +414,27 @@ html[data-theme='light'] .btn-close { filter: none; }
   line-height: 1.2;
 }
 .order-summary__price span { font-size: 0.62rem; color: var(--muted); }
+.order-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(var(--accent-rgb), 0.28);
+  background: rgba(var(--accent-rgb), 0.04);
+  font-size: 0.78rem;
+}
+.order-totals:empty { display: none; }
+.order-total-line { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--muted); }
+.order-total-line strong { color: var(--text-soft); font-weight: 800; }
+.order-total-line.is-final {
+  margin-top: 0.2rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(var(--accent-rgb), 0.22);
+  color: var(--text);
+  font-size: 0.86rem;
+}
+.order-total-line.is-final strong { color: var(--accent); font-family: var(--font-display); font-size: 1rem; }
 .order-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-bottom: 0.2rem; }
 .order-option {
   position: relative;

@@ -72,6 +72,13 @@
       announcementLink: '#packages',
       announcementEnabled: true,
       currency: 'ج.م',
+      orderNumberPrefix: 'HE-',
+      orderStartNumber: 1001,
+      orderNumberPadding: 4,
+      vatEnabled: false,
+      vatRate: 15,
+      taxNumber: '',
+      invoiceNote: 'هذا إيصال إلكتروني صادر من {siteName} — الطلب رقم {orderNo}. الدفع عبر تحويل بنكي أو عند الاستلام فقط، ولا نطلب أي بيانات بطاقة.',
       accent: 'cyan',
       defaultTheme: 'dark',
       seoTitle: 'نِيون ميديا | تسويق رقمي · سوشيال ميديا · تصوير · تصميم',
@@ -1066,7 +1073,12 @@
     if (cloudEnabled && options.cloud !== false && window.NeonCloud && window.NeonCloud.save) {
       window.NeonCloud.save(data).catch(function (error) {
         var code = error && error.code;
-        setCloudStatus(code === 'AUTH_REQUIRED' ? 'auth-required' : code === 'DOC_TOO_LARGE' ? 'too-large' : 'error');
+        setCloudStatus(
+          code === 'AUTH_REQUIRED' ? 'auth-required'
+            : code === 'DOC_TOO_LARGE' ? 'too-large'
+            : code === 'permission-denied' ? 'forbidden'
+            : 'error'
+        );
       });
     }
     notify(options.source || 'local');
@@ -1330,18 +1342,252 @@
     return changed;
   }
 
-  function addOrder(order) {
+  /* ------------------------------------------------------------------------
+     الطلبات والفواتير — ترقيم متسلسل + إيصال إلكتروني
+     ------------------------------------------------------------------------ */
+  var AR_WEEKDAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+  function roundMoney(value) {
+    return Math.round((Number(value) || 0) * 100) / 100;
+  }
+
+  function formatMoneyFixed(value, currency) {
+    var number = Number(value) || 0;
+    var cur = currency || (data.settings && data.settings.currency) || 'ج.م';
+    return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cur;
+  }
+
+  function orderPrefix() {
+    var prefix = data.settings ? data.settings.orderNumberPrefix : 'HE-';
+    return prefix == null ? 'HE-' : String(prefix);
+  }
+
+  function orderPadding() {
+    var pad = Math.floor(Number(data.settings && data.settings.orderNumberPadding));
+    if (!isFinite(pad) || pad < 1) pad = 4;
+    if (pad > 10) pad = 10;
+    return pad;
+  }
+
+  function padOrderNumber(value) {
+    var text = String(Math.max(0, Math.floor(Number(value) || 0)));
+    var pad = orderPadding();
+    while (text.length < pad) text = '0' + text;
+    return text;
+  }
+
+  function nextOrderNumber() {
+    var start = Math.floor(Number(data.settings && data.settings.orderStartNumber));
+    if (!isFinite(start) || start < 1) start = 1001;
+    var max = 0;
+    (data.orders || []).forEach(function (order) {
+      var num = Number(order && order.number);
+      if (isFinite(num) && num > max) max = num;
+    });
+    return Math.max(start, max + 1);
+  }
+
+  function orderNoOf(order) {
+    if (!order) return '—';
+    if (order.orderNo) return String(order.orderNo);
+    if (order.number != null && isFinite(Number(order.number))) {
+      return orderPrefix() + padOrderNumber(order.number);
+    }
+    return String(order.id || '—');
+  }
+
+  function orderNoLabel(order) {
+    var no = orderNoOf(order);
+    return no.charAt(0) === '#' ? no : '#' + no;
+  }
+
+  function orderItemsOf(order) {
+    var items = [];
+    if (order && Array.isArray(order.items) && order.items.length) {
+      order.items.forEach(function (item) {
+        var qty = Math.max(1, Math.floor(Number(item.qty) || 1));
+        var price = Number(item.price);
+        if (!isFinite(price)) price = 0;
+        items.push({
+          title: String(item.title || ''),
+          qty: qty,
+          price: roundMoney(price),
+          unit: item.unit || '',
+          total: roundMoney(price * qty)
+        });
+      });
+    } else if (order) {
+      var quantity = Math.max(1, Math.floor(Number(order.quantity) || 1));
+      var unitPrice = Number(order.price != null ? order.price : order.amount) || 0;
+      items.push({
+        title: String(order.serviceTitle || ''),
+        qty: quantity,
+        price: roundMoney(unitPrice),
+        unit: order.unit || '',
+        total: roundMoney(unitPrice * quantity)
+      });
+    }
+    return items;
+  }
+
+  function orderTotals(order) {
+    var items = orderItemsOf(order);
+    var subtotal = roundMoney(items.reduce(function (sum, item) { return sum + item.total; }, 0));
+    // الضريبة تُحفظ لحظة الطلب حتى لا تتغير الفواتير القديمة عند تعديل الإعدادات لاحقًا.
+    var vatEnabled = order && order.vatEnabled !== undefined ? !!order.vatEnabled : false;
+    var rate = order && order.vatRate !== undefined ? Number(order.vatRate) : Number(data.settings && data.settings.vatRate);
+    if (!isFinite(rate) || rate < 0) rate = 0;
+    var vatAmount = vatEnabled ? roundMoney(subtotal * rate / 100) : 0;
+    return {
+      items: items,
+      subtotal: subtotal,
+      vatEnabled: vatEnabled,
+      vatRate: rate,
+      vatAmount: vatAmount,
+      total: roundMoney(subtotal + vatAmount)
+    };
+  }
+
+  function orderPaymentStatus(order) {
+    if (!order) return 'سيتم التأكيد عبر واتساب';
+    if (order.paymentStatus) return String(order.paymentStatus);
+    var method = String(order.paymentMethod || '');
+    var type = String(order.paymentType || '');
+    if (/عند الاستلام/.test(method) || /cash/i.test(type)) return 'الدفع عند الاستلام (كاش)';
+    if (/تحويل|بنك|bank|instapay|إنستا|انستا|فودافون|محفظة|wallet/i.test(method) || /bank|instapay|wallet|transfer/i.test(type)) {
+      return 'في انتظار التحويل عبر ' + method;
+    }
+    if (/كاش|نقد/i.test(method)) return 'في انتظار الدفع عبر ' + method;
+    return method ? 'في انتظار تأكيد الدفع عبر ' + method : 'سيتم التأكيد عبر واتساب';
+  }
+
+  function invoiceDateParts(value) {
+    var date = value ? new Date(value) : new Date();
+    if (isNaN(date.getTime())) date = new Date();
+    var day = AR_WEEKDAYS[date.getDay()];
+    var time = '';
+    try {
+      day = new Intl.DateTimeFormat('ar-EG', { weekday: 'long' }).format(date);
+      time = new Intl.DateTimeFormat('ar-EG', { hour: 'numeric', minute: '2-digit', hour12: true }).format(date);
+    } catch (error) { /* fallback below */ }
+    if (!time) {
+      var hours = date.getHours();
+      var suffix = hours < 12 ? 'ص' : 'م';
+      var hour12 = hours % 12 || 12;
+      time = hour12 + ':' + (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ' ' + suffix;
+    }
+    var two = function (num) { return num < 10 ? '0' + num : String(num); };
+    return {
+      day: String(day).replace(/[\u200e\u200f]/g, ''),
+      date: two(date.getDate()) + '/' + two(date.getMonth() + 1) + '/' + date.getFullYear(),
+      time: String(time).replace(/[\u200e\u200f]/g, '')
+    };
+  }
+
+  function formatPercent(value) {
+    var rate = Number(value);
+    if (!isFinite(rate)) rate = 0;
+    return String(Math.round(rate * 100) / 100);
+  }
+
+  // إيصال إلكتروني نصي جاهز للواتساب — يتحدّث اسم الموقع تلقائيًا من الإعدادات
+  function buildInvoice(order, options) {
+    var opts = options || {};
+    var toCustomer = opts.recipient === 'customer';
+    var s = data.settings || {};
+    var siteName = s.siteName || 'نِيون ميديا';
+    var currency = (order && order.currency) || s.currency || 'ج.م';
+    var totals = orderTotals(order || {});
+    var when = invoiceDateParts(order && order.createdAt);
+    var sep = '------------------------------';
+    var lines = [];
+
+    lines.push((toCustomer ? 'فاتورة طلبك من (' : 'طلب جديد من (') + siteName + ')');
+    lines.push(sep);
+    lines.push('رقم الطلب: ' + orderNoLabel(order));
+    lines.push('اليوم: ' + when.day);
+    lines.push('التاريخ: ' + when.date);
+    lines.push('الوقت: ' + when.time);
+    lines.push('حالة الدفع: ' + orderPaymentStatus(order));
+    lines.push(sep);
+    lines.push('');
+    lines.push('بيانات العميل:');
+    lines.push('* الاسم: ' + ((order && order.name) || '—'));
+    lines.push('* الجوال: ' + ((order && order.phone) || '—'));
+    lines.push('* نوع الطلب: ' + ((order && (order.orderType || order.serviceTitle)) || '—'));
+    lines.push('* ملاحظات: ' + ((order && order.notes) || 'لا يوجد'));
+    lines.push('');
+    lines.push('تفاصيل المنتجات أو الخدمات:');
+    if (totals.items.length) {
+      totals.items.forEach(function (item) {
+        lines.push('* ' + (item.title || '—') + ' (العدد: ' + item.qty + ') = ' + formatMoneyFixed(item.total, currency));
+      });
+    } else {
+      lines.push('* —');
+    }
+    lines.push('');
+    lines.push(sep);
+    lines.push('المجموع قبل الضريبة: ' + formatMoneyFixed(totals.subtotal, currency));
+    if (totals.vatEnabled) {
+      lines.push('ضريبة القيمة المضافة (' + formatPercent(totals.vatRate) + '%): ' + formatMoneyFixed(totals.vatAmount, currency));
+      if (s.taxNumber) lines.push('الرقم الضريبي: ' + s.taxNumber);
+    }
+    lines.push(sep);
+    lines.push('الإجمالي النهائي: ' + formatMoneyFixed(totals.total, currency));
+
+    if (order && (order.paymentValue || order.paymentInstructions)) {
+      lines.push('');
+      lines.push(sep);
+      lines.push('بيانات الدفع (' + (order.paymentMethod || 'تحويل بنكي') + '):');
+      if (order.paymentValue) lines.push(String(order.paymentValue));
+      if (order.paymentInstructions) lines.push(String(order.paymentInstructions));
+    }
+
+    if (s.invoiceNote) {
+      lines.push('');
+      lines.push(sep);
+      lines.push(String(s.invoiceNote)
+        .replace(/\{siteName\}/g, siteName)
+        .replace(/\{orderNo\}/g, orderNoLabel(order))
+        .replace(/\{total\}/g, formatMoneyFixed(totals.total, currency)));
+    }
+
+    return lines.join('\n');
+  }
+
+  function addOrder(order, options) {
     var entry = deepMerge({
-      id: 'NM-' + Date.now().toString(36).toUpperCase(),
+      id: '',
       status: 'جديد',
       createdAt: nowISO()
     }, order || {});
+
+    // ترقيم متسلسل رقمي + بادئة قابلة للتعديل من الإعدادات (مثال: HE-1001)
+    // يمكن تمرير رقم محجوز من العدّاد السحابي ليكون فريدًا بين كل الزوار.
+    var reserved = options && Number(options.sequence);
+    var sequence = isFinite(reserved) && reserved > 0 ? Math.floor(reserved) : nextOrderNumber();
+    entry.number = sequence;
+    entry.numberPrefix = orderPrefix();
+    entry.orderNo = entry.numberPrefix + padOrderNumber(sequence);
+    entry.id = entry.orderNo;
+
+    // تثبيت قيم الضريبة وقت إنشاء الطلب
+    if (entry.vatEnabled === undefined) entry.vatEnabled = !!(data.settings && data.settings.vatEnabled);
+    if (entry.vatRate === undefined) entry.vatRate = Number(data.settings && data.settings.vatRate) || 0;
+
+    var totals = orderTotals(entry);
+    entry.items = totals.items;
+    entry.subtotal = totals.subtotal;
+    entry.vatAmount = totals.vatAmount;
+    entry.total = totals.total;
+    entry.amount = totals.total;
+
     if (!Array.isArray(data.orders)) data.orders = [];
     data.orders.unshift(entry);
 
     var customer = upsertCustomer({ name: entry.name, phone: entry.phone, email: entry.email });
-    if (customer && data.settings.loyaltyEnabled !== false && Number(entry.amount) > 0) {
-      var earned = Math.floor(Number(entry.amount) * Number(data.settings.loyaltyPointsPerCurrency || 0));
+    if (customer && data.settings.loyaltyEnabled !== false && Number(entry.subtotal) > 0) {
+      var earned = Math.floor(Number(entry.subtotal) * Number(data.settings.loyaltyPointsPerCurrency || 0));
       if (earned > 0) {
         customer.points = Number(customer.points || 0) + earned;
         customer.totalPointsEarned = Number(customer.totalPointsEarned || 0) + earned;
@@ -1504,6 +1750,12 @@
       var cur = currency || data.settings.currency || 'ج.م';
       return number.toLocaleString('en-US') + ' ' + cur;
     },
+    formatMoneyFixed: formatMoneyFixed,
+    orderNoOf: orderNoOf,
+    orderNoLabel: orderNoLabel,
+    orderPaymentStatus: orderPaymentStatus,
+    orderTotals: orderTotals,
+    buildInvoice: buildInvoice,
     formatDate: function (value, withTime) {
       if (!value) return '—';
       try {
