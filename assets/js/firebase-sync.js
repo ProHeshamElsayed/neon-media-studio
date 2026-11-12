@@ -166,6 +166,81 @@
     }
   }
 
+  function cleanPayload(payload) {
+    try {
+      return JSON.parse(JSON.stringify(payload));
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // إنشاء سجل عام (طلب/رسالة) من صفحات الزوار — مسموح بالقواعد للإنشاء فقط.
+  async function createRecord(name, payload) {
+    if (!isConfigured()) return null;
+    var body = cleanPayload(payload);
+    if (!body) return null;
+    await init();
+    var fs = state.mods.firestore;
+    var ref = await fs.addDoc(fs.collection(state.db, name), body);
+    return ref.id;
+  }
+
+  // جلب السجلات — يتطلب تسجيل دخول المشرف (قواعد القراءة).
+  async function fetchRecords(name, limitCount) {
+    if (!isConfigured()) return [];
+    await init();
+    var fs = state.mods.firestore;
+    var q = fs.query(
+      fs.collection(state.db, name),
+      fs.orderBy('createdAt', 'desc'),
+      fs.limit(limitCount || 200)
+    );
+    var snapshot = await fs.getDocs(q);
+    return snapshot.docs.map(function (docSnap) {
+      return Object.assign({ _cloudId: docSnap.id }, docSnap.data());
+    });
+  }
+
+  async function updateRecord(name, id, patch) {
+    if (!isConfigured() || !id) return false;
+    await init();
+    var fs = state.mods.firestore;
+    await fs.updateDoc(fs.doc(state.db, name, String(id)), patch || {});
+    return true;
+  }
+
+  async function deleteRecord(name, id) {
+    if (!isConfigured() || !id) return false;
+    await init();
+    var fs = state.mods.firestore;
+    await fs.deleteDoc(fs.doc(state.db, name, String(id)));
+    return true;
+  }
+
+  // متابعة لحظية للطلبات/الرسائل داخل لوحة التحكم.
+  async function watchRecords(name, callback, limitCount) {
+    if (!isConfigured() || typeof callback !== 'function') return function () {};
+    await init();
+    var fs = state.mods.firestore;
+    var q = fs.query(
+      fs.collection(state.db, name),
+      fs.orderBy('createdAt', 'desc'),
+      fs.limit(limitCount || 200)
+    );
+    return fs.onSnapshot(q, function (snapshot) {
+      var items = snapshot.docs.map(function (docSnap) {
+        return Object.assign({ _cloudId: docSnap.id }, docSnap.data());
+      });
+      try {
+        callback(items);
+      } catch (error) {
+        console.warn('[NeonCloud] خطأ في معالجة ' + name, error);
+      }
+    }, function (error) {
+      console.warn('[NeonCloud] تعذر متابعة ' + name + ':', error && error.code ? error.code : error);
+    });
+  }
+
   function subscribe(callback) {
     if (!isConfigured() || state.subscribed) return;
     init().then(function () {
@@ -262,6 +337,11 @@
     load: load,
     save: save,
     reserveOrderNumber: reserveOrderNumber,
+    createRecord: createRecord,
+    fetchRecords: fetchRecords,
+    updateRecord: updateRecord,
+    deleteRecord: deleteRecord,
+    watchRecords: watchRecords,
     subscribe: subscribe,
     stop: stop,
     uploadImage: uploadImage,

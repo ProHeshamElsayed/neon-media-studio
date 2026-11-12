@@ -76,7 +76,7 @@
       orderStartNumber: 1001,
       orderNumberPadding: 4,
       vatEnabled: false,
-      vatRate: 15,
+      vatRate: 14,
       taxNumber: '',
       invoiceNote: 'هذا إيصال إلكتروني صادر من {siteName} — الطلب رقم {orderNo}. الدفع عبر تحويل بنكي أو عند الاستلام فقط، ولا نطلب أي بيانات بطاقة.',
       accent: 'cyan',
@@ -1061,6 +1061,29 @@
     }));
   }
 
+  // مستند الموقع العام للزوار لا يحتوي بيانات العملاء أو الطلبات (خصوصية).
+  var CLOUD_EXCLUDED = ['orders', 'messages', 'customers', 'notifications'];
+
+  function cloudPayload(source) {
+    var payload = {};
+    Object.keys(source || {}).forEach(function (key) {
+      if (CLOUD_EXCLUDED.indexOf(key) === -1) payload[key] = source[key];
+    });
+    return payload;
+  }
+
+  function getCloudData() {
+    return cloudPayload(data);
+  }
+
+  // عند تحميل محتوى السحابة، لا نمسح الطلبات/الرسائل/العملاء المحفوظين على هذا الجهاز.
+  function preserveLocalPrivate(target) {
+    CLOUD_EXCLUDED.forEach(function (key) {
+      if (Array.isArray(data[key]) && data[key].length) target[key] = data[key];
+    });
+    return target;
+  }
+
   function persist(options) {
     options = options || {};
     var ok = persistLocal(options.showErrors);
@@ -1071,7 +1094,7 @@
     }
     if (options.showErrors !== false) lastLocalSave = Date.now();
     if (cloudEnabled && options.cloud !== false && window.NeonCloud && window.NeonCloud.save) {
-      window.NeonCloud.save(data).catch(function (error) {
+      window.NeonCloud.save(cloudPayload(data)).catch(function (error) {
         var code = error && error.code;
         setCloudStatus(
           code === 'AUTH_REQUIRED' ? 'auth-required'
@@ -1113,6 +1136,7 @@
           if (remote && typeof remote === 'object') {
             var localStats = data.campaignStats;
             var incoming = mergeWithDefaults(remote);
+            preserveLocalPrivate(incoming);
             mergeCampaignStats(incoming, localStats);
             if (JSON.stringify(incoming) !== JSON.stringify(data)) {
               data = incoming;
@@ -1126,6 +1150,7 @@
               if (Date.now() - lastLocalSave < 2500) return;
               var localStats = data.campaignStats;
               var incoming = mergeWithDefaults(remoteData);
+              preserveLocalPrivate(incoming);
               mergeCampaignStats(incoming, localStats);
               if (JSON.stringify(incoming) === JSON.stringify(data)) return;
               data = incoming;
@@ -1201,6 +1226,50 @@
     data[collection] = next;
     persist();
     return true;
+  }
+
+  // دمج الطلبات/الرسائل الواردة من Firestore مع المحفوظ محليًا (بدون حذف أي عنصر).
+  function mergeRemoteRecords(collection, records) {
+    if (!Array.isArray(records)) return 0;
+    if (!Array.isArray(data[collection])) data[collection] = [];
+    var list = data[collection];
+    var byId = {};
+    list.forEach(function (item) {
+      if (item && item.id != null) byId[String(item.id)] = item;
+    });
+    var added = 0;
+    var touched = false;
+    records.forEach(function (record) {
+      if (!record || typeof record !== 'object') return;
+      var key = record.id != null ? String(record.id) : '';
+      if (!key) return;
+      var local = byId[key];
+      if (local) {
+        if (record._cloudId && local._cloudId !== record._cloudId) {
+          local._cloudId = record._cloudId;
+          touched = true;
+        }
+        if (record.status && record.status !== local.status) {
+          local.status = record.status;
+          touched = true;
+        }
+      } else {
+        list.push(record);
+        byId[key] = record;
+        added++;
+      }
+    });
+    if (added) {
+      list.sort(function (a, b) {
+        return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+      });
+      touched = true;
+    }
+    if (touched) {
+      persistLocal(false);
+      notify('cloud-' + collection);
+    }
+    return added;
   }
 
   function moveItem(collection, id, direction) {
@@ -1520,20 +1589,20 @@
     lines.push('تفاصيل المنتجات أو الخدمات:');
     if (totals.items.length) {
       totals.items.forEach(function (item) {
-        lines.push('* ' + (item.title || '—') + ' (العدد: ' + item.qty + ') = ' + formatMoneyFixed(item.total, currency));
+        lines.push('* ' + (item.title || '—'));
+        lines.push('   الكمية: ' + item.qty + ' × ' + formatMoneyFixed(item.price, currency) + ' = ' + formatMoneyFixed(item.total, currency));
       });
     } else {
       lines.push('* —');
     }
     lines.push('');
     lines.push(sep);
-    lines.push('المجموع قبل الضريبة: ' + formatMoneyFixed(totals.subtotal, currency));
     if (totals.vatEnabled) {
+      // بيانات الضريبة فقط — بدون سطر «السعر قبل الضريبة».
       lines.push('ضريبة القيمة المضافة (' + formatPercent(totals.vatRate) + '%): ' + formatMoneyFixed(totals.vatAmount, currency));
       if (s.taxNumber) lines.push('الرقم الضريبي: ' + s.taxNumber);
     }
-    lines.push(sep);
-    lines.push('الإجمالي النهائي: ' + formatMoneyFixed(totals.total, currency));
+    lines.push('الإجمالي: ' + formatMoneyFixed(totals.total, currency));
 
     if (order && (order.paymentValue || order.paymentInstructions)) {
       lines.push('');
@@ -1552,6 +1621,58 @@
         .replace(/\{total\}/g, formatMoneyFixed(totals.total, currency)));
     }
 
+    return lines.join('\n');
+  }
+
+  // إيصال ضريبي معتمد يُصدر من لوحة التحكم بعد تنفيذ الطلب واستلام العميل.
+  function buildTaxReceipt(order, options) {
+    var opts = options || {};
+    var s = data.settings || {};
+    var siteName = s.siteName || 'نِيون ميديا';
+    var currency = (order && order.currency) || s.currency || 'ج.م';
+    var totals = orderTotals(order || {});
+    var when = invoiceDateParts(order && order.createdAt);
+    var done = order && order.executedAt ? invoiceDateParts(order.executedAt) : null;
+    var sep = '----------------------------------------';
+    var lines = [];
+
+    lines.push('إيصال ضريبي معتمد — ' + siteName);
+    lines.push(sep);
+    if (s.taxNumber) lines.push('الرقم الضريبي: ' + s.taxNumber);
+    lines.push('رقم الإيصال: ' + orderNoLabel(order));
+    lines.push('تاريخ الإصدار: ' + when.day + ' ' + when.date + ' — ' + when.time);
+    if (done) lines.push('تاريخ التنفيذ: ' + done.day + ' ' + done.date + ' — ' + done.time);
+    lines.push('حالة الدفع: ' + orderPaymentStatus(order));
+    lines.push(sep);
+    lines.push('بيانات العميل:');
+    lines.push('* الاسم: ' + ((order && order.name) || '—'));
+    lines.push('* الجوال: ' + ((order && order.phone) || '—'));
+    lines.push('');
+    lines.push('الخدمات المنفذة:');
+    if (totals.items.length) {
+      totals.items.forEach(function (item) {
+        lines.push('* ' + (item.title || '—'));
+        lines.push('   الكمية: ' + item.qty + ' × ' + formatMoneyFixed(item.price, currency) + ' = ' + formatMoneyFixed(item.total, currency));
+      });
+    } else {
+      lines.push('* —');
+    }
+    lines.push(sep);
+    if (totals.vatEnabled) {
+      lines.push('ضريبة القيمة المضافة (' + formatPercent(totals.vatRate) + '%): ' + formatMoneyFixed(totals.vatAmount, currency));
+    }
+    lines.push(totals.vatEnabled ? 'الإجمالي (شامل الضريبة): ' + formatMoneyFixed(totals.total, currency) : 'الإجمالي: ' + formatMoneyFixed(totals.total, currency));
+    lines.push(sep);
+    lines.push('تم تنفيذ الطلب وتسليمه للعميل بنجاح.');
+    lines.push('هذا الإيصال معتمد إلكترونيًا من موقع ' + siteName + '.');
+    lines.push('للتواصل: ' + (s.phone || '—') + (s.email ? ' — ' + s.email : ''));
+    if (opts.includeNote !== false && s.invoiceNote) {
+      lines.push('');
+      lines.push(String(s.invoiceNote)
+        .replace(/\{siteName\}/g, siteName)
+        .replace(/\{orderNo\}/g, orderNoLabel(order))
+        .replace(/\{total\}/g, formatMoneyFixed(totals.total, currency)));
+    }
     return lines.join('\n');
   }
 
@@ -1594,11 +1715,12 @@
         entry.pointsEarned = earned;
       }
     }
-    persist();
+    // صفحات الزوار لا تكتب مستند الموقع العام؛ الطلب يُرفع لمجموعته الخاصة فقط.
+    persist({ cloud: !(options && options.cloud === false) });
     return entry;
   }
 
-  function addMessage(message) {
+  function addMessage(message, options) {
     var entry = deepMerge({
       id: 'MSG-' + Date.now().toString(36).toUpperCase(),
       status: 'جديد',
@@ -1607,7 +1729,7 @@
     if (!Array.isArray(data.messages)) data.messages = [];
     data.messages.unshift(entry);
     upsertCustomer({ name: entry.name, phone: entry.phone, email: entry.email });
-    persist();
+    persist({ cloud: !(options && options.cloud === false) });
     return entry;
   }
 
@@ -1719,6 +1841,7 @@
     addItem: addItem,
     updateItem: updateItem,
     removeItem: removeItem,
+    mergeRemoteRecords: mergeRemoteRecords,
     moveItem: moveItem,
     campaignStats: campaignStats,
     trackCampaign: trackCampaign,
@@ -1756,6 +1879,8 @@
     orderPaymentStatus: orderPaymentStatus,
     orderTotals: orderTotals,
     buildInvoice: buildInvoice,
+    buildTaxReceipt: buildTaxReceipt,
+    getCloudData: getCloudData,
     formatDate: function (value, withTime) {
       if (!value) return '—';
       try {

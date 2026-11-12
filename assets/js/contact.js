@@ -113,7 +113,23 @@
         message: message,
         source: 'صفحة الاتصال',
         status: 'جديد'
-      });
+      }, { cloud: false });
+
+      if (window.NeonCloud && typeof window.NeonCloud.createRecord === 'function') {
+        window.NeonCloud.createRecord('messages', {
+          id: entry.id,
+          name: entry.name,
+          phone: entry.phone,
+          email: entry.email,
+          service: entry.service,
+          message: entry.message,
+          source: entry.source,
+          status: entry.status,
+          createdAt: entry.createdAt
+        }).catch(function (error) {
+          console.warn('[NeonContact] تعذر رفع الرسالة للسحابة:', error && error.code ? error.code : error);
+        });
+      }
 
       var text = [
         'مرحبًا نِيون ميديا 👋',

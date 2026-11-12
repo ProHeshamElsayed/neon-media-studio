@@ -18,7 +18,8 @@
     currentServiceId: null,
     lastOrder: null,
     lastOrderText: '',
-    submitting: false
+    submitting: false,
+    cart: cartLoad()
   };
 
   var modalInstances = {};
@@ -541,51 +542,163 @@
     }).join('') : '<p class="form-text">لا توجد طرق دفع مضافة. أكمل الطلب عبر واتساب.</p>';
   }
 
-  function renderOrderTotals(item, quantity) {
-    var box = qs('#orderTotals');
-    if (!box) return;
-    if (!item || !store || !store.orderTotals) {
-      box.innerHTML = '';
-      return;
+  /* ------------------------------------------------------------------------
+     سلة الطلب — يمكن للعميل اختيار أكثر من خدمة/باقة في طلب واحد
+     ------------------------------------------------------------------------ */
+  var CART_KEY = 'neonMediaCart_v1';
+
+  function cartLoad() {
+    try {
+      var raw = localStorage.getItem(CART_KEY);
+      var list = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(list)) return [];
+      return list.filter(function (item) {
+        return item && (item.kind === 'service' || item.kind === 'package') && item.id;
+      }).map(function (item) {
+        return {
+          kind: item.kind,
+          id: String(item.id),
+          title: String(item.title || ''),
+          price: n(item.price),
+          unit: String(item.unit || ''),
+          qty: Math.max(1, Math.min(99, Math.floor(n(item.qty) || 1)))
+        };
+      });
+    } catch (error) {
+      return [];
     }
-    var s = (data && data.settings) || {};
-    var totals = store.orderTotals({
-      items: [{ title: item.title, qty: quantity, price: n(item.price), unit: item.unit }],
-      vatEnabled: s.vatEnabled === true,
-      vatRate: n(s.vatRate),
-      currency: s.currency
-    });
-    var html = '' +
-      '<div class="order-total-line"><span>المجموع قبل الضريبة</span><strong>' + escapeHTML(money(totals.subtotal)) + '</strong></div>';
-    if (totals.vatEnabled) {
-      html += '<div class="order-total-line"><span>ضريبة القيمة المضافة (' + escapeHTML(String(totals.vatRate)) + '%)</span><strong>' + escapeHTML(money(totals.vatAmount)) + '</strong></div>';
-    }
-    html += '<div class="order-total-line is-final"><span>الإجمالي النهائي</span><strong>' + escapeHTML(money(totals.total)) + '</strong></div>';
-    box.innerHTML = html;
   }
 
-  function syncOrderSummary() {
-    var select = qs('#orderService');
+  function cartSave() {
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
+    } catch (error) { /* تجاهل امتلاء التخزين */ }
+  }
+
+  function cartKey(item) { return item.kind + ':' + item.id; }
+
+  function cartFind(key) {
+    return state.cart.filter(function (item) { return cartKey(item) === key; })[0] || null;
+  }
+
+  function cartAdd(item, quantity) {
+    if (!item) return false;
+    var qty = Math.max(1, Math.min(99, Math.floor(n(quantity) || 1)));
+    var key = cartKey(item);
+    var existing = cartFind(key);
+    if (existing) {
+      existing.qty = Math.min(99, existing.qty + qty);
+    } else {
+      state.cart.push({
+        kind: item.kind,
+        id: String(item.id),
+        title: item.title || '',
+        price: n(item.price),
+        unit: item.unit || '',
+        qty: qty
+      });
+    }
+    cartSave();
+    renderCart();
+    return true;
+  }
+
+  function cartStep(key, delta) {
+    var item = cartFind(key);
+    if (!item) return;
+    item.qty = Math.max(1, Math.min(99, item.qty + delta));
+    cartSave();
+    renderCart();
+  }
+
+  function cartRemove(key) {
+    state.cart = state.cart.filter(function (item) { return cartKey(item) !== key; });
+    cartSave();
+    renderCart();
+  }
+
+  function cartClear() {
+    state.cart = [];
+    cartSave();
+    renderCart();
+  }
+
+  function cartPayload() {
+    return state.cart.map(function (item) {
+      return {
+        kind: item.kind,
+        id: item.id,
+        title: item.title,
+        price: n(item.price),
+        unit: item.unit,
+        qty: item.qty
+      };
+    });
+  }
+
+  function cartCount() {
+    return state.cart.reduce(function (sum, item) { return sum + item.qty; }, 0);
+  }
+
+  function cartCountLabel(count) {
+    if (!count) return 'لم تضف خدمات بعد';
+    if (count === 1) return 'خدمة واحدة مختارة';
+    if (count === 2) return 'خدمتان مختارتان';
+    return count + ' خدمات مختارة';
+  }
+
+  function renderCart() {
+    var list = qs('#orderCart');
     var title = qs('#orderSummaryTitle');
     var price = qs('#orderSummaryPrice');
     var note = qs('#orderSummaryNote');
-    var quantityField = qs('#orderQuantity');
-    if (!select) return;
-    var quantity = Math.max(1, Math.floor(n(quantityField ? quantityField.value : 1)));
-    if (quantityField && String(quantity) !== quantityField.value) quantityField.value = String(quantity);
-    var item = findOrderItem(select.value);
-    if (!item) {
-      if (title) title.textContent = 'اختر خدمة أو باقة';
-      if (price) price.textContent = '—';
-      if (note) note.textContent = 'السعر يبدأ من';
-      renderOrderTotals(null, quantity);
+    var count = cartCount();
+    var cartSettings = (data && data.settings) || {};
+    var totals = (store && store.orderTotals) ? store.orderTotals({
+      items: cartPayload(),
+      vatEnabled: cartSettings.vatEnabled === true,
+      vatRate: n(cartSettings.vatRate)
+    }) : { total: 0 };
+
+    if (title) title.textContent = cartCountLabel(count);
+    if (price) price.textContent = money(totals.total);
+    if (note) note.textContent = 'الإجمالي';
+
+    var fab = qs('#cartFab');
+    var badge = qs('#cartCount');
+    if (fab) {
+      fab.hidden = false;
+      fab.setAttribute('aria-label', count ? 'سلة الطلب — ' + cartCountLabel(count) : 'سلة الطلب');
+    }
+    if (badge) {
+      badge.textContent = String(count);
+      badge.hidden = count === 0;
+    }
+    var fabLabel = qs('#cartFabLabel');
+    if (fabLabel) fabLabel.textContent = count ? 'سلة الطلب — ' + cartCountLabel(count) : 'سلة الطلب';
+
+    if (!list) return;
+    if (!state.cart.length) {
+      list.innerHTML = '<p class="order-cart-empty">اختر الخدمة أو الباقة ثم اضغط «إضافة» — يمكنك جمع أكثر من خدمة في طلب واحد.</p>';
       return;
     }
-    state.currentServiceId = item.kind === 'service' ? item.id : null;
-    if (title) title.textContent = item.title;
-    if (price) price.textContent = money(n(item.price) * quantity);
-    if (note) note.textContent = item.priceNote + (item.unit ? ' ' + item.unit : '');
-    renderOrderTotals(item, quantity);
+    list.innerHTML = state.cart.map(function (item) {
+      var key = cartKey(item);
+      return '' +
+        '<div class="order-cart-item" data-cart-key="' + escapeHTML(key) + '">' +
+          '<div class="order-cart-item__body">' +
+            '<strong>' + escapeHTML(item.title) + '</strong>' +
+            '<span>' + escapeHTML(money(item.price)) + (item.unit ? ' ' + escapeHTML(item.unit) : '') + ' × ' + item.qty + ' = ' + escapeHTML(money(item.price * item.qty)) + '</span>' +
+          '</div>' +
+          '<div class="order-cart-item__qty">' +
+            '<button type="button" class="cart-qty" data-cart-minus="' + escapeHTML(key) + '" aria-label="تقليل العدد">−</button>' +
+            '<b>' + item.qty + '</b>' +
+            '<button type="button" class="cart-qty" data-cart-plus="' + escapeHTML(key) + '" aria-label="زيادة العدد">+</button>' +
+          '</div>' +
+          '<button type="button" class="cart-remove" data-cart-remove="' + escapeHTML(key) + '" aria-label="حذف من السلة">×</button>' +
+        '</div>';
+    }).join('') +
+    '<div class="order-cart-total"><span>الإجمالي</span><strong>' + escapeHTML(money(totals.total)) + '</strong></div>';
   }
 
   function openOrder(kind, id) {
@@ -595,17 +708,13 @@
       if (UI) UI.openWhatsApp(data.settings.orderDisabledText || 'مرحبًا نِيون ميديا، أريد الاستفسار عن خدماتكم.');
       return;
     }
+    if (kind && id) {
+      var item = findOrderItem(kind + ':' + id);
+      if (item) cartAdd(item, 1);
+    }
     populateOrderSelect();
     renderOrderPayments();
-    var select = qs('#orderService');
-    if (select) {
-      if (kind && id) {
-        var value = kind + ':' + id;
-        if (select.querySelector('option[value="' + value + '"]')) select.value = value;
-      }
-      if (!select.value && select.options.length) select.selectedIndex = 0;
-    }
-    syncOrderSummary();
+    renderCart();
     var instance = modal('orderModal');
     if (instance) instance.show();
   }
@@ -760,7 +869,23 @@
           message: message,
           source: 'website',
           status: 'جديد'
-        });
+        }, { cloud: false });
+
+        if (window.NeonCloud && typeof window.NeonCloud.createRecord === 'function') {
+          window.NeonCloud.createRecord('messages', {
+            id: entry.id,
+            name: entry.name,
+            phone: entry.phone,
+            email: entry.email,
+            service: entry.service,
+            message: entry.message,
+            source: entry.source,
+            status: entry.status,
+            createdAt: entry.createdAt
+          }).catch(function (error) {
+            console.warn('[NeonHome] تعذر رفع الرسالة للسحابة:', error && error.code ? error.code : error);
+          });
+        }
         var text = [
           'مرحبًا نِيون ميديا 👋',
           'الاسم: ' + name,
@@ -811,7 +936,7 @@
     fillContactServiceOptions();
     populateOrderSelect();
     renderOrderPayments();
-    syncOrderSummary();
+    renderCart();
     if (UI) {
       UI.refreshReveal();
       UI.initCounters();
@@ -844,6 +969,29 @@
       var workCard = target.closest('[data-work-id]');
       if (workCard) { event.preventDefault(); openWork(workCard.getAttribute('data-work-id')); return; }
 
+      var cartPlus = target.closest('[data-cart-plus]');
+      if (cartPlus) { event.preventDefault(); cartStep(cartPlus.getAttribute('data-cart-plus'), 1); return; }
+
+      var cartMinus = target.closest('[data-cart-minus]');
+      if (cartMinus) { event.preventDefault(); cartStep(cartMinus.getAttribute('data-cart-minus'), -1); return; }
+
+      var cartRemoveBtn = target.closest('[data-cart-remove]');
+      if (cartRemoveBtn) { event.preventDefault(); cartRemove(cartRemoveBtn.getAttribute('data-cart-remove')); return; }
+
+      var cartAddBtn = target.closest('#orderAddBtn');
+      if (cartAddBtn) {
+        event.preventDefault();
+        var cartSelect = qs('#orderService');
+        var cartItem = cartSelect ? findOrderItem(cartSelect.value) : null;
+        if (!cartItem) {
+          if (UI) UI.toast('اختر خدمة أو باقة أولًا.', 'info');
+          return;
+        }
+        cartAdd(cartItem, 1);
+        if (UI) UI.toast('تمت إضافة «' + cartItem.title + '» إلى السلة.', 'success', 3200);
+        return;
+      }
+
       var serviceFilter = target.closest('#serviceFilters [data-filter]');
       if (serviceFilter) {
         state.serviceFilter = serviceFilter.getAttribute('data-filter') || 'all';
@@ -866,15 +1014,6 @@
       openWork(card.getAttribute('data-work-id'));
     });
 
-    var orderService = qs('#orderService');
-    if (orderService) orderService.addEventListener('change', syncOrderSummary);
-
-    var orderQuantity = qs('#orderQuantity');
-    if (orderQuantity) {
-      orderQuantity.addEventListener('input', syncOrderSummary);
-      orderQuantity.addEventListener('change', syncOrderSummary);
-    }
-
     var orderForm = qs('#orderForm');
     if (orderForm) {
       orderForm.addEventListener('submit', function (event) {
@@ -887,10 +1026,8 @@
           return;
         }
         if (!data || state.submitting) return;
-        var select = qs('#orderService');
-        var item = findOrderItem(select ? select.value : '');
-        if (!item) {
-          if (UI) UI.toast('اختر خدمة أو باقة أولًا.', 'error');
+        if (!state.cart.length) {
+          if (UI) UI.toast('أضف خدمة أو باقة واحدة على الأقل إلى السلة أولًا.', 'error', 4500);
           return;
         }
 
@@ -905,7 +1042,9 @@
         var paymentInput = orderForm.querySelector('input[name="paymentMethod"]:checked');
         var payment = paymentInput ? byId('payments', paymentInput.value) : null;
         var formData = new FormData(orderForm);
-        var quantity = Math.max(1, Math.floor(n(formData.get('quantity'))));
+        var items = cartPayload();
+        var totalQty = items.reduce(function (sum, line) { return sum + line.qty; }, 0);
+        var totalPrice = items.reduce(function (sum, line) { return sum + (n(line.price) * line.qty); }, 0);
         var startNumber = Number(data.settings.orderStartNumber) || 1001;
 
         // عدّاد سحابي (إن كان متاحًا) ليكون رقم الطلب فريدًا بين كل الزوار.
@@ -923,14 +1062,14 @@
             name: String(formData.get('name') || '').trim(),
             phone: String(formData.get('phone') || '').trim(),
             notes: String(formData.get('notes') || '').trim(),
-            quantity: quantity,
-            orderType: item.kind === 'package' ? 'باقة شهرية' : 'خدمة',
-            itemType: item.kind,
-            serviceId: item.id,
-            serviceTitle: item.title,
-            unit: item.unit,
-            price: n(item.price),
-            items: [{ title: item.title, qty: quantity, price: n(item.price), unit: item.unit }],
+            quantity: totalQty,
+            orderType: items.length > 1 ? 'طلب متعدد' : (items[0].kind === 'package' ? 'باقة شهرية' : 'خدمة'),
+            itemType: items.length > 1 ? 'multi' : items[0].kind,
+            serviceId: items.length > 1 ? '' : items[0].id,
+            serviceTitle: items.map(function (line) { return line.title; }).join(' + '),
+            unit: items.length === 1 ? items[0].unit : '',
+            price: totalPrice,
+            items: items,
             vatEnabled: data.settings.vatEnabled === true,
             vatRate: n(data.settings.vatRate),
             currency: data.settings.currency,
@@ -941,9 +1080,46 @@
             paymentInstructions: payment ? (payment.instructions || '') : '',
             status: 'جديد',
             source: 'الموقع'
-          }, { sequence: sequence });
+          }, { sequence: sequence, cloud: false });
           var text = buildOrderWhatsApp(order);
           if (UI) UI.openWhatsApp(text);
+
+          // رفع الطلب إلى مجموعة Firestore خاصة (إنشاء فقط للزوار) ليظهر في لوحة التحكم.
+          if (window.NeonCloud && typeof window.NeonCloud.createRecord === 'function') {
+            window.NeonCloud.createRecord('orders', {
+              id: order.id,
+              orderNo: order.orderNo,
+              number: order.number,
+              numberPrefix: order.numberPrefix,
+              name: order.name,
+              phone: order.phone,
+              notes: order.notes,
+              quantity: order.quantity,
+              orderType: order.orderType,
+              itemType: order.itemType,
+              serviceId: order.serviceId,
+              serviceTitle: order.serviceTitle,
+              unit: order.unit,
+              items: order.items,
+              subtotal: order.subtotal,
+              vatEnabled: order.vatEnabled === true,
+              vatRate: order.vatRate,
+              vatAmount: order.vatAmount,
+              total: order.total,
+              amount: order.amount,
+              currency: order.currency,
+              paymentId: order.paymentId,
+              paymentMethod: order.paymentMethod,
+              paymentType: order.paymentType,
+              paymentValue: order.paymentValue,
+              paymentInstructions: order.paymentInstructions,
+              status: order.status,
+              source: order.source,
+              createdAt: order.createdAt
+            }).catch(function (error) {
+              console.warn('[NeonHome] تعذر رفع الطلب للسحابة:', error && error.code ? error.code : error);
+            });
+          }
 
           var orderInstance = modal('orderModal');
           var orderModalEl = qs('#orderModal');
@@ -962,9 +1138,7 @@
           if (notes) notes.value = '';
           if (nameField) nameField.value = '';
           if (phoneField) phoneField.value = '';
-          var qtyField = qs('#orderQuantity');
-          if (qtyField) qtyField.value = '1';
-          syncOrderSummary();
+          cartClear();
           orderForm.classList.remove('was-validated');
           if (UI) UI.toast('تم تسجيل طلبك، وفتح واتساب لتأكيده.', 'success', 5000);
           finish();
