@@ -367,17 +367,7 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 p { color: var(--text-soft); }
 .text-gradient { animation: gradientShift 8s ease infinite; background-size: 220% 220%; }
 
-/* Testimonials carousel */
-.testimonials-carousel { position: relative; }
-#testimonialsGrid {
-  display: flex;
-  gap: 1.4rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding: 0.5rem 0.25rem 1.2rem;
-  scrollbar-width: thin;
-}
+
 #testimonialsGrid::-webkit-scrollbar { height: 6px; }
 #testimonialsGrid::-webkit-scrollbar-thumb { background: var(--gradient); border-radius: 99px; }
 #testimonialsGrid > .testimonial-card {
