@@ -1393,3 +1393,17 @@ iframe[src*="netlify.com"][src*="badge"] {
   pointer-events: none !important;
 }
 
+
+
+/* إخفاء شارة Netlify (iframe) */
+iframe[title*="Powered by Netlify"],
+iframe[aria-label*="Powered by Netlify"],
+iframe[src*="netlify"][src*="badge"],
+iframe[src*="/.netlify/"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
