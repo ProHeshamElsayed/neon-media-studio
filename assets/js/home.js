@@ -395,70 +395,8 @@
             '<div><strong>' + escapeHTML(item.name) + '</strong><span>' + escapeHTML([item.role, item.company].filter(Boolean).join(' · ')) + '</span></div>' +
           '</div>' +
         '</article>';
-    }).join('') : emptyState('لا توجد آراء منشورة حاليًا.');
-    if (UI) UI.refreshReveal(grid);
-    initTestimonialsCarousel();
-  }
 
-  function initTestimonialsCarousel() {
-    var grid = qs('#testimonialsGrid');
-    if (!grid || grid.dataset.carousel === '1') return;
-    var cards = Array.prototype.slice.call(grid.querySelectorAll('.testimonial-card'));
-    if (cards.length < 2) return;
-    grid.dataset.carousel = '1';
-    var wrap = grid.parentElement;
-    var nav = document.createElement('div');
-    nav.className = 'testimonials-nav';
-    nav.innerHTML = '<button type="button" class="t-prev" aria-label="السابق">‹</button><button type="button" class="t-next" aria-label="التالي">›</button>';
-    if (wrap) wrap.appendChild(nav);
-    var idx = 0;
-    function go(i) {
-      idx = (i + cards.length) % cards.length;
-      var target = cards[idx];
-      if (target) grid.scrollTo({ left: target.offsetLeft - grid.offsetLeft, behavior: 'smooth' });
-    }
-    var prev = nav.querySelector('.t-prev');
-    var next = nav.querySelector('.t-next');
-    if (prev) prev.addEventListener('click', function () { go(idx - 1); });
-    if (next) next.addEventListener('click', function () { go(idx + 1); });
-    var timer = setInterval(function () { go(idx + 1); }, 3500);
-    grid.addEventListener('mouseenter', function () { clearInterval(timer); });
-    grid.addEventListener('touchstart', function () { clearInterval(timer); }, { passive: true });
-  }
 
-  function renderClientsMarquee() {
-    var marquee = qs('#clientsMarquee');
-    if (!marquee) return;
-    var items = '';
-    var clients = activeList('clients');
-
-    if (clients.length) {
-      items = clients.map(function (client) {
-        var inner = client.logo
-          ? '<img src="' + escapeHTML(client.logo) + '" alt="' + escapeHTML(client.name || '') + '" loading="lazy">'
-          : icon('spark') + escapeHTML(client.name || '');
-        if (client.url) {
-          return '<a class="client-logo" href="' + escapeHTML(client.url) + '" target="_blank" rel="noopener noreferrer">' + inner + '</a>';
-        }
-        return '<span class="client-logo">' + inner + '</span>';
-      }).join('');
-    } else {
-      var names = [];
-      activeList('works').forEach(function (work) {
-        if (work.client && names.indexOf(work.client) === -1) names.push(work.client);
-      });
-      activeList('testimonials').forEach(function (item) {
-        if (item.company && names.indexOf(item.company) === -1) names.push(item.company);
-      });
-      if (!names.length) names = ['كافيه نون', 'مطعم بحر', 'الإعمار للتطوير', 'مكتبة المعرفة', 'قاعة النور', 'NOOR Parfum'];
-      items = names.map(function (name) {
-        return '<span class="client-logo">' + icon('spark') + escapeHTML(name) + '</span>';
-      }).join('');
-    }
-
-    var track = '<div class="marquee__track">' + items + '</div>';
-    marquee.innerHTML = track + track;
-  }
 
   /* ------------------------------------------------------------------------
      Payments
