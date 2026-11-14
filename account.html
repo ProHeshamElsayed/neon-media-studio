@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#04060c">
   <meta name="description" content="حسابك في نِيون ميديا — سجّل الدخول أو أنشئ حسابًا جديدًا لمتابعة طلباتك وحالة التنفيذ والدفع في مكان واحد.">
-  <meta name="author" content="نِيون ميديا">
+  <meta name="author" content="هشام السيد — Hesham Elsayed">
+  <meta name="copyright" content="© 2026 هشام السيد — نِيون ميديا. جميع الحقوق محفوظة.">
   <meta name="robots" content="noindex, nofollow">
 
   <meta property="og:type" content="website">
@@ -39,11 +40,11 @@
   <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/home.css">
-  <link rel="stylesheet" href="assets/css/components.css?v=20261112d">
+  <link rel="stylesheet" href="assets/css/components.css?v=20261114f">
   <link rel="stylesheet" href="assets/css/extras.css">
   <link rel="stylesheet" href="assets/css/features.css">
-  <link rel="stylesheet" href="assets/css/glass.css?v=20261112d">
-  <link rel="stylesheet" href="assets/css/account.css?v=20261112d">
+  <link rel="stylesheet" href="assets/css/glass.css?v=20261114f">
+  <link rel="stylesheet" href="assets/css/account.css?v=20261114f">
   <noscript>
     <style>
       #preloader { display: none !important; }
@@ -99,7 +100,7 @@
         <a class="navbar-brand" href="index.html">
           <span class="brand-mark"><img src="assets/img/logo.svg" alt="" data-logo></span>
           <span class="brand-text">
-            <strong data-bind="settings.siteName">نِيون ميديا</strong>
+            <strong data-bind="settings.siteName">هشام السيد</strong>
             <span data-bind="settings.brandLatin">NEON MEDIA</span>
           </span>
         </a>
@@ -124,7 +125,7 @@
           <a class="icon-btn account-link is-active" href="account.html" aria-label="حسابي" aria-current="page" title="حسابي">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
           </a>
-          <a class="nav-whatsapp" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد الاستفسار عن خدماتكم." target="_blank" rel="noopener noreferrer" aria-label="تواصل واتساب">
+          <a class="nav-whatsapp" href="https://wa.me/201017908893" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد الاستفسار عن خدماتكم." target="_blank" rel="noopener noreferrer" aria-label="تواصل واتساب">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
             <span>اطلب الآن</span>
           </a>
@@ -223,29 +224,92 @@
               <form class="account-form" id="registerForm" novalidate hidden>
                 <div class="account-form__row">
                   <div>
-                    <label class="form-label" for="registerName">الاسم بالكامل</label>
-                    <input class="form-control" id="registerName" name="name" type="text" autocomplete="name" placeholder="اسمك الكريم" required>
+                    <label class="form-label" for="registerName">الاسم بالكامل <span class="req">*</span></label>
+                    <input class="form-control" id="registerName" name="name" type="text" autocomplete="name" placeholder="اسمك الكريم" minlength="2" maxlength="80" required>
                   </div>
                   <div>
-                    <label class="form-label" for="registerPhone">رقم الهاتف <small style="opacity:.7">(اختياري)</small></label>
-                    <input class="form-control" id="registerPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0100 000 0000">
+                    <label class="form-label" for="registerPhone">رقم الموبايل <span class="req">*</span></label>
+                    <input class="form-control" id="registerPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="01xxxxxxxxx" maxlength="20" required>
                   </div>
                 </div>
                 <div>
-                  <label class="form-label" for="registerEmail">البريد الإلكتروني</label>
-                  <input class="form-control" id="registerEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+                  <label class="form-label" for="registerEmail">البريد الإلكتروني <span class="req">*</span></label>
+                  <input class="form-control" id="registerEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="160" required>
                 </div>
                 <div class="account-form__row">
                   <div>
-                    <label class="form-label" for="registerPassword">كلمة المرور</label>
-                    <input class="form-control" id="registerPassword" name="password" type="password" autocomplete="new-password" placeholder="8 أحرف على الأقل" minlength="8" required>
+                    <label class="form-label" for="registerGovernorate">المحافظة <span class="req">*</span></label>
+                    <select class="form-control" id="registerGovernorate" name="governorate" autocomplete="address-level1" required>
+                      <option value="">اختر المحافظة</option>
+                      <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option>
+                      <option>الشرقية</option><option>الغربية</option><option>المنوفية</option><option>القليوبية</option>
+                      <option>البحيرة</option><option>كفر الشيخ</option><option>دمياط</option><option>بورسعيد</option>
+                      <option>الإسماعيلية</option><option>السويس</option><option>شمال سيناء</option><option>جنوب سيناء</option>
+                      <option>الفيوم</option><option>بني سويف</option><option>المنيا</option><option>أسيوط</option>
+                      <option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option>
+                      <option>البحر الأحمر</option><option>الوادي الجديد</option><option>مطروح</option>
+                    </select>
                   </div>
                   <div>
-                    <label class="form-label" for="registerPassword2">تأكيد كلمة المرور</label>
-                    <input class="form-control" id="registerPassword2" name="password2" type="password" autocomplete="new-password" placeholder="أعد كتابتها" minlength="8" required>
+                    <label class="form-label" for="registerCity">المدينة / المركز <span class="req">*</span></label>
+                    <input class="form-control" id="registerCity" name="city" type="text" autocomplete="address-level2" placeholder="مثال: المنصورة" maxlength="80" required>
                   </div>
                 </div>
-                <p class="account-form__hint">بإنشاء الحساب تقدر تتابع طلباتك وتوصل لتفاصيلها في أي وقت. بياناتك محفوظة في Firebase ولا تُستخدم إلا لخدمتك.</p>
+                <div>
+                  <label class="form-label" for="registerAddress">العنوان بالتفصيل <small>(اختياري)</small></label>
+                  <input class="form-control" id="registerAddress" name="address" type="text" autocomplete="street-address" placeholder="الشارع، رقم المبنى، علامة مميزة" maxlength="220">
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="registerCompany">اسم النشاط / الشركة <small>(اختياري)</small></label>
+                    <input class="form-control" id="registerCompany" name="company" type="text" autocomplete="organization" placeholder="اسم مشروعك أو شركتك" maxlength="120">
+                  </div>
+                  <div>
+                    <label class="form-label" for="registerBirthdate">تاريخ الميلاد <small>(اختياري)</small></label>
+                    <input class="form-control" id="registerBirthdate" name="birthdate" type="date" autocomplete="bday" min="1940-01-01">
+                  </div>
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="registerGender">النوع <small>(اختياري)</small></label>
+                    <select class="form-control" id="registerGender" name="gender">
+                      <option value="">أفضّل عدم الذكر</option>
+                      <option value="male">ذكر</option>
+                      <option value="female">أنثى</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" for="registerContact">طريقة التواصل المفضلة <span class="req">*</span></label>
+                    <select class="form-control" id="registerContact" name="contactPreference" required>
+                      <option value="whatsapp">واتساب</option>
+                      <option value="phone">اتصال هاتفي</option>
+                      <option value="email">بريد إلكتروني</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="registerPassword">كلمة المرور <span class="req">*</span></label>
+                    <input class="form-control" id="registerPassword" name="password" type="password" autocomplete="new-password" placeholder="8 أحرف على الأقل" minlength="8" maxlength="128" required aria-describedby="pwStrengthText">
+                    <div class="pw-strength" id="pwStrength" aria-hidden="true">
+                      <div class="pw-strength__bar"><span id="pwStrengthBar"></span></div>
+                      <span class="pw-strength__text" id="pwStrengthText">8 أحرف على الأقل، مع حرف كبير وصغير ورقم ورمز.</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="form-label" for="registerPassword2">تأكيد كلمة المرور <span class="req">*</span></label>
+                    <input class="form-control" id="registerPassword2" name="password2" type="password" autocomplete="new-password" placeholder="أعد كتابتها" minlength="8" maxlength="128" required>
+                  </div>
+                </div>
+                <label class="account-check">
+                  <input type="checkbox" id="registerTerms" name="terms" required>
+                  <span>أوافق على سياسة الخصوصية وشروط الاستخدام، وأؤكد أن بياناتي صحيحة. <span class="req">*</span></span>
+                </label>
+                <label class="account-check">
+                  <input type="checkbox" id="registerMarketing" name="marketing">
+                  <span>أوافق على استلام العروض والمستجدات على وسيلة التواصل المختارة (اختياري).</span>
+                </label>
+                <p class="account-form__hint">بإنشاء الحساب تقدر تتابع طلباتك وتوصل لتفاصيلها في أي وقت. بياناتك محفوظة في Firebase ولا تُستخدم إلا لخدمتك، ولا نطلب بيانات بطاقة أبدًا.</p>
                 <button type="submit" class="btn-neon btn-block account-submit" id="registerSubmit">إنشاء الحساب</button>
               </form>
 
@@ -264,23 +328,110 @@
 
               <div class="account-stats" id="accountStats"></div>
 
-              <form class="account-side-card account-side-card--profile" id="profileForm" data-reveal="right">
+              <form class="account-side-card account-side-card--profile" id="profileForm" data-reveal="right" novalidate>
                 <h3>بياناتي</h3>
-                <div>
-                  <label class="form-label" for="profileName">الاسم</label>
-                  <input class="form-control" id="profileName" name="name" type="text" autocomplete="name" required>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="profileName">الاسم <span class="req">*</span></label>
+                    <input class="form-control" id="profileName" name="name" type="text" autocomplete="name" minlength="2" maxlength="80" required>
+                  </div>
+                  <div>
+                    <label class="form-label" for="profilePhone">الموبايل <span class="req">*</span></label>
+                    <input class="form-control" id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx" maxlength="20" required>
+                  </div>
                 </div>
                 <div>
-                  <label class="form-label" for="profilePhone">رقم الهاتف</label>
-                  <input class="form-control" id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0100 000 0000">
+                  <label class="form-label" for="profileEmail">البريد الإلكتروني</label>
+                  <input class="form-control" id="profileEmail" name="email" type="email" autocomplete="email" readonly>
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="profileGovernorate">المحافظة</label>
+                    <select class="form-control" id="profileGovernorate" name="governorate" autocomplete="address-level1">
+                      <option value="">اختر المحافظة</option>
+                      <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option>
+                      <option>الشرقية</option><option>الغربية</option><option>المنوفية</option><option>القليوبية</option>
+                      <option>البحيرة</option><option>كفر الشيخ</option><option>دمياط</option><option>بورسعيد</option>
+                      <option>الإسماعيلية</option><option>السويس</option><option>شمال سيناء</option><option>جنوب سيناء</option>
+                      <option>الفيوم</option><option>بني سويف</option><option>المنيا</option><option>أسيوط</option>
+                      <option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option>
+                      <option>البحر الأحمر</option><option>الوادي الجديد</option><option>مطروح</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" for="profileCity">المدينة / المركز</label>
+                    <input class="form-control" id="profileCity" name="city" type="text" autocomplete="address-level2" maxlength="80">
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label" for="profileAddress">العنوان بالتفصيل</label>
+                  <input class="form-control" id="profileAddress" name="address" type="text" autocomplete="street-address" maxlength="220">
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="profileCompany">النشاط / الشركة</label>
+                    <input class="form-control" id="profileCompany" name="company" type="text" autocomplete="organization" maxlength="120">
+                  </div>
+                  <div>
+                    <label class="form-label" for="profileBirthdate">تاريخ الميلاد</label>
+                    <input class="form-control" id="profileBirthdate" name="birthdate" type="date" autocomplete="bday" min="1940-01-01">
+                  </div>
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="profileGender">النوع</label>
+                    <select class="form-control" id="profileGender" name="gender">
+                      <option value="">أفضّل عدم الذكر</option>
+                      <option value="male">ذكر</option>
+                      <option value="female">أنثى</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" for="profileContact">التواصل المفضل</label>
+                    <select class="form-control" id="profileContact" name="contactPreference">
+                      <option value="whatsapp">واتساب</option>
+                      <option value="phone">اتصال هاتفي</option>
+                      <option value="email">بريد إلكتروني</option>
+                    </select>
+                  </div>
                 </div>
                 <button type="submit" class="btn-neon btn-sm btn-block">حفظ البيانات</button>
               </form>
+
+              <details class="account-side-card account-side-card--security" data-reveal="right">
+                <summary>الأمان وتغيير كلمة المرور</summary>
+                <form class="account-form" id="passwordForm" novalidate>
+                  <div>
+                    <label class="form-label" for="currentPassword">كلمة المرور الحالية</label>
+                    <input class="form-control" id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required>
+                  </div>
+                  <div>
+                    <label class="form-label" for="newPassword">كلمة المرور الجديدة</label>
+                    <input class="form-control" id="newPassword" name="newPassword" type="password" autocomplete="new-password" placeholder="8 أحرف على الأقل" minlength="8" maxlength="128" required>
+                  </div>
+                  <div>
+                    <label class="form-label" for="newPassword2">تأكيد كلمة المرور الجديدة</label>
+                    <input class="form-control" id="newPassword2" name="newPassword2" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+                  </div>
+                  <p class="account-form__hint">استخدم كلمة مرور قوية لا تستخدمها في مواقع أخرى. سيتم تسجيل خروجك من الأجهزة الأخرى بعد التغيير.</p>
+                  <button type="submit" class="btn-ghost btn-sm btn-block" id="changePasswordBtn">تغيير كلمة المرور</button>
+                </form>
+              </details>
 
               <button class="btn-ghost btn-sm btn-block" type="button" id="logoutAccount">تسجيل الخروج</button>
             </aside>
 
             <div class="account-main" data-reveal="left">
+              <div class="account-verify" id="emailVerify" role="status" hidden>
+                <div class="account-verify__text">
+                  <strong>أكّد بريدك الإلكتروني</strong>
+                  <p>أرسلنا رابط تأكيد إلى بريدك. تأكيد البريد يحمي حسابك ويضمن وصول تحديثات طلباتك. راجع صندوق الوارد أو الرسائل غير المرغوب فيها.</p>
+                </div>
+                <div class="account-verify__actions">
+                  <button type="button" class="btn-neon btn-sm" id="resendVerify">إعادة إرسال الرابط</button>
+                  <button type="button" class="btn-ghost btn-sm" id="refreshVerify">تحققت؟ حدّث الحالة</button>
+                </div>
+              </div>
               <div class="account-main__head">
                 <h2>طلباتي <span id="ordersCount">…</span></h2>
                 <button class="btn-ghost btn-sm" type="button" id="refreshOrders">تحديث</button>
@@ -303,7 +454,7 @@
           <a class="footer-brand" href="index.html">
             <span class="brand-mark"><img src="assets/img/logo.svg" alt="" data-logo></span>
             <span>
-              <strong data-bind="settings.siteName">نِيون ميديا</strong>
+              <strong data-bind="settings.siteName">هشام السيد</strong>
               <span data-bind="settings.brandLatin">NEON MEDIA</span>
             </span>
           </a>
@@ -345,16 +496,16 @@
         <div class="footer-col">
           <h3>تواصل معنا</h3>
           <ul class="footer-contact">
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3 6.2 2 2 0 0 1 5 4Z"/></svg><a href="tel:+201000000000" data-phone-link data-bind="settings.phoneDisplay">0100 000 0000</a></li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:hello@neonmedia.example" data-email-link data-bind="settings.email">hello@neonmedia.example</a></li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-bind="settings.address">القاهرة، مصر</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3 6.2 2 2 0 0 1 5 4Z"/></svg><a href="tel:+201017908893" data-phone-link data-bind="settings.phoneDisplay">01017908893</a></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:pro.heshamelsayed@gmail.com" data-email-link data-bind="settings.email">pro.heshamelsayed@gmail.com</a></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-bind="settings.address">مصر - الدقهلية</span></li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-bind="settings.workingHours">السبت – الخميس · 10 ص – 8 م</span></li>
           </ul>
-          <a class="btn-neon btn-sm mt-3" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد طلب خدمة." target="_blank" rel="noopener noreferrer">اطلب الآن</a>
+          <a class="btn-neon btn-sm mt-3" href="https://wa.me/201017908893" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد طلب خدمة." target="_blank" rel="noopener noreferrer">اطلب الآن</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© <span data-year>2026</span> <span data-bind="settings.siteName">نِيون ميديا</span> — جميع الحقوق محفوظة.</p>
+        <p>© <span data-year>2026</span> <span data-bind="settings.siteName">هشام السيد</span> — جميع الحقوق محفوظة.</p>
         <div class="footer-bottom__links">
           <a href="index.html#faq">الأسئلة الشائعة</a>
           <a href="index.html#payment">طرق الدفع</a>
@@ -372,7 +523,7 @@
     <a class="float-btn" href="index.html#services" aria-label="اطلب خدمة" title="اطلب خدمة">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 4 6v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-2-4H6Z"/><path d="M4 6h16M16 10a4 4 0 0 1-8 0"/></svg>
     </a>
-    <a class="float-btn float-wa" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد التحدث عن مشروعي." target="_blank" rel="noopener noreferrer" data-label="تحدث معنا على واتساب" aria-label="تحدث معنا على واتساب">
+    <a class="float-btn float-wa" href="https://wa.me/201017908893" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد التحدث عن مشروعي." target="_blank" rel="noopener noreferrer" data-label="تحدث معنا على واتساب" aria-label="تحدث معنا على واتساب">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
     </a>
     <button type="button" class="float-btn float-top" data-back-top aria-label="العودة لأعلى" title="العودة لأعلى">
@@ -384,10 +535,10 @@
 
   <script src="assets/vendor/bootstrap.bundle.min.js"></script>
   <script src="assets/js/firebase-config.js"></script>
-  <script src="assets/js/firebase-sync.js?v=20261112d"></script>
+  <script src="assets/js/firebase-sync.js?v=20261114f"></script>
   <script src="assets/js/site-seed.js"></script>
-  <script src="assets/js/store.js?v=20261112d"></script>
+  <script src="assets/js/store.js?v=20261114f"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/account.js?v=20261112d"></script>
+  <script src="assets/js/account.js?v=20261114f"></script>
 </body>
 </html>
