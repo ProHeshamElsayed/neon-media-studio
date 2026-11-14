@@ -19,7 +19,7 @@
   var ORIGIN = 'http://localhost:' + PORT;
   var script = document.currentScript;
   var page = (script && script.getAttribute('data-page')) || 'index.html';
-  if (['index.html', 'contact.html', 'admin.html'].indexOf(page) === -1) page = 'index.html';
+  if (['index.html', 'contact.html', 'account.html', 'admin.html'].indexOf(page) === -1) page = 'index.html';
   var target = ORIGIN + '/' + page;
 
   var settled = false;

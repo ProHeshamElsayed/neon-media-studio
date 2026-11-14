@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark" data-accent="cyan">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#04060c">
+  <meta name="description" content="حسابك في نِيون ميديا — سجّل الدخول أو أنشئ حسابًا جديدًا لمتابعة طلباتك وحالة التنفيذ والدفع في مكان واحد.">
+  <meta name="author" content="نِيون ميديا">
+  <meta name="robots" content="noindex, nofollow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ar_EG">
+  <meta property="og:title" content="حسابي | نِيون ميديا">
+  <meta property="og:description" content="تابع طلباتك وحالة التنفيذ والدفع من حسابك الشخصي.">
+  <meta property="og:image" content="assets/img/og-cover.svg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <title>حسابي وطلباتي | نِيون ميديا</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="apple-touch-icon" href="assets/img/logo.svg">
+  <link rel="manifest" href="site.webmanifest">
+
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var theme = localStorage.getItem('neonTheme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+        var accent = localStorage.getItem('neonAccent');
+        if (accent && ['cyan', 'magenta', 'violet', 'lime'].indexOf(accent) !== -1) document.documentElement.setAttribute('data-accent', accent);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+  <script src="assets/js/file-origin-guard.js" data-page="account.html"></script>
+
+  <link rel="preload" href="assets/fonts/Cairo-arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Tajawal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/components.css?v=20261112d">
+  <link rel="stylesheet" href="assets/css/extras.css">
+  <link rel="stylesheet" href="assets/css/features.css">
+  <link rel="stylesheet" href="assets/css/glass.css?v=20261112d">
+  <link rel="stylesheet" href="assets/css/account.css?v=20261112d">
+  <noscript>
+    <style>
+      #preloader { display: none !important; }
+      html.js [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+      body.is-loading { overflow: auto !important; }
+    </style>
+  </noscript>
+</head>
+
+<body class="is-loading" data-fixed-meta>
+  <noscript><div class="noscript-note">يرجى تفعيل JavaScript لتجربة الموقع كاملة.</div></noscript>
+
+  <a class="skip-link" href="#main">تخطي إلى المحتوى الرئيسي</a>
+
+  <div class="preloader" id="preloader" role="status" aria-live="polite" aria-label="جارٍ تحميل الموقع">
+    <div class="preloader__inner">
+      <div class="loader-mark">
+        <img src="assets/img/logo.svg" alt="شعار نِيون ميديا">
+      </div>
+      <div class="preloader__title">
+        نِيون ميديا
+        <span>NEON MEDIA · CREATIVE STUDIO</span>
+      </div>
+      <div class="loader-bar"><span id="loaderProgress"></span></div>
+      <div class="preloader__percent" id="loaderPercent">0%</div>
+      <p class="preloader__hint">نجهّز لك تجربة تلمع… لحظات</p>
+    </div>
+  </div>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+  <div class="scroll-progress"><span id="scrollProgress"></span></div>
+
+  <div class="bg-effects" aria-hidden="true">
+    <span class="aurora aurora--1"></span>
+    <span class="aurora aurora--2"></span>
+    <span class="aurora aurora--3"></span>
+  </div>
+
+  <div class="announcement" data-announcement>
+    <div class="container">
+      <div class="announcement__inner">
+        <span class="announcement__dot" aria-hidden="true"></span>
+        <span data-announcement-text>حسابك في نِيون ميديا · تابع طلباتك خطوة بخطوة</span>
+        <a href="index.html#packages" data-announcement-link>اكتشف العروض <span aria-hidden="true">←</span></a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <nav class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <span class="brand-mark"><img src="assets/img/logo.svg" alt="" data-logo></span>
+          <span class="brand-text">
+            <strong data-bind="settings.siteName">نِيون ميديا</strong>
+            <span data-bind="settings.brandLatin">NEON MEDIA</span>
+          </span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html">الرئيسية</a>
+          <a href="index.html#about">نبذة عنا</a>
+          <a href="index.html#services">خدماتنا</a>
+          <a href="index.html#works">أعمالنا</a>
+          <a href="index.html#clients">عملائنا</a>
+          <a href="contact.html">الاتصال والمساعدة</a>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="icon-btn" data-audio-toggle aria-label="تشغيل التلاوة" aria-pressed="false" title="تشغيل التلاوة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          </button>
+          <button type="button" class="icon-btn" data-theme-toggle aria-label="تفعيل الوضع الفاتح" aria-pressed="false" title="الوضع الفاتح">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          </button>
+          <a class="icon-btn account-link is-active" href="account.html" aria-label="حسابي" aria-current="page" title="حسابي">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+          </a>
+          <a class="nav-whatsapp" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد الاستفسار عن خدماتكم." target="_blank" rel="noopener noreferrer" aria-label="تواصل واتساب">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+            <span>اطلب الآن</span>
+          </a>
+          <button type="button" class="nav-toggle" id="navToggle" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu"><span></span></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu__nav">
+      <a href="index.html">الرئيسية <span>01</span></a>
+      <a href="index.html#about">نبذة عنا <span>02</span></a>
+      <a href="index.html#services">خدماتنا <span>03</span></a>
+      <a href="index.html#works">أعمالنا <span>04</span></a>
+      <a href="index.html#clients">عملائنا <span>05</span></a>
+      <a href="contact.html">الاتصال والمساعدة <span>06</span></a>
+      <a href="account.html">حسابي وطلباتي <span>07</span></a>
+    </div>
+    <div class="mobile-menu__footer">
+      <span>© <span data-year>2026</span> نِيون ميديا</span>
+      <div class="mobile-menu__socials">
+        <a class="social-btn" data-social="instagram" href="#" aria-label="إنستجرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a class="social-btn" data-social="tiktok" href="#" aria-label="تيك توك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a5.4 5.4 0 0 1-1.1-3.3h-3.1v12.1a2.5 2.5 0 1 1-1.8-2.4V9a5.6 5.6 0 1 0 4.9 5.5V9.3a8.6 8.6 0 0 0 4.6 1.4V7.6a5.5 5.5 0 0 1-3.5-1.8Z"/></svg></a>
+        <a class="social-btn" data-social="facebook" href="#" aria-label="فيسبوك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V10c0-.6.4-1 1-1Z"/></svg></a>
+        <a class="social-btn" data-social="snapchat" href="#" aria-label="سناب شات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 0 4.5 2.2 4.5 5v2.3c.7.2 1.4 0 2 .5.3.3 0 .8-.4 1.1-.7.5-1.7.7-1.7 1.5 0 1.6 2.3 3.1 3.3 3.4.5.2.4.8-.2 1.1-.8.4-2 .5-2.4.9-.2.2-.1.6-.5.8-.5.2-1.4-.4-2.5-.1-1.1.3-1.6 1.5-2.6 1.5s-1.5-1.2-2.6-1.5c-1.1-.3-2 .3-2.5.1-.4-.2-.3-.6-.5-.8-.4-.4-1.6-.5-2.4-.9-.6-.3-.7-.9-.2-1.1 1-.3 3.3-1.8 3.3-3.4 0-.8-1-1-1.7-1.5-.4-.3-.7-.8-.4-1.1.6-.5 1.3-.3 2-.5V8c0-2.8 1.5-5 4.5-5Z"/></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="مسار التنقل">
+          <a href="index.html">الرئيسية</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          <span>حسابي وطلباتي</span>
+        </nav>
+        <span class="eyebrow"><span class="pulse-dot"></span> حسابك الشخصي</span>
+        <h1>تابع <span class="text-gradient">طلبك</span> لحظة بلحظة</h1>
+        <p>سجّل دخولك أو أنشئ حسابًا جديدًا لتشوف كل طلباتك، حالة التنفيذ، وحالة الدفع — في مكان واحد وآمن.</p>
+      </div>
+    </section>
+
+    <section class="account-page">
+      <div class="container">
+        <div class="account-shell">
+
+          <div class="account-notice" id="accountNotice" role="status" hidden></div>
+
+          <!-- Auth -->
+          <div class="account-auth" id="accountAuth" hidden>
+            <div class="account-auth__aside" data-reveal="right">
+              <span class="eyebrow"><span class="pulse-dot"></span> حساب نِيون</span>
+              <h2>طلباتك، حالتك، وتفاصيل فاتورتك<br><span class="text-gradient">في مكان واحد</span></h2>
+              <p>حسابك يخلّي المتابعة أسهل: تعرف طلبك وصل لفين، إيه اللي اتنفّذ، وإيه المتبقي — بدون ما تسأل كل مرة.</p>
+              <ul class="account-perks">
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+                  <span>تتبّع حالة التنفيذ: جديد ← قيد التنفيذ ← مكتمل.</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+                  <span>حالة الدفع وطريقة الدفع وتفاصيل الضريبة عند تفعيلها.</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+                  <span>كل طلباتك محفوظة — تقدر ترجع لها في أي وقت.</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+                  <span>بياناتك محفوظة بأمان، ولا تُستخدم إلا لمتابعة خدمتك.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="account-card" data-reveal="left">
+              <div class="account-tabs" role="tablist" aria-label="دخول أو إنشاء حساب">
+                <button type="button" role="tab" class="is-active" data-auth-tab="login" aria-selected="true">تسجيل الدخول</button>
+                <button type="button" role="tab" data-auth-tab="register" aria-selected="false">حساب جديد</button>
+              </div>
+
+              <form class="account-form" id="loginForm" novalidate>
+                <div>
+                  <label class="form-label" for="loginEmail">البريد الإلكتروني</label>
+                  <input class="form-control" id="loginEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+                </div>
+                <div>
+                  <label class="form-label" for="loginPassword">كلمة المرور</label>
+                  <input class="form-control" id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+                </div>
+                <button type="button" class="account-link-btn" id="forgotPassword">نسيت كلمة المرور؟</button>
+                <button type="submit" class="btn-neon btn-block account-submit" id="loginSubmit">دخول لحسابي</button>
+              </form>
+
+              <form class="account-form" id="registerForm" novalidate hidden>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="registerName">الاسم بالكامل</label>
+                    <input class="form-control" id="registerName" name="name" type="text" autocomplete="name" placeholder="اسمك الكريم" required>
+                  </div>
+                  <div>
+                    <label class="form-label" for="registerPhone">رقم الهاتف <small style="opacity:.7">(اختياري)</small></label>
+                    <input class="form-control" id="registerPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0100 000 0000">
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label" for="registerEmail">البريد الإلكتروني</label>
+                  <input class="form-control" id="registerEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+                </div>
+                <div class="account-form__row">
+                  <div>
+                    <label class="form-label" for="registerPassword">كلمة المرور</label>
+                    <input class="form-control" id="registerPassword" name="password" type="password" autocomplete="new-password" placeholder="8 أحرف على الأقل" minlength="8" required>
+                  </div>
+                  <div>
+                    <label class="form-label" for="registerPassword2">تأكيد كلمة المرور</label>
+                    <input class="form-control" id="registerPassword2" name="password2" type="password" autocomplete="new-password" placeholder="أعد كتابتها" minlength="8" required>
+                  </div>
+                </div>
+                <p class="account-form__hint">بإنشاء الحساب تقدر تتابع طلباتك وتوصل لتفاصيلها في أي وقت. بياناتك محفوظة في Firebase ولا تُستخدم إلا لخدمتك.</p>
+                <button type="submit" class="btn-neon btn-block account-submit" id="registerSubmit">إنشاء الحساب</button>
+              </form>
+
+              <div class="account-status" id="authStatus" role="status" aria-live="polite" hidden></div>
+            </div>
+          </div>
+
+          <!-- Dashboard -->
+          <div class="account-dash" id="accountDash" hidden>
+            <aside class="account-side">
+              <div class="account-identity" data-reveal="right">
+                <span class="account-avatar" id="accountAvatar" aria-hidden="true">ع</span>
+                <strong id="accountName">عميل نِيون</strong>
+                <span id="accountEmail"></span>
+              </div>
+
+              <div class="account-stats" id="accountStats"></div>
+
+              <form class="account-side-card account-side-card--profile" id="profileForm" data-reveal="right">
+                <h3>بياناتي</h3>
+                <div>
+                  <label class="form-label" for="profileName">الاسم</label>
+                  <input class="form-control" id="profileName" name="name" type="text" autocomplete="name" required>
+                </div>
+                <div>
+                  <label class="form-label" for="profilePhone">رقم الهاتف</label>
+                  <input class="form-control" id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0100 000 0000">
+                </div>
+                <button type="submit" class="btn-neon btn-sm btn-block">حفظ البيانات</button>
+              </form>
+
+              <button class="btn-ghost btn-sm btn-block" type="button" id="logoutAccount">تسجيل الخروج</button>
+            </aside>
+
+            <div class="account-main" data-reveal="left">
+              <div class="account-main__head">
+                <h2>طلباتي <span id="ordersCount">…</span></h2>
+                <button class="btn-ghost btn-sm" type="button" id="refreshOrders">تحديث</button>
+              </div>
+              <div class="account-orders" id="ordersList" aria-live="polite"></div>
+              <div class="account-pager" id="ordersPager"></div>
+              <p class="account-form__hint">الطلبات تظهر هنا تلقائيًا لو اتعملت وأنت مسجّل الدخول. للطلبات القديمة اللي قبل إنشاء الحساب، تواصل معنا على واتساب ونربطها بحسابك.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="index.html">
+            <span class="brand-mark"><img src="assets/img/logo.svg" alt="" data-logo></span>
+            <span>
+              <strong data-bind="settings.siteName">نِيون ميديا</strong>
+              <span data-bind="settings.brandLatin">NEON MEDIA</span>
+            </span>
+          </a>
+          <p class="footer-about" data-bind="settings.tagline">استوديو التسويق الرقمي والإبداع البصري.</p>
+          <p class="footer-about" data-bind="settings.footerNote">نصنع أفكارًا تُرى، ونتائج تُقاس.</p>
+          <div class="footer-socials" role="group" aria-label="حسابات التواصل الاجتماعي">
+            <a class="social-btn" data-social="instagram" href="#" aria-label="إنستجرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a class="social-btn" data-social="tiktok" href="#" aria-label="تيك توك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a5.4 5.4 0 0 1-1.1-3.3h-3.1v12.1a2.5 2.5 0 1 1-1.8-2.4V9a5.6 5.6 0 1 0 4.9 5.5V9.3a8.6 8.6 0 0 0 4.6 1.4V7.6a5.5 5.5 0 0 1-3.5-1.8Z"/></svg></a>
+            <a class="social-btn" data-social="facebook" href="#" aria-label="فيسبوك"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V10c0-.6.4-1 1-1Z"/></svg></a>
+            <a class="social-btn" data-social="snapchat" href="#" aria-label="سناب شات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 0 4.5 2.2 4.5 5v2.3c.7.2 1.4 0 2 .5.3.3 0 .8-.4 1.1-.7.5-1.7.7-1.7 1.5 0 1.6 2.3 3.1 3.3 3.4.5.2.4.8-.2 1.1-.8.4-2 .5-2.4.9-.2.2-.1.6-.5.8-.5.2-1.4-.4-2.5-.1-1.1.3-1.6 1.5-2.6 1.5s-1.5-1.2-2.6-1.5c-1.1-.3-2 .3-2.5.1-.4-.2-.3-.6-.5-.8-.4-.4-1.6-.5-2.4-.9-.6-.3-.7-.9-.2-1.1 1-.3 3.3-1.8 3.3-3.4 0-.8-1-1-1.7-1.5-.4-.3-.7-.8-.4-1.1.6-.5 1.3-.3 2-.5V8c0-2.8 1.5-5 4.5-5Z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>روابط سريعة</h3>
+          <div class="footer-links">
+            <a href="index.html">الرئيسية</a>
+            <a href="index.html#about">نبذة عنا</a>
+            <a href="index.html#services">خدماتنا</a>
+            <a href="index.html#works">أعمالنا</a>
+            <a href="index.html#clients">عملائنا</a>
+            <a href="contact.html">الاتصال والمساعدة</a>
+            <a href="account.html">حسابي وطلباتي</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>خدماتنا</h3>
+          <div class="footer-links">
+            <a href="index.html#services">تصميم الجرافيك</a>
+            <a href="index.html#services">إدارة السوشيال ميديا</a>
+            <a href="index.html#services">التصوير الاحترافي</a>
+            <a href="index.html#services">التسويق الإلكتروني</a>
+            <a href="index.html#services">المواقع والمنيوهات</a>
+            <a href="index.html#services">المطبوعات والدعاية</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>تواصل معنا</h3>
+          <ul class="footer-contact">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3 6.2 2 2 0 0 1 5 4Z"/></svg><a href="tel:+201000000000" data-phone-link data-bind="settings.phoneDisplay">0100 000 0000</a></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:hello@neonmedia.example" data-email-link data-bind="settings.email">hello@neonmedia.example</a></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-bind="settings.address">القاهرة، مصر</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-bind="settings.workingHours">السبت – الخميس · 10 ص – 8 م</span></li>
+          </ul>
+          <a class="btn-neon btn-sm mt-3" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد طلب خدمة." target="_blank" rel="noopener noreferrer">اطلب الآن</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> <span data-bind="settings.siteName">نِيون ميديا</span> — جميع الحقوق محفوظة.</p>
+        <div class="footer-bottom__links">
+          <a href="index.html#faq">الأسئلة الشائعة</a>
+          <a href="index.html#payment">طرق الدفع</a>
+          <a href="account.html">حسابي</a>
+        </div>
+        <p class="footer-made">صُنع بـ <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9A5.5 5.5 0 0 1 12 6.6 5.5 5.5 0 0 1 21.6 12c-2.1 4.4-9.6 9-9.6 9Z"/></svg> في القاهرة</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="floating-stack">
+    <button type="button" class="float-btn float-audio" data-audio-toggle aria-label="تشغيل التلاوة" aria-pressed="false" title="تشغيل التلاوة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+    <a class="float-btn" href="index.html#services" aria-label="اطلب خدمة" title="اطلب خدمة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 4 6v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-2-4H6Z"/><path d="M4 6h16M16 10a4 4 0 0 1-8 0"/></svg>
+    </a>
+    <a class="float-btn float-wa" href="https://wa.me/201000000000" data-wa-link data-wa-text="مرحبًا نِيون ميديا، أريد التحدث عن مشروعي." target="_blank" rel="noopener noreferrer" data-label="تحدث معنا على واتساب" aria-label="تحدث معنا على واتساب">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.8.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+    </a>
+    <button type="button" class="float-btn float-top" data-back-top aria-label="العودة لأعلى" title="العودة لأعلى">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+    </button>
+  </div>
+
+  <audio id="quranAudio" preload="none" loop aria-hidden="true"></audio>
+
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/firebase-sync.js?v=20261112d"></script>
+  <script src="assets/js/site-seed.js"></script>
+  <script src="assets/js/store.js?v=20261112d"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/account.js?v=20261112d"></script>
+</body>
+</html>

@@ -24,6 +24,39 @@
 
   var modalInstances = {};
 
+  // حساب العميل (اختياري) — يربط الطلبات الجديدة بالحساب ويملأ بياناته تلقائيًا.
+  var customerAccount = { user: null, profile: null };
+
+  function prefillOrderIdentity() {
+    if (!customerAccount.user) return;
+    var nameField = qs('#orderName');
+    var phoneField = qs('#orderPhone');
+    var name = (customerAccount.profile && customerAccount.profile.name) || customerAccount.user.displayName || '';
+    var phone = (customerAccount.profile && customerAccount.profile.phone) || '';
+    if (nameField && !nameField.value.trim() && name) nameField.value = name;
+    if (phoneField && !phoneField.value.trim() && phone) phoneField.value = phone;
+  }
+
+  function loadCustomerProfile() {
+    var cloud = window.NeonCloud;
+    if (!cloud || !customerAccount.user || typeof cloud.getCustomerProfile !== 'function') return;
+    cloud.getCustomerProfile().then(function (profile) {
+      customerAccount.profile = profile || null;
+      prefillOrderIdentity();
+    }).catch(function () { /* الملف الشخصي اختياري */ });
+  }
+
+  function initCustomerAccount() {
+    var cloud = window.NeonCloud;
+    if (!cloud || typeof cloud.initCustomer !== 'function') return;
+    cloud.initCustomer().then(function () {
+      return cloud.whenCustomerReady ? cloud.whenCustomerReady(4000) : null;
+    }).then(function (user) {
+      customerAccount.user = user || null;
+      loadCustomerProfile();
+    }).catch(function () { /* الحساب اختياري */ });
+  }
+
   function escapeHTML(value) {
     return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
@@ -715,6 +748,7 @@
     populateOrderSelect();
     renderOrderPayments();
     renderCart();
+    prefillOrderIdentity();
     var instance = modal('orderModal');
     if (instance) instance.show();
   }
@@ -1047,6 +1081,12 @@
         var totalPrice = items.reduce(function (sum, line) { return sum + (n(line.price) * line.qty); }, 0);
         var startNumber = Number(data.settings.orderStartNumber) || 1001;
 
+        // ربط الطلب بحساب العميل إن كان مسجّل الدخول (بدون تعطيل الطلب للزوار).
+        var customerUser = (window.NeonCloud && typeof window.NeonCloud.getCustomerUser === 'function')
+          ? window.NeonCloud.getCustomerUser()
+          : null;
+        var customerEmail = customerUser && customerUser.email ? customerUser.email : '';
+
         // عدّاد سحابي (إن كان متاحًا) ليكون رقم الطلب فريدًا بين كل الزوار.
         // عند تعذر الوصول أو قبل نشر القواعد، نكمل بالترقيم المحلي بدون تعطيل الطلب.
         var reserved = Promise.resolve(null);
@@ -1079,7 +1119,10 @@
             paymentValue: payment ? (payment.value || '') : '',
             paymentInstructions: payment ? (payment.instructions || '') : '',
             status: 'جديد',
-            source: 'الموقع'
+            source: 'الموقع',
+            userId: customerUser ? customerUser.uid : '',
+            customerEmail: customerEmail,
+            email: customerEmail
           }, { sequence: sequence, cloud: false });
           var text = buildOrderWhatsApp(order);
           if (UI) UI.openWhatsApp(text);
@@ -1115,6 +1158,8 @@
               paymentInstructions: order.paymentInstructions,
               status: order.status,
               source: order.source,
+              userId: order.userId || '',
+              customerEmail: order.customerEmail || '',
               createdAt: order.createdAt
             }).catch(function (error) {
               console.warn('[NeonHome] تعذر رفع الطلب للسحابة:', error && error.code ? error.code : error);
@@ -1186,6 +1231,7 @@
   function boot() {
     if (!store) return;
     bindEvents();
+    initCustomerAccount();
     store.ready.then(function () {
       data = store.get();
       renderAll();

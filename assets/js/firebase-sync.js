@@ -331,6 +331,178 @@
     }
   }
 
+  /* ------------------------------------------------------------------------
+     Customer accounts — نسخة Firebase مستقلة عن جلسة المشرف
+     حتى لا تتأثر جلسة الأدمن أو توكنه عند دخول عميل من نفس المتصفح.
+     ------------------------------------------------------------------------ */
+  var customer = {
+    initPromise: null,
+    app: null,
+    auth: null,
+    db: null,
+    mods: null,
+    user: null,
+    ready: false
+  };
+
+  function isCustomerReady() {
+    return Boolean(customer.auth);
+  }
+
+  async function initCustomer() {
+    if (!isConfigured()) return null;
+    if (customer.initPromise) return customer.initPromise;
+    customer.initPromise = (async function () {
+      var appMod = await import(BASE + 'firebase-app.js');
+      var authMod = await import(BASE + 'firebase-auth.js');
+      var fsMod = await import(BASE + 'firebase-firestore.js');
+
+      var app;
+      try {
+        app = appMod.getApp('neon-customers');
+      } catch (missingApp) {
+        app = appMod.initializeApp(config, 'neon-customers');
+      }
+
+      customer.app = app;
+      customer.auth = authMod.getAuth(app);
+      customer.db = fsMod.getFirestore(app);
+      customer.mods = { app: appMod, auth: authMod, fs: fsMod };
+
+      try {
+        await authMod.setPersistence(customer.auth, authMod.browserLocalPersistence);
+      } catch (persistenceError) {
+        console.warn('[NeonCloud] تعذر تثبيت جلسة العميل:', persistenceError);
+      }
+
+      authMod.onAuthStateChanged(customer.auth, function (user) {
+        customer.user = user || null;
+        customer.ready = true;
+        window.dispatchEvent(new CustomEvent('neon:customerauth', { detail: { user: customer.user } }));
+      });
+
+      return customer;
+    })();
+    return customer.initPromise;
+  }
+
+  function customerError(code, message) {
+    var error = new Error(message || 'تعذر تنفيذ العملية.');
+    error.code = code || '';
+    return error;
+  }
+
+  async function customerRegister(options) {
+    var opts = options || {};
+    var email = String(opts.email || '').trim();
+    var password = String(opts.password || '');
+    var name = String(opts.name || '').trim();
+    var phone = String(opts.phone || '').trim();
+    if (!email || !password) throw customerError('auth/missing-fields', 'أدخل الإيميل وكلمة المرور.');
+    await initCustomer();
+    if (!customer.auth) throw customerError('auth/unavailable', 'خدمة الحسابات غير متاحة حاليًا.');
+    var authMod = customer.mods.auth;
+    var fs = customer.mods.fs;
+    var credential = await authMod.createUserWithEmailAndPassword(customer.auth, email, password);
+    var user = credential.user;
+    if (!user) throw customerError('auth/failed', 'تعذر إنشاء الحساب.');
+    if (name) {
+      try { await authMod.updateProfile(user, { displayName: name }); } catch (profileError) { /* اختياري */ }
+    }
+    try {
+      await fs.setDoc(fs.doc(customer.db, 'clients', user.uid), {
+        name: name,
+        email: email,
+        phone: phone,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch (profileWriteError) {
+      console.warn('[NeonCloud] تم إنشاء الحساب لكن تعذر حفظ الملف الشخصي:', profileWriteError);
+    }
+    return user;
+  }
+
+  async function customerSignIn(email, password) {
+    await initCustomer();
+    if (!customer.auth) throw customerError('auth/unavailable', 'خدمة الحسابات غير متاحة حاليًا.');
+    var credential = await customer.mods.auth.signInWithEmailAndPassword(
+      customer.auth,
+      String(email || '').trim(),
+      String(password || '')
+    );
+    return credential.user;
+  }
+
+  async function customerSignOut() {
+    if (!customer.auth) return;
+    await customer.mods.auth.signOut(customer.auth);
+    customer.user = null;
+  }
+
+  async function customerResetPassword(email) {
+    await initCustomer();
+    if (!customer.auth) throw customerError('auth/unavailable', 'خدمة الحسابات غير متاحة حاليًا.');
+    await customer.mods.auth.sendPasswordResetEmail(customer.auth, String(email || '').trim());
+    return true;
+  }
+
+  function getCustomerUser() {
+    return customer.user;
+  }
+
+  async function whenCustomerReady(timeoutMs) {
+    if (customer.ready) return customer.user;
+    await initCustomer().catch(function () { return null; });
+    if (customer.ready) return customer.user;
+    return new Promise(function (resolve) {
+      var done = false;
+      function finish() {
+        if (done) return;
+        done = true;
+        window.removeEventListener('neon:customerauth', finish);
+        resolve(customer.user);
+      }
+      window.addEventListener('neon:customerauth', finish);
+      setTimeout(finish, timeoutMs || 4000);
+    });
+  }
+
+  async function getCustomerProfile() {
+    await initCustomer();
+    if (!customer.user) return null;
+    var fs = customer.mods.fs;
+    var snapshot = await fs.getDoc(fs.doc(customer.db, 'clients', customer.user.uid));
+    return snapshot.exists() ? Object.assign({ _cloudId: snapshot.id }, snapshot.data()) : null;
+  }
+
+  async function saveCustomerProfile(patch) {
+    await initCustomer();
+    if (!customer.user) throw customerError('auth/required', 'سجّل الدخول أولًا.');
+    var fs = customer.mods.fs;
+    var payload = Object.assign({}, patch || {}, { updatedAt: new Date().toISOString() });
+    await fs.setDoc(fs.doc(customer.db, 'clients', customer.user.uid), payload, { merge: true });
+    return true;
+  }
+
+  async function fetchCustomerOrders() {
+    await initCustomer();
+    if (!customer.user) return [];
+    var fs = customer.mods.fs;
+    var q = fs.query(
+      fs.collection(customer.db, 'orders'),
+      fs.where('userId', '==', customer.user.uid)
+    );
+    var snapshot = await fs.getDocs(q);
+    var rows = snapshot.docs.map(function (docSnap) {
+      return Object.assign({ _cloudId: docSnap.id }, docSnap.data());
+    });
+    rows.sort(function (a, b) {
+      return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+    });
+    return rows;
+  }
+
   window.NeonCloud = {
     isConfigured: isConfigured,
     init: init,
@@ -352,6 +524,18 @@
     isAuthEnabled: authEnabled,
     getUser: function () { return state.user; },
     getState: function () { return state; },
-    config: config
+    config: config,
+
+    // حسابات العملاء — تطبيق Firebase مستقل تمامًا عن جلسة المشرف
+    initCustomer: initCustomer,
+    customerRegister: customerRegister,
+    customerSignIn: customerSignIn,
+    customerSignOut: customerSignOut,
+    customerResetPassword: customerResetPassword,
+    getCustomerUser: getCustomerUser,
+    whenCustomerReady: whenCustomerReady,
+    getCustomerProfile: getCustomerProfile,
+    saveCustomerProfile: saveCustomerProfile,
+    fetchCustomerOrders: fetchCustomerOrders
   };
 })();
