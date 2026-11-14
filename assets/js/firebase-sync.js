@@ -392,13 +392,20 @@
     return error;
   }
 
+  function cleanText(value, max) {
+    return String(value == null ? '' : value).trim().slice(0, max || 200);
+  }
+
   async function customerRegister(options) {
     var opts = options || {};
-    var email = String(opts.email || '').trim();
+    var email = String(opts.email || '').trim().toLowerCase();
     var password = String(opts.password || '');
-    var name = String(opts.name || '').trim();
-    var phone = String(opts.phone || '').trim();
+    var name = cleanText(opts.name, 80);
+    var phone = cleanText(opts.phone, 20);
+    var extra = opts.profile && typeof opts.profile === 'object' ? opts.profile : {};
     if (!email || !password) throw customerError('auth/missing-fields', 'أدخل الإيميل وكلمة المرور.');
+    if (name.length < 2) throw customerError('auth/missing-fields', 'أدخل الاسم بالكامل.');
+    if (String(phone).replace(/\D/g, '').length < 8) throw customerError('auth/missing-fields', 'أدخل رقم موبايل صحيح.');
     await initCustomer();
     if (!customer.auth) throw customerError('auth/unavailable', 'خدمة الحسابات غير متاحة حاليًا.');
     var authMod = customer.mods.auth;
@@ -406,14 +413,25 @@
     var credential = await authMod.createUserWithEmailAndPassword(customer.auth, email, password);
     var user = credential.user;
     if (!user) throw customerError('auth/failed', 'تعذر إنشاء الحساب.');
-    if (name) {
-      try { await authMod.updateProfile(user, { displayName: name }); } catch (profileError) { /* اختياري */ }
+    try { await authMod.updateProfile(user, { displayName: name }); } catch (profileError) { /* اختياري */ }
+    try {
+      await authMod.sendEmailVerification(user);
+    } catch (verificationError) {
+      console.warn('[NeonCloud] تعذر إرسال رابط تأكيد البريد:', verificationError && verificationError.code ? verificationError.code : verificationError);
     }
     try {
       await fs.setDoc(fs.doc(customer.db, 'clients', user.uid), {
         name: name,
         email: email,
         phone: phone,
+        governorate: cleanText(extra.governorate, 80),
+        city: cleanText(extra.city, 80),
+        address: cleanText(extra.address, 220),
+        company: cleanText(extra.company, 120),
+        birthdate: cleanText(extra.birthdate, 20),
+        gender: cleanText(extra.gender, 20),
+        contactPreference: cleanText(extra.contactPreference, 20) || 'whatsapp',
+        marketingConsent: extra.marketingConsent === true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }, { merge: true });
@@ -480,8 +498,52 @@
     await initCustomer();
     if (!customer.user) throw customerError('auth/required', 'سجّل الدخول أولًا.');
     var fs = customer.mods.fs;
-    var payload = Object.assign({}, patch || {}, { updatedAt: new Date().toISOString() });
+    var source = patch || {};
+    var payload = {
+      name: cleanText(source.name, 80),
+      phone: cleanText(source.phone, 20),
+      governorate: cleanText(source.governorate, 80),
+      city: cleanText(source.city, 80),
+      address: cleanText(source.address, 220),
+      company: cleanText(source.company, 120),
+      birthdate: cleanText(source.birthdate, 20),
+      gender: cleanText(source.gender, 20),
+      contactPreference: cleanText(source.contactPreference, 20) || 'whatsapp',
+      updatedAt: new Date().toISOString()
+    };
+    if (payload.name.length < 2) throw customerError('auth/missing-fields', 'أدخل الاسم بالكامل.');
+    if (String(payload.phone).replace(/\D/g, '').length < 8) throw customerError('auth/missing-fields', 'أدخل رقم موبايل صحيح.');
     await fs.setDoc(fs.doc(customer.db, 'clients', customer.user.uid), payload, { merge: true });
+    try {
+      await customer.mods.auth.updateProfile(customer.user, { displayName: payload.name });
+    } catch (profileError) { /* اختياري */ }
+    return true;
+  }
+
+  async function sendCustomerVerification() {
+    await initCustomer();
+    if (!customer.user) throw customerError('auth/required', 'سجّل الدخول أولًا.');
+    if (customer.user.emailVerified) return true;
+    await customer.mods.auth.sendEmailVerification(customer.user);
+    return true;
+  }
+
+  async function reloadCustomerUser() {
+    await initCustomer();
+    if (!customer.user) return null;
+    await customer.mods.auth.reload(customer.user);
+    customer.user = customer.mods.auth.currentUser || customer.user;
+    window.dispatchEvent(new CustomEvent('neon:customerauth', { detail: { user: customer.user } }));
+    return customer.user;
+  }
+
+  async function customerChangePassword(currentPassword, newPassword) {
+    await initCustomer();
+    if (!customer.user || !customer.user.email) throw customerError('auth/required', 'سجّل الدخول أولًا.');
+    var authMod = customer.mods.auth;
+    var credential = authMod.EmailAuthProvider.credential(customer.user.email, String(currentPassword || ''));
+    await authMod.reauthenticateWithCredential(customer.user, credential);
+    await authMod.updatePassword(customer.user, String(newPassword || ''));
     return true;
   }
 
@@ -536,6 +598,9 @@
     whenCustomerReady: whenCustomerReady,
     getCustomerProfile: getCustomerProfile,
     saveCustomerProfile: saveCustomerProfile,
+    sendCustomerVerification: sendCustomerVerification,
+    reloadCustomerUser: reloadCustomerUser,
+    customerChangePassword: customerChangePassword,
     fetchCustomerOrders: fetchCustomerOrders
   };
 })();

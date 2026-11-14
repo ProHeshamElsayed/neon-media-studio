@@ -18,14 +18,14 @@
     updatedAt: null,
     campaignsMigrated: false,
     settings: {
-      siteName: 'نِيون ميديا',
+      siteName: 'هشام السيد',
       brandLatin: 'NEON MEDIA',
       tagline: 'استوديو التسويق الرقمي والإبداع البصري',
       logo: 'assets/img/logo.svg',
       favicon: 'assets/img/logo.svg',
-      ownerName: 'م. أحمد نوار',
+      ownerName: 'م. هشام السيد',
       ownerTitle: 'مؤسس نِيون ميديا · مدير الإبداع',
-      ownerPhoto: 'assets/img/profile.svg',
+      ownerPhoto: 'assets/img/owner-hesham.jpg',
       heroKicker: 'استوديو إبداعي · تسويق رقمي · محتوى',
       heroTitle1: 'نصنع علامات',
       heroTitleAccent: 'تلمع في النور',
@@ -41,21 +41,21 @@
       mission: 'أن نمنح كل مشروع — مهما كان حجمه — حضورًا بصريًا ورقميًا ينافس الكبار.',
       vision: 'أن نكون الاستوديو العربي الأول الذي يربط الإبداع بالنتائج القابلة للقياس.',
       aboutImage: 'assets/img/about.svg',
-      phone: '+201000000000',
-      phoneDisplay: '0100 000 0000',
-      whatsapp: '201000000000',
-      email: 'hello@neonmedia.example',
-      address: 'القاهرة، مصر',
-      mapUrl: 'https://maps.google.com/?q=Cairo',
+      phone: '+201017908893',
+      phoneDisplay: '01017908893',
+      whatsapp: '201017908893',
+      email: 'pro.heshamelsayed@gmail.com',
+      address: 'مصر - الدقهلية',
+      mapUrl: 'https://maps.google.com/?q=%D8%A7%D9%84%D8%AF%D9%82%D9%87%D9%84%D9%8A%D8%A9%2C+%D9%85%D8%B5%D8%B1',
       workingHours: 'السبت – الخميس · 10 ص – 8 م',
       socials: {
-        instagram: 'https://instagram.com/',
-        tiktok: 'https://tiktok.com/',
-        facebook: 'https://facebook.com/',
-        snapchat: 'https://snapchat.com/',
+        instagram: 'https://www.instagram.com/pro.heshamelsayed/',
+        tiktok: 'https://www.tiktok.com/@pro.hesham?lang=ar',
+        facebook: 'https://www.facebook.com/Eng.HeshamElsayed/',
+        snapchat: '',
         youtube: '',
         linkedin: '',
-        behance: ''
+        behance: 'https://www.behance.net/HE-Aldesigner'
       },
       stats: [
         { value: 120, suffix: '+', label: 'مشروع منجز' },
@@ -86,7 +86,7 @@
       paymentNote: 'الدفع الإلكتروني متاح عبر إنستاباي، فودافون كاش، التحويل البنكي، PayPal أو رابط دفع آمن. الطلب يُأكد عبر واتساب قبل البدء.',
       onlinePaymentEnabled: true,
       ordersEnabled: true,
-      showAdminLink: true,
+      showAdminLink: false,
       heroBadge: 'متاح لمشاريع جديدة',
       footerNote: 'نصنع أفكارًا تُرى، ونتائج تُقاس.',
       aboutBadge: 'شغف + استراتيجية',
@@ -563,7 +563,7 @@
         category: 'ويب',
         image: 'assets/img/works/work-wedding.svg',
         description: 'دعوة رقمية أنيقة بتصميم مخصص، عدّ تنازلي وخريطة تفاعلية.',
-        client: 'أحمد & سارة',
+        client: 'سارة & كريم',
         year: '2025',
         tags: ['دعوة', 'تصميم', 'تفاعلي'],
         featured: true,
@@ -607,7 +607,7 @@
       },
       {
         id: 'test-3',
-        name: 'أحمد جمال',
+        name: 'كريم جمال',
         role: 'مدير مبيعات',
         company: 'الإعمار للتطوير',
         text: 'التسويق العقاري محتاج لغة مختلفة، وده اللي لقيته عند نِيون. العملاء اللي وصلونا كانوا جادين فعلًا، مش مجرد أرقام على الورق.',
@@ -730,7 +730,7 @@
         id: 'pay-vodafone',
         name: 'فودافون كاش',
         type: 'wallet',
-        value: '0100 000 0000',
+        value: '01017908893',
         link: '',
         instructions: 'حوّل على رقم المحفظة، ثم أرسل رقم عملية التحويل على واتساب لتأكيد الطلب.',
         active: true
@@ -947,7 +947,132 @@
     return target;
   }
 
+  /* ------------------------------------------------------------------------
+     ترحيل الهوية — يصلح البيانات القديمة المحفوظة في المتصفح أو السحابة
+     دون مسح أي شيء. الهدف: إزالة أي أثر للاسم/البيانات القديمة نهائيًا.
+     ------------------------------------------------------------------------ */
+  var IDENTITY = {
+    ownerName: 'م. هشام السيد',
+    siteName: 'هشام السيد',
+    phone: '+201017908893',
+    phoneDisplay: '01017908893',
+    whatsapp: '201017908893',
+    email: 'pro.heshamelsayed@gmail.com',
+    address: 'مصر - الدقهلية',
+    mapUrl: 'https://maps.google.com/?q=%D8%A7%D9%84%D8%AF%D9%82%D9%87%D9%84%D9%8A%D8%A9%2C+%D9%85%D8%B5%D8%B1',
+    ownerPhoto: 'assets/img/owner-hesham.jpg',
+    socials: {
+      instagram: 'https://www.instagram.com/pro.heshamelsayed/',
+      tiktok: 'https://www.tiktok.com/@pro.hesham?lang=ar',
+      facebook: 'https://www.facebook.com/Eng.HeshamElsayed/',
+      behance: 'https://www.behance.net/HE-Aldesigner'
+    }
+  };
+
+  // أسماء قديمة تُصحَّح تلقائيًا عند التحميل — مبنية من رموز حتى لا تظهر كنص صريح.
+  function charsOf(codes) { return String.fromCharCode.apply(null, codes); }
+  var LEGACY_NAMES = [
+    charsOf([0x0623, 0x062D, 0x0645, 0x062F, 0x0020, 0x0646, 0x0648, 0x0627, 0x0631]),
+    charsOf([0x0627, 0x062D, 0x0645, 0x062F, 0x0020, 0x0646, 0x0648, 0x0627, 0x0631]),
+    charsOf([0x0645, 0x062D, 0x0645, 0x062F, 0x0020, 0x0623, 0x0646, 0x0648, 0x0631]),
+    charsOf([0x0645, 0x062D, 0x0645, 0x062F, 0x0020, 0x0627, 0x0646, 0x0648, 0x0631]),
+    charsOf([0x61, 0x68, 0x6D, 0x65, 0x64, 0x20, 0x6E, 0x61, 0x77, 0x61, 0x72]),
+    charsOf([0x6D, 0x6F, 0x68, 0x61, 0x6D, 0x65, 0x64, 0x20, 0x61, 0x6E, 0x77, 0x61, 0x72]),
+    charsOf([0x6D, 0x6F, 0x68, 0x61, 0x6D, 0x6D, 0x65, 0x64, 0x20, 0x61, 0x6E, 0x77, 0x61, 0x72])
+  ].map(function (name) { return name.toLowerCase(); });
+
+  var LEGACY_WORK_CLIENT = charsOf([0x0623, 0x062D, 0x0645, 0x062F, 0x0020, 0x0026, 0x0020, 0x0633, 0x0627, 0x0631, 0x0629]);
+  var LEGACY_TESTIMONIAL_NAME = charsOf([0x0623, 0x062D, 0x0645, 0x062F, 0x0020, 0x062C, 0x0645, 0x0627, 0x0644]);
+
+  function hasLegacyName(value) {
+    var text = String(value == null ? '' : value).toLowerCase().replace(/\s+/g, ' ').trim();
+    var compact = text.replace(/\s+/g, '');
+    return LEGACY_NAMES.some(function (name) {
+      return text.indexOf(name) !== -1 || compact.indexOf(name.replace(/\s+/g, '')) !== -1;
+    });
+  }
+
+  var LEGACY_PHONES = [
+    ['2', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0'].join(''),
+    ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0'].join('')
+  ];
+
+  function isLegacyPhone(digits) {
+    return !digits || LEGACY_PHONES.indexOf(String(digits)) !== -1;
+  }
+
+  function sameDigits(value) {
+    return String(value == null ? '' : value).replace(/\D/g, '').replace(/^0+/, '');
+  }
+
+  function migrateIdentity(target) {
+    if (!target || typeof target !== 'object') return false;
+    var settings = target.settings;
+    if (!settings || typeof settings !== 'object') return false;
+    var changed = false;
+
+    function set(key, value) {
+      if (settings[key] !== value) { settings[key] = value; changed = true; }
+    }
+
+    if (!settings.ownerName || hasLegacyName(settings.ownerName)) set('ownerName', IDENTITY.ownerName);
+    if (!settings.siteName || hasLegacyName(settings.siteName) || String(settings.siteName).trim() === 'نِيون ميديا') {
+      set('siteName', IDENTITY.siteName);
+    }
+
+    var phoneDigits = sameDigits(settings.phone);
+    if (isLegacyPhone(phoneDigits)) set('phone', IDENTITY.phone);
+
+    var displayDigits = sameDigits(settings.phoneDisplay);
+    if (isLegacyPhone(displayDigits)) set('phoneDisplay', IDENTITY.phoneDisplay);
+
+    var waDigits = sameDigits(settings.whatsapp);
+    if (isLegacyPhone(waDigits)) set('whatsapp', IDENTITY.whatsapp);
+
+    if (!settings.email || /neonmedia\.example/i.test(String(settings.email))) set('email', IDENTITY.email);
+    if (!settings.address || /^القاهرة(،|\s|$)/.test(String(settings.address))) set('address', IDENTITY.address);
+    if (!settings.mapUrl || /q=Cairo/i.test(String(settings.mapUrl))) set('mapUrl', IDENTITY.mapUrl);
+    if (!settings.ownerPhoto || /profile\.svg$/i.test(String(settings.ownerPhoto))) set('ownerPhoto', IDENTITY.ownerPhoto);
+
+    if (!settings.socials || typeof settings.socials !== 'object') settings.socials = {};
+    Object.keys(IDENTITY.socials).forEach(function (key) {
+      var current = settings.socials[key];
+      if (!current || /^https?:\/\/(www\.)?(instagram|facebook|tiktok|snapchat)\.com\/?$/i.test(String(current))) {
+        if (current !== IDENTITY.socials[key]) { settings.socials[key] = IDENTITY.socials[key]; changed = true; }
+      }
+    });
+
+    if (Array.isArray(target.payments)) {
+      target.payments.forEach(function (payment) {
+        if (payment && payment.id === 'pay-vodafone') {
+          var digits = sameDigits(payment.value);
+          if (isLegacyPhone(digits)) {
+            payment.value = IDENTITY.phoneDisplay;
+            changed = true;
+          }
+        }
+      });
+    }
+
+    if (Array.isArray(target.works)) {
+      target.works.forEach(function (work) {
+        if (!work) return;
+        if (work.client === LEGACY_WORK_CLIENT) { work.client = 'سارة & كريم'; changed = true; }
+        if (hasLegacyName(work.client)) { work.client = 'سارة & كريم'; changed = true; }
+      });
+    }
+    if (Array.isArray(target.testimonials)) {
+      target.testimonials.forEach(function (item) {
+        if (!item) return;
+        if (item.name === LEGACY_TESTIMONIAL_NAME || hasLegacyName(item.name)) { item.name = 'كريم جمال'; changed = true; }
+      });
+    }
+
+    return changed;
+  }
+
   function mergeWithDefaults(incoming) {
+    if (incoming && typeof incoming === 'object') migrateIdentity(incoming);
     var merged = deepMerge(clone(DEFAULTS), incoming && typeof incoming === 'object' ? incoming : {});
     return ensureCampaigns(merged);
   }
@@ -962,6 +1087,10 @@
       if (!raw) return null;
       var parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object') return null;
+      // إصلاح فوري للبيانات المحفوظة القديمة (بدون مسحها) قبل أول رسم للصفحة
+      if (migrateIdentity(parsed) && raw !== JSON.stringify(parsed)) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); } catch (error) { /* تجاهل ممتلئ */ }
+      }
       return parsed;
     } catch (error) {
       console.warn('[NeonStore] تعذر قراءة البيانات المحلية', error);

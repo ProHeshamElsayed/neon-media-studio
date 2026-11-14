@@ -45,6 +45,107 @@
     }
   }
 
+  /* -------------------------- Validation helpers --------------------------- */
+  function digitsOf(value) {
+    return String(value == null ? '' : value).replace(/\D/g, '');
+  }
+
+  function normalizePhone(value) {
+    var digits = digitsOf(value);
+    if (digits.indexOf('0020') === 0) digits = digits.slice(4);
+    else if (digits.indexOf('20') === 0 && digits.length > 10) digits = digits.slice(2);
+    if (digits.length === 10 && digits.charAt(0) === '1') digits = '0' + digits;
+    return digits;
+  }
+
+  function validPhone(value) {
+    return /^01[0125]\d{8}$/.test(normalizePhone(value));
+  }
+
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value || '').trim());
+  }
+
+  function passwordChecks(password) {
+    var text = String(password || '');
+    return {
+      length: text.length >= 8,
+      lower: /[a-z]/.test(text),
+      upper: /[A-Z]/.test(text),
+      digit: /\d/.test(text),
+      symbol: /[^A-Za-z0-9]/.test(text)
+    };
+  }
+
+  function passwordScore(password) {
+    var checks = passwordChecks(password);
+    var score = 0;
+    if (checks.length) score += 1;
+    if (checks.lower && checks.upper) score += 1;
+    if (checks.digit) score += 1;
+    if (checks.symbol) score += 1;
+    if (String(password || '').length >= 12) score += 1;
+    return Math.min(5, score);
+  }
+
+  function passwordOk(password) {
+    var text = String(password || '');
+    var checks = passwordChecks(text);
+    var groups = (checks.lower ? 1 : 0) + (checks.upper ? 1 : 0) + (checks.digit ? 1 : 0) + (checks.symbol ? 1 : 0);
+    return checks.length && groups >= 3 && !/\s/.test(text);
+  }
+
+  function passwordHint(password) {
+    if (!password) return '8 أحرف على الأقل، مع حرف كبير وصغير ورقم ورمز.';
+    var checks = passwordChecks(password);
+    var missing = [];
+    if (!checks.length) missing.push('8 أحرف على الأقل');
+    if (!(checks.lower && checks.upper)) missing.push('حرف كبير وصغير');
+    if (!checks.digit) missing.push('رقم');
+    if (!checks.symbol) missing.push('رمز');
+    if (/\s/.test(String(password))) missing.push('بدون مسافات');
+    return missing.length ? 'ناقص: ' + missing.join(' · ') : 'كلمة مرور قوية ✓';
+  }
+
+  /* ---------------------------- Login guard -------------------------------- */
+  var LOGIN_GUARD_KEY = 'neonCustomerLoginGuard_v1';
+
+  function readGuard() {
+    try {
+      var raw = localStorage.getItem(LOGIN_GUARD_KEY);
+      var parsed = raw ? JSON.parse(raw) : null;
+      return parsed && typeof parsed === 'object' ? parsed : { count: 0, first: 0, blockedUntil: 0 };
+    } catch (error) {
+      return { count: 0, first: 0, blockedUntil: 0 };
+    }
+  }
+
+  function writeGuard(value) {
+    try { localStorage.setItem(LOGIN_GUARD_KEY, JSON.stringify(value)); } catch (error) { /* تجاهل */ }
+  }
+
+  function guardWaitMinutes() {
+    var guard = readGuard();
+    var left = Number(guard.blockedUntil) - Date.now();
+    return left > 0 ? Math.ceil(left / 60000) : 0;
+  }
+
+  function noteLoginFailure() {
+    var now = Date.now();
+    var guard = readGuard();
+    if (!guard.first || now - Number(guard.first) > 10 * 60 * 1000) {
+      guard = { count: 0, first: now, blockedUntil: 0 };
+    }
+    guard.count = (Number(guard.count) || 0) + 1;
+    if (guard.count >= 5) guard.blockedUntil = now + 5 * 60 * 1000;
+    writeGuard(guard);
+    return guard;
+  }
+
+  function clearLoginGuard() {
+    try { localStorage.removeItem(LOGIN_GUARD_KEY); } catch (error) { /* تجاهل */ }
+  }
+
   var STATUS_CLASS = { 'جديد': 'new', 'قيد التنفيذ': 'work', 'مكتمل': 'done', 'ملغي': 'cancel' };
   var STATUS_STEP = { 'جديد': 0, 'قيد التنفيذ': 1, 'مكتمل': 2 };
   var PAY_CLASS = { 'غير مدفوع': 'muted', 'دفعة مقدمة': 'partial', 'مدفوع': 'paid' };
@@ -67,6 +168,28 @@
     profileForm: qs('#profileForm'),
     profileName: qs('#profileName'),
     profilePhone: qs('#profilePhone'),
+    profileEmail: qs('#profileEmail'),
+    profileGovernorate: qs('#profileGovernorate'),
+    profileCity: qs('#profileCity'),
+    profileAddress: qs('#profileAddress'),
+    profileCompany: qs('#profileCompany'),
+    profileBirthdate: qs('#profileBirthdate'),
+    profileGender: qs('#profileGender'),
+    profileContact: qs('#profileContact'),
+    verify: qs('#emailVerify'),
+    resendVerify: qs('#resendVerify'),
+    refreshVerify: qs('#refreshVerify'),
+    passwordForm: qs('#passwordForm'),
+    currentPassword: qs('#currentPassword'),
+    newPassword: qs('#newPassword'),
+    newPassword2: qs('#newPassword2'),
+    changePasswordBtn: qs('#changePasswordBtn'),
+    pwStrength: qs('#pwStrength'),
+    pwStrengthBar: qs('#pwStrengthBar'),
+    pwStrengthText: qs('#pwStrengthText'),
+    registerPassword: qs('#registerPassword'),
+    registerTerms: qs('#registerTerms'),
+    registerMarketing: qs('#registerMarketing'),
     orders: qs('#ordersList'),
     ordersCount: qs('#ordersCount'),
     pager: qs('#ordersPager'),
@@ -139,6 +262,49 @@
     return map[code] || (error && error.message) || 'حدث خطأ غير متوقع. حاول مرة أخرى.';
   }
 
+  function fieldValue(selector) {
+    var element = qs(selector);
+    return element ? String(element.value == null ? '' : element.value).trim() : '';
+  }
+
+  function updatePasswordMeter() {
+    if (!els.pwStrength || !els.registerPassword) return;
+    var password = els.registerPassword.value;
+    var score = passwordScore(password);
+    if (els.pwStrengthBar) els.pwStrengthBar.style.width = Math.max(0, Math.min(100, score * 20)) + '%';
+    var tone = score >= 4 ? 'strong' : score >= 3 ? 'good' : score >= 2 ? 'weak' : 'bad';
+    els.pwStrength.setAttribute('data-tone', tone);
+    if (els.pwStrengthText) els.pwStrengthText.textContent = passwordHint(password);
+  }
+
+  function fillProfileForm(profile) {
+    var data = profile || {};
+    var user = state.user || {};
+    var values = {
+      profileName: data.name || user.displayName || '',
+      profilePhone: data.phone || '',
+      profileEmail: data.email || user.email || '',
+      profileGovernorate: data.governorate || '',
+      profileCity: data.city || '',
+      profileAddress: data.address || '',
+      profileCompany: data.company || '',
+      profileBirthdate: data.birthdate || '',
+      profileGender: data.gender || '',
+      profileContact: data.contactPreference || 'whatsapp'
+    };
+    Object.keys(values).forEach(function (id) {
+      var element = qs('#' + id);
+      if (!element || document.activeElement === element) return;
+      var value = values[id] == null ? '' : String(values[id]);
+      if (element.tagName === 'SELECT') {
+        element.value = value;
+        if (element.value !== value) element.value = '';
+      } else {
+        element.value = value;
+      }
+    });
+  }
+
   /* -------------------------------- Tabs --------------------------------- */
   function setTab(tab) {
     state.tab = tab === 'register' ? 'register' : 'login';
@@ -180,6 +346,15 @@
         setStatus('أدخل البريد الإلكتروني وكلمة المرور.', 'error');
         return;
       }
+      if (!validEmail(email)) {
+        setStatus('صيغة البريد الإلكتروني غير صحيحة.', 'error');
+        return;
+      }
+      var wait = guardWaitMinutes();
+      if (wait > 0) {
+        setStatus('محاولات دخول كثيرة على هذا المتصفح. انتظر ' + wait + ' دقيقة ثم حاول مرة أخرى، أو استخدم «نسيت كلمة المرور».', 'error');
+        return;
+      }
       if (!cloud || !cloud.customerSignIn) {
         setStatus('خدمة الحسابات غير متاحة حاليًا.', 'error');
         return;
@@ -187,11 +362,14 @@
       setBusy(els.loginBtn, true, 'جارٍ الدخول…');
       setStatus('جارٍ تسجيل الدخول…', 'info');
       cloud.customerSignIn(email, password).then(function () {
+        clearLoginGuard();
         setStatus('');
         els.loginForm.reset();
         toast('أهلًا بيك من جديد 👋', 'success');
       }).catch(function (error) {
-        setStatus(errorMessage(error), 'error');
+        var guard = noteLoginFailure();
+        var extra = guard.blockedUntil > Date.now() ? ' تم إيقاف المحاولة 5 دقائق لحماية حسابك.' : '';
+        setStatus(errorMessage(error) + extra, 'error');
       }).then(function () {
         setBusy(els.loginBtn, false);
       });
@@ -201,17 +379,27 @@
   if (els.registerForm) {
     els.registerForm.addEventListener('submit', function (event) {
       event.preventDefault();
-      var name = String((qs('#registerName') || {}).value || '').trim();
-      var phone = String((qs('#registerPhone') || {}).value || '').trim();
-      var email = String((qs('#registerEmail') || {}).value || '').trim();
+      var name = fieldValue('#registerName');
+      var phone = fieldValue('#registerPhone');
+      var email = fieldValue('#registerEmail').toLowerCase();
+      var governorate = fieldValue('#registerGovernorate');
+      var city = fieldValue('#registerCity');
+      var address = fieldValue('#registerAddress');
+      var company = fieldValue('#registerCompany');
+      var birthdate = fieldValue('#registerBirthdate');
+      var gender = fieldValue('#registerGender');
+      var contactPreference = fieldValue('#registerContact') || 'whatsapp';
       var password = String((qs('#registerPassword') || {}).value || '');
       var confirm = String((qs('#registerPassword2') || {}).value || '');
 
-      if (name.length < 2) { setStatus('اكتب اسمك بشكل صحيح.', 'error'); return; }
-      if (phone && phone.replace(/\D/g, '').length < 8) { setStatus('رقم الهاتف غير صحيح.', 'error'); return; }
-      if (!email) { setStatus('أدخل البريد الإلكتروني.', 'error'); return; }
-      if (password.length < 8) { setStatus('كلمة المرور يجب أن تكون 8 أحرف على الأقل.', 'error'); return; }
+      if (name.length < 2) { setStatus('اكتب اسمك بالكامل (حرفان على الأقل).', 'error'); return; }
+      if (!validPhone(phone)) { setStatus('أدخل رقم موبايل مصري صحيح يبدأ بـ 010 أو 011 أو 012 أو 015.', 'error'); return; }
+      if (!validEmail(email)) { setStatus('أدخل بريدًا إلكترونيًا صحيحًا.', 'error'); return; }
+      if (!governorate) { setStatus('اختر المحافظة.', 'error'); return; }
+      if (city.length < 2) { setStatus('اكتب المدينة أو المركز.', 'error'); return; }
+      if (!passwordOk(password)) { setStatus('كلمة المرور ضعيفة: ' + passwordHint(password), 'error'); return; }
       if (password !== confirm) { setStatus('كلمتا المرور غير متطابقتين.', 'error'); return; }
+      if (!els.registerTerms || !els.registerTerms.checked) { setStatus('يجب الموافقة على سياسة الخصوصية وشروط الاستخدام.', 'error'); return; }
       if (!cloud || !cloud.customerRegister) {
         setStatus('خدمة الحسابات غير متاحة حاليًا.', 'error');
         return;
@@ -219,10 +407,27 @@
 
       setBusy(els.registerBtn, true, 'جارٍ إنشاء الحساب…');
       setStatus('جارٍ إنشاء حسابك…', 'info');
-      cloud.customerRegister({ name: name, email: email, phone: phone, password: password }).then(function () {
+      cloud.customerRegister({
+        name: name,
+        email: email,
+        phone: normalizePhone(phone),
+        password: password,
+        profile: {
+          governorate: governorate,
+          city: city,
+          address: address,
+          company: company,
+          birthdate: birthdate,
+          gender: gender,
+          contactPreference: contactPreference,
+          marketingConsent: Boolean(els.registerMarketing && els.registerMarketing.checked)
+        }
+      }).then(function () {
+        clearLoginGuard();
         setStatus('');
         els.registerForm.reset();
-        toast('تم إنشاء حسابك بنجاح 🎉', 'success');
+        updatePasswordMeter();
+        toast('تم إنشاء حسابك بنجاح 🎉 أكّد بريدك الإلكتروني من الرابط المرسل إليك.', 'success', 6500);
       }).catch(function (error) {
         setStatus(errorMessage(error), 'error');
       }).then(function () {
@@ -269,21 +474,87 @@
   if (els.profileForm) {
     els.profileForm.addEventListener('submit', function (event) {
       event.preventDefault();
-      var name = String(els.profileName ? els.profileName.value : '').trim();
-      var phone = String(els.profilePhone ? els.profilePhone.value : '').trim();
-      if (name.length < 2) { toast('اكتب اسمك بشكل صحيح.', 'error'); return; }
-      if (phone && phone.replace(/\D/g, '').length < 8) { toast('رقم الهاتف غير صحيح.', 'error'); return; }
+      var payload = {
+        name: fieldValue('#profileName'),
+        phone: normalizePhone(fieldValue('#profilePhone')),
+        governorate: fieldValue('#profileGovernorate'),
+        city: fieldValue('#profileCity'),
+        address: fieldValue('#profileAddress'),
+        company: fieldValue('#profileCompany'),
+        birthdate: fieldValue('#profileBirthdate'),
+        gender: fieldValue('#profileGender'),
+        contactPreference: fieldValue('#profileContact') || 'whatsapp'
+      };
+      if (payload.name.length < 2) { toast('اكتب اسمك بالكامل.', 'error'); return; }
+      if (!validPhone(payload.phone)) { toast('أدخل رقم موبايل مصري صحيح.', 'error'); return; }
       if (!cloud || !cloud.saveCustomerProfile) return;
       var button = qs('button[type="submit"]', els.profileForm);
       setBusy(button, true, 'جارٍ الحفظ…');
-      cloud.saveCustomerProfile({ name: name, phone: phone }).then(function () {
-        state.profile = Object.assign({}, state.profile || {}, { name: name, phone: phone });
+      cloud.saveCustomerProfile(payload).then(function () {
+        state.profile = Object.assign({}, state.profile || {}, payload);
         renderIdentity();
-        toast('تم حفظ بياناتك.', 'success');
+        toast('تم حفظ بياناتك بنجاح.', 'success');
       }).catch(function (error) {
         toast(errorMessage(error), 'error');
       }).then(function () {
         setBusy(button, false);
+      });
+    });
+  }
+
+  if (els.passwordForm) {
+    els.passwordForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var current = String((els.currentPassword || {}).value || '');
+      var next = String((els.newPassword || {}).value || '');
+      var confirm = String((els.newPassword2 || {}).value || '');
+      if (!current) { toast('أدخل كلمة المرور الحالية.', 'error'); return; }
+      if (!passwordOk(next)) { toast('كلمة المرور الجديدة ضعيفة: ' + passwordHint(next), 'error', 6000); return; }
+      if (next !== confirm) { toast('كلمتا المرور الجديدتان غير متطابقتين.', 'error'); return; }
+      if (!cloud || !cloud.customerChangePassword) { toast('خدمة تغيير كلمة المرور غير متاحة حاليًا.', 'error'); return; }
+      setBusy(els.changePasswordBtn, true, 'جارٍ التغيير…');
+      cloud.customerChangePassword(current, next).then(function () {
+        els.passwordForm.reset();
+        toast('تم تغيير كلمة المرور بنجاح 🔐', 'success');
+      }).catch(function (error) {
+        toast(errorMessage(error), 'error');
+      }).then(function () {
+        setBusy(els.changePasswordBtn, false);
+      });
+    });
+  }
+
+  if (els.registerPassword) {
+    els.registerPassword.addEventListener('input', updatePasswordMeter);
+    updatePasswordMeter();
+  }
+
+  if (els.resendVerify) {
+    els.resendVerify.addEventListener('click', function () {
+      if (!cloud || !cloud.sendCustomerVerification) return;
+      els.resendVerify.disabled = true;
+      cloud.sendCustomerVerification().then(function () {
+        toast('أرسلنا رابط التأكيد مرة أخرى. راجع بريدك.', 'success', 5500);
+      }).catch(function (error) {
+        toast(errorMessage(error), 'error');
+      }).then(function () {
+        els.resendVerify.disabled = false;
+      });
+    });
+  }
+
+  if (els.refreshVerify) {
+    els.refreshVerify.addEventListener('click', function () {
+      if (!cloud || !cloud.reloadCustomerUser) return;
+      els.refreshVerify.disabled = true;
+      cloud.reloadCustomerUser().then(function (user) {
+        state.user = user || state.user;
+        renderVerification();
+        toast(user && user.emailVerified ? 'تم تأكيد بريدك بنجاح ✅' : 'البريد لم يُؤكَّد بعد. افتح رابط التأكيد ثم حاول مجددًا.', user && user.emailVerified ? 'success' : 'info', 5500);
+      }).catch(function (error) {
+        toast(errorMessage(error), 'error');
+      }).then(function () {
+        els.refreshVerify.disabled = false;
       });
     });
   }
@@ -301,8 +572,15 @@
     if (els.avatar) els.avatar.textContent = initial(name);
     if (els.name) els.name.textContent = name;
     if (els.email) els.email.textContent = profile.email || user.email || '';
-    if (els.profileName && !els.profileName.value) els.profileName.value = name;
-    if (els.profilePhone && !els.profilePhone.value) els.profilePhone.value = profile.phone || '';
+    fillProfileForm(profile);
+    renderVerification();
+  }
+
+  function renderVerification() {
+    if (!els.verify) return;
+    var user = state.user;
+    var unverified = Boolean(user && user.emailVerified === false);
+    els.verify.hidden = !unverified;
   }
 
   function renderStats() {
@@ -481,6 +759,13 @@
   function loadDashboard() {
     renderIdentity();
     renderStats();
+    if (cloud && cloud.reloadCustomerUser) {
+      cloud.reloadCustomerUser().then(function (user) {
+        if (!user) return;
+        state.user = user;
+        renderIdentity();
+      }).catch(function () { /* التحقق اختياري */ });
+    }
     if (!cloud || !cloud.getCustomerProfile) return;
     cloud.getCustomerProfile().then(function (profile) {
       state.profile = profile || null;
@@ -491,9 +776,13 @@
 
   function handleAuth(user) {
     var uid = user ? user.uid : null;
-    if (state.uid === uid && state.rendered) return;
+    var same = state.uid === uid && state.rendered;
     state.uid = uid;
     state.user = user || null;
+    if (same) {
+      renderVerification();
+      return;
+    }
     state.profile = null;
     state.orders = [];
     state.page = 1;
