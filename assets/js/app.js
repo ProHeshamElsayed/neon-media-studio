@@ -156,8 +156,8 @@
 
     Promise.race([
       Promise.all([storeReady, windowLoad, assetsReady]),
-      // Never hold the page behind a slow image/network for more than 1.5s.
-      new Promise(function (resolve) { setTimeout(resolve, 1500); })
+      // Never hold the page behind a slow image/network for more than 0.8s.
+      new Promise(function (resolve) { setTimeout(resolve, 800); })
     ]).then(function () {
       var elapsed = performance.now() - started;
       var wait = Math.max(0, MIN_TIME - elapsed);

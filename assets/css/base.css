@@ -1378,3 +1378,32 @@ html.js [data-reveal].is-visible {
   .icon-btn { width: 37px; height: 37px; }
   .section { padding: 3.8rem 0; }
 }
+
+
+/* ==========================================================================
+   إخفاء شارة «Powered by Netlify» (إن ظهرت) - خيار بديل
+   ========================================================================== */
+.netlify-badge,
+#netlify-badge,
+.netlify-hud,
+[data-netlify-badge],
+iframe[src*="netlify.com"][src*="badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
+
+/* إخفاء شارة Netlify (iframe) */
+iframe[title*="Powered by Netlify"],
+iframe[aria-label*="Powered by Netlify"],
+iframe[src*="netlify"][src*="badge"],
+iframe[src*="/.netlify/"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
