@@ -172,6 +172,28 @@
     /* ============================ SECTION MASCOTS ============================ */
     .mascot{display:block;width:100%;height:auto;overflow:visible}
 
+    /* large picture in a box — same family as the old site */
+    .about__image-wrap img{animation:aboutFloat 7.4s ease-in-out infinite;will-change:translate}
+    @keyframes aboutFloat{0%,100%{translate:0 0}50%{translate:0 -13px}}
+    .about__exp{animation:aboutFloat 6.2s ease-in-out -2.1s infinite;will-change:translate}
+    .about__badge{animation:aboutFloat 5.4s ease-in-out -1s infinite;will-change:translate}
+
+    /* ============================ BIG VECTOR BANNER ============================ */
+    .vector-banner{position:relative;overflow:hidden;background:radial-gradient(900px 520px at 88% -12%,rgba(var(--accent-rgb),.15),transparent 62%),var(--bg-2)}
+    .vb-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,minmax(320px,520px));gap:clamp(1.2rem,3vw,2.6rem);align-items:center}
+    @media(max-width:991px){.vb-card{grid-template-columns:1fr;text-align:center}.vb-copy .eyebrow{margin-inline:auto}.vb-actions,.vb-badges{justify-content:center}}
+    .vb-copy .eyebrow{margin-bottom:1.05rem}
+    .vb-copy h2{font-size:clamp(2rem,4vw,3.05rem);font-weight:900;letter-spacing:-1.1px;line-height:1.18;margin-bottom:1rem}
+    .vb-copy>p{color:var(--muted);line-height:1.9;font-size:.95rem;max-width:52ch}
+    @media(max-width:991px){.vb-copy>p{margin-inline:auto}}
+    .vb-badges{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.2rem 0 1.5rem}
+    .vb-badge{padding:.42rem .8rem;border-radius:99px;font-size:.76rem;color:var(--text-soft);border:1px solid var(--line);background:var(--surface)}
+    .vb-actions{display:flex;flex-wrap:wrap;gap:.7rem}
+    .vb-fig{position:relative;display:grid;place-items:center;isolation:isolate}
+    .vb-fig::before{content:"";position:absolute;inset:4% 8%;border-radius:44%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(var(--accent-3-rgb),.3),transparent 70%);filter:blur(26px)}
+    .vb-figure{width:min(100%,520px);height:auto;animation:vbFloat 7.6s ease-in-out infinite;will-change:translate;filter:drop-shadow(0 40px 46px rgba(0,0,0,.45))}
+    @keyframes vbFloat{0%,100%{translate:0 0}50%{translate:0 -15px rotate(-.3deg)}}
+
     /* صورة الفيكتور المفرّغ الافتراضية — تطفو زي سياسة الموقع القديم */
     .sq-fig-img{animation:sqFloatY 6.4s var(--ease) infinite;will-change:translate}
     .sq-card:nth-child(2) .sq-fig-img{animation-delay:-2s}
@@ -269,7 +291,7 @@
       .mascot *,.mascot *::before,.mascot *::after,
       .mascot-wrap::before,.mascot-wrap::after,
       .works-cta__card::after,
-      .sq-fig-img,.mascot-img{animation:none!important;translate:0 0!important}
+      .sq-fig-img,.mascot-img,.about__image-wrap img,.about__exp,.about__badge,.vb-figure{animation:none!important;translate:0 0!important;transform:none!important}
       .sq-live .sq-skill b{width:var(--w)}
       .sq-fig{transform:none}
       .sq-progress{display:none}
@@ -804,6 +826,34 @@
       })();
     </script>
 
+    <!-- ======================= BIG VECTOR BANNER ======================= -->
+    <section class="section vector-banner" id="vectorBanner" aria-labelledby="vectorBannerTitle">
+      <div class="container">
+        <div class="vb-card" data-reveal>
+          <div class="vb-copy">
+            <span class="eyebrow"><span class="pulse-dot"></span> من الاستوديو · VECTOR BANNER</span>
+            <h2 id="vectorBannerTitle"><span>فكرتك الجاية تستاهل</span><br><span class="text-gradient">تبقى مشروع كامل</span></h2>
+            <p>من أول هوية لحد إعلان يشتغل… فريق واحد، خطة واحدة، ونتيجة واحدة — من أول موشن لحد آخر إعلان.</p>
+            <div class="vb-badges" aria-label="ما نتميز به">
+              <span class="vb-badge">✔ تنفيذ في المواعيد</span>
+              <span class="vb-badge">✔ تعديلات مجانية</span>
+              <span class="vb-badge">✔ ملفات أصلية لك</span>
+            </div>
+            <div class="vb-actions">
+              <button type="button" class="btn-neon btn-lg" data-open-order data-magnetic="5">
+                اطلب خدمتك الآن
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+              <a class="btn-ghost btn-lg" href="#packages">شوف الباقات</a>
+            </div>
+          </div>
+          <div class="vb-fig">
+            <img class="vb-figure" src="vec-scene-about.png" alt="المصمم واقف أمام لوحة المشاريع مع رسم بياني للنمو — فيكتور مفرّغ" data-site-src="settings.vectors.banner" width="940" height="620" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ======================= ABOUT ======================= -->
     <section class="section about" id="about">
       <div class="container">
@@ -812,7 +862,7 @@
             <div class="about__media" data-reveal="left">
               <div class="about__frame" aria-hidden="true"></div>
               <div class="about__image-wrap">
-                <img src="assets/img/about.svg" alt="مساحة عمل إبداعية في استوديو نِيون ميديا" data-site-src="settings.aboutImage" width="900" height="720" loading="lazy">
+                <img src="vec-scene-about.png" alt="المصمم واقف أمام لوحة المشاريع في استوديو نيون — فيكتور مفرّغ الشفاف" data-site-src="settings.aboutImage" width="940" height="620" loading="lazy" decoding="async">
               </div>
               <div class="about__exp">
                 <strong data-bind="settings.aboutYears">8+</strong>
