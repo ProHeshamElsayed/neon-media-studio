@@ -2,5 +2,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /track.html
 
-Sitemap: https://proheshamelsayed.github.io/neon-media-studio/sitemap.xml
+Sitemap: https://neon-media-studio.netlify.app/sitemap.xml

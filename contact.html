@@ -20,8 +20,8 @@
   <title>الاتصال والمساعدة | نِيون ميديا</title>
 
   <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
-  <link rel="apple-touch-icon" href="assets/img/logo.svg">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="manifest" href="site.webmanifest?v=20261115">
+  <link rel="apple-touch-icon" href="assets/img/icon-192.png">
 
   <script>
     (function () {
@@ -52,7 +52,9 @@
       body.is-loading { overflow: auto !important; }
     </style>
   </noscript>
-</head>
+  <!-- Google Analytics 4 (optional) — استبدل G-XXXXXXXXXX بـ Measurement ID الخاص بك -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script> --></head>
 
 <body class="is-loading" data-fixed-meta>
   <noscript><div class="noscript-note">يرجى تفعيل JavaScript لتجربة الموقع كاملة.</div></noscript>
@@ -382,5 +384,6 @@
   <script src="assets/js/chatbot.js?v=20261114f"></script>
   <script src="assets/js/extras.js"></script>
   <script src="assets/js/features.js"></script>
+  <script>if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); }); }</script>
 </body>
 </html>
