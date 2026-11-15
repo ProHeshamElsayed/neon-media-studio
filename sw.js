@@ -26,6 +26,8 @@ const PRECACHE = [
   './vec-works.png',
   './vec-contact.png',
   './vec-scene-about.png',
+  './components.css',
+  './chatbot.js',
   './assets/css/base.css',
   './assets/css/home.css',
   './assets/css/components.css',
