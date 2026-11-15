@@ -397,9 +397,165 @@
         '</article>';
     }).join('') : emptyState('لا توجد آراء منشورة حاليًا.');
     if (UI) UI.refreshReveal(grid);
+    initTestimonialsCarousel();
   }
 
-  function renderClientsMarquee() {
+  function initTestimonialsCarousel() {
+    var grid = qs('#testimonialsGrid');
+    if (!grid) return;
+
+    // تنظيف أي نسخة سابقة (يُستدعى بعد كل إعادة رسم)
+    if (grid._tTimer) { clearInterval(grid._tTimer); grid._tTimer = null; }
+    var wrap = grid.parentElement;
+    if (wrap) {
+      var oldNav = wrap.querySelector('.t-nav');
+      if (oldNav && oldNav.parentNode) oldNav.parentNode.removeChild(oldNav);
+    }
+
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.testimonial-card'));
+    if (cards.length < 2) return;
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var idx = 0;
+    var timer = null;
+
+    var nav = document.createElement('div');
+    nav.className = 't-nav';
+    nav.innerHTML =
+      '<button type="button" class="t-nav__btn t-prev" aria-label="الرأي السابق">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>' +
+      '</button>' +
+      '<div class="t-nav__dots"></div>' +
+      '<button type="button" class="t-nav__btn t-next" aria-label="الرأي التالي">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' +
+      '</button>';
+    if (wrap) wrap.appendChild(nav);
+
+    var dotsBox = nav.querySelector('.t-nav__dots');
+    cards.forEach(function (card, i) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 't-nav__dot';
+      dot.setAttribute('aria-label', 'اذهب إلى الرأي رقم ' + (i + 1));
+      dot.addEventListener('click', function () { scrollTo(i); });
+      dotsBox.appendChild(dot);
+    });
+    var dots = Array.prototype.slice.call(dotsBox.children);
+    var rtl = window.getComputedStyle(grid).direction === 'rtl';
+
+    function paint() {
+      dots.forEach(function (d, i) { d.classList.toggle('is-active', i === idx); });
+    }
+
+    function scrollTo(i) {
+      idx = Math.max(0, Math.min(cards.length - 1, i));
+      var card = cards[idx];
+      if (card && card.scrollIntoView) {
+        card.scrollIntoView({
+          behavior: reduce ? 'auto' : 'smooth',
+          block: 'nearest',
+          inline: 'start'
+        });
+      }
+      paint();
+    }
+
+    function next() {
+      scrollTo(idx >= cards.length - 1 ? 0 : idx + 1);
+    }
+    function prev() {
+      scrollTo(idx <= 0 ? cards.length - 1 : idx - 1);
+    }
+    function start() {
+      if (reduce || timer) return;
+      timer = setInterval(next, 6500);
+      grid._tTimer = timer;
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+      grid._tTimer = null;
+    }
+
+    nav.querySelector('.t-prev').addEventListener('click', function () { prev(); });
+    nav.querySelector('.t-next').addEventListener('click', function () { next(); });
+
+    var scrollTid;
+    grid.addEventListener('scroll', function () {
+      clearTimeout(scrollTid);
+      scrollTid = setTimeout(function () {
+        var gr = grid.getBoundingClientRect();
+        var best = idx;
+        var bestD = Infinity;
+        cards.forEach(function (card, i) {
+          var r = card.getBoundingClientRect();
+          var d = Math.abs(rtl ? (r.right - gr.right) : (r.left - gr.left));
+          if (d < bestD) { bestD = d; best = i; }
+        });
+        idx = best;
+        paint();
+      }, 130);
+    }, { passive: true });
+
+    grid.addEventListener('mouseenter', stop);
+    grid.addEventListener('mouseleave', start);
+    grid.addEventListener('focusin', stop);
+    grid.addEventListener('focusout', start);
+    grid.addEventListener('touchstart', stop, { passive: true });
+    nav.addEventListener('mouseenter', stop);
+    nav.addEventListener('mouseleave', start);
+
+    if (!document._tNavHiddenHooked) {
+      document._tNavHiddenHooked = true;
+      document.addEventListener('visibilitychange', function () {
+        var g = qs('#testimonialsGrid');
+        if (!g || !g._tTimer) return;
+        if (document.hidden) { clearInterval(g._tTimer); g._tTimer = null; }
+      });
+    }
+
+    // لا يبدأ التشغيل التلقائي إلا عندما يكون القسم ظاهرًا في الشاشة
+    if (grid._tIO) { grid._tIO.disconnect(); grid._tIO = null; }
+    if ('IntersectionObserver' in window) {
+      grid._tIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) start(); else stop();
+        });
+      }, { threshold: 0.35 });
+      grid._tIO.observe(grid);
+    } else {
+      start();
+    }
+
+    paint();
+  }
+
+  function initBeforeAfter() {
+    var slider = qs('.ba-slider');
+    if (!slider) return;
+    var range = slider.querySelector('.ba-slider__range');
+    var after = slider.querySelector('.ba-slider__img--after');
+    var handle = slider.querySelector('.ba-slider__handle');
+    if (!range || !after || !handle) return;
+
+    function update() {
+      var v = Number(range.value);
+      if (!isFinite(v)) v = 30;
+      v = Math.max(0, Math.min(100, v));
+      // الطبقة «بعد» تبدأ من موضع المقبض حتى أقصى اليمين
+      after.style.clipPath = 'inset(0 0 0 ' + v + '%)';
+      handle.style.left = v + '%';
+      range.setAttribute('aria-valuetext', 'قبل ' + v + '% — بعد ' + (100 - v) + '%');
+    }
+
+    if (!range._baBound) {
+      range._baBound = true;
+      range.addEventListener('input', update);
+      range.addEventListener('change', update);
+    }
+    update();
+  }
+
+function renderClientsMarquee() {
     var marquee = qs('#clientsMarquee');
     if (!marquee) return;
     var items = '';
@@ -965,6 +1121,7 @@
     renderWorks();
     renderTestimonials();
     renderClientsMarquee();
+    initBeforeAfter();
     renderPayments();
     renderFaqs();
     fillContactServiceOptions();
@@ -1127,41 +1284,52 @@
           var text = buildOrderWhatsApp(order);
           if (UI) UI.openWhatsApp(text);
 
-          // رفع الطلب إلى مجموعة Firestore خاصة (إنشاء فقط للزوار) ليظهر في لوحة التحكم.
-          if (window.NeonCloud && typeof window.NeonCloud.createRecord === 'function') {
-            window.NeonCloud.createRecord('orders', {
-              id: order.id,
-              orderNo: order.orderNo,
-              number: order.number,
-              numberPrefix: order.numberPrefix,
-              name: order.name,
-              phone: order.phone,
-              notes: order.notes,
-              quantity: order.quantity,
-              orderType: order.orderType,
-              itemType: order.itemType,
-              serviceId: order.serviceId,
-              serviceTitle: order.serviceTitle,
-              unit: order.unit,
-              items: order.items,
-              subtotal: order.subtotal,
-              vatEnabled: order.vatEnabled === true,
-              vatRate: order.vatRate,
-              vatAmount: order.vatAmount,
-              total: order.total,
-              amount: order.amount,
-              currency: order.currency,
-              paymentId: order.paymentId,
-              paymentMethod: order.paymentMethod,
-              paymentType: order.paymentType,
-              paymentValue: order.paymentValue,
-              paymentInstructions: order.paymentInstructions,
-              status: order.status,
-              source: order.source,
-              userId: order.userId || '',
-              customerEmail: order.customerEmail || '',
-              createdAt: order.createdAt
-            }).catch(function (error) {
+          // رفع الطلب إلى مجموعة Firestore خاصة (إنشاء فقط) ليظهر في لوحة التحكم.
+          // إذا كان العميل مسجّل الدخول، نستخدم createCustomerOrder (مصادقة العميل)
+          // حتى تسمح قواعد Firestore (userId == request.auth.uid).
+          // وإلا (زائر) نستخدم createRecord (userId = '') — مسموح للزوار.
+          var orderPayload = {
+            id: order.id,
+            orderNo: order.orderNo,
+            number: order.number,
+            numberPrefix: order.numberPrefix,
+            name: order.name,
+            phone: order.phone,
+            notes: order.notes,
+            quantity: order.quantity,
+            orderType: order.orderType,
+            itemType: order.itemType,
+            serviceId: order.serviceId,
+            serviceTitle: order.serviceTitle,
+            unit: order.unit,
+            items: order.items,
+            subtotal: order.subtotal,
+            vatEnabled: order.vatEnabled === true,
+            vatRate: order.vatRate,
+            vatAmount: order.vatAmount,
+            total: order.total,
+            amount: order.amount,
+            currency: order.currency,
+            paymentId: order.paymentId,
+            paymentMethod: order.paymentMethod,
+            paymentType: order.paymentType,
+            paymentValue: order.paymentValue,
+            paymentInstructions: order.paymentInstructions,
+            status: order.status,
+            source: order.source,
+            userId: order.userId || '',
+            customerEmail: order.customerEmail || '',
+            createdAt: order.createdAt
+          };
+          var cloud = window.NeonCloud;
+          var uploadPromise = null;
+          if (cloud && customerUser && typeof cloud.createCustomerOrder === 'function') {
+            uploadPromise = cloud.createCustomerOrder(orderPayload);
+          } else if (cloud && typeof cloud.createRecord === 'function') {
+            uploadPromise = cloud.createRecord('orders', orderPayload);
+          }
+          if (uploadPromise) {
+            uploadPromise.catch(function (error) {
               console.warn('[NeonHome] تعذر رفع الطلب للسحابة:', error && error.code ? error.code : error);
             });
           }
