@@ -360,6 +360,11 @@
     });
     if (state.workFilter !== 'all' && categories.indexOf(state.workFilter) === -1) state.workFilter = 'all';
 
+    var totalEl = qs('#worksTotal');
+    if (totalEl) totalEl.textContent = all.length;
+    var catsEl = qs('#worksCatCount');
+    if (catsEl) catsEl.textContent = categories.length;
+
     var filters = qs('#workFilters');
     if (filters) {
       filters.innerHTML = ['all'].concat(categories).map(function (cat) {
