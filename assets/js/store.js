@@ -83,6 +83,8 @@
       orderNumberPadding: 4,
       vatEnabled: false,
       vatRate: 14,
+      pushEnabled: false,
+      pushTopic: '',
       taxNumber: '',
       invoiceNote: 'هذا إيصال إلكتروني صادر من {siteName} — الطلب رقم {orderNo}. الدفع عبر تحويل بنكي أو عند الاستلام فقط، ولا نطلب أي بيانات بطاقة.',
       accent: 'cyan',
@@ -2069,6 +2071,56 @@
     return lines.join('\n');
   }
 
+  /* ------------------------------------------------------------------------
+     إشعارات الجوال للمالك — عبر ntfy.sh (بدون سيرفر وبدون رسوم)
+     الموقع يرسل POST JSON إلى ntfy على الموضوع السري، وتطبيق ntfy على جوال
+     المالك (مشترك بنفس الموضوع) يستقبلها كإشعار نظام فوري زي واتساب.
+     ------------------------------------------------------------------------
+     - تعمل فقط عند تفعيلها من لوحة التحكم مع موضوع سري صحيح.
+     - اسم الموضوع يُقرأ من الإعدادات (المتزامنة مع Firebase) ولا يُكتب في الكود.
+     - fire-and-forget: أي فشل لا يؤثر على إنشاء الطلب أو الرسالة.
+     ---------------------------------------------------------------------- */
+  var NTFY_URL = 'https://ntfy.sh/';
+  var NTFY_TOPIC_RE = /^[A-Za-z0-9_-]{1,64}$/;
+
+  function phonePushTopic() {
+    var raw = String((data.settings && data.settings.pushTopic) || '').trim();
+    if (!raw) return '';
+    // يقبل لصق رابط الموضوع كامل (https://ntfy.sh/neon-xxx) ويستخرج الاسم منه
+    var match = raw.match(/ntfy\.sh\/([A-Za-z0-9_-]+)/);
+    var topic = match ? match[1] : raw;
+    return NTFY_TOPIC_RE.test(topic) ? topic : '';
+  }
+
+  function sendPhonePush(title, body, opts) {
+    var settings = data.settings || {};
+    if (settings.pushEnabled === false || settings.pushEnabled === undefined) return Promise.resolve(false);
+    var topic = phonePushTopic();
+    if (!topic) return Promise.resolve(false);
+
+    var options = opts || {};
+    var payload = {
+      topic: topic,
+      title: String(title || '🔔 إشعار جديد').substring(0, 120),
+      message: String(body || '').substring(0, 500),
+      // ntfy في وضع JSON يقبل الأولوية كرقم فقط: 1=min · 3=default · 4=high · 5=urgent (أعلى صوت واهتزاز)
+      priority: Number(options.priority) > 0 ? Math.min(5, Math.floor(Number(options.priority))) : 5,
+      tags: options.tags || ['bell'],
+      click: options.click || 'https://neon-media-admin.pages.dev/admin.html'
+    };
+
+    try {
+      var request = fetch(NTFY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return request.then(function () { return true; }).catch(function () { return false; });
+    } catch (error) {
+      return Promise.resolve(false);
+    }
+  }
+
   function addOrder(order, options) {
     var entry = deepMerge({
       id: '',
@@ -2118,6 +2170,13 @@
     }
     // صفحات الزوار لا تكتب مستند الموقع العام؛ الطلب يُرفع لمجموعته الخاصة فقط.
     persist({ cloud: !(options && options.cloud === false) });
+    // إشعار جوال فوري للمالك (ntfy) — لا يوقف الطلب ولا يظهر للعميل.
+    if (!(options && options.silentPush)) {
+      sendPhonePush(
+        '🛒 طلب جديد ' + (entry.orderNo || entry.id || ''),
+        (entry.name || 'عميل') + ' · ' + formatMoneyFixed(entry.total) + (entry.phone ? ' · ' + entry.phone : '')
+      );
+    }
     return entry;
   }
 
@@ -2131,6 +2190,13 @@
     data.messages.unshift(entry);
     upsertCustomer({ name: entry.name, phone: entry.phone, email: entry.email });
     persist({ cloud: !(options && options.cloud === false) });
+    // إشعار جوال فوري للمالك (ntfy) — لا يوقف الرسالة.
+    if (!(options && options.silentPush)) {
+      sendPhonePush(
+        '💬 رسالة جديدة من الموقع',
+        (entry.name || 'زائر') + ': ' + String(entry.message || '').replace(/\s+/g, ' ').trim().substring(0, 140)
+      );
+    }
     return entry;
   }
 
@@ -2250,6 +2316,7 @@
     activeItems: activeItems,
     addOrder: addOrder,
     addMessage: addMessage,
+    sendPhonePush: sendPhonePush,
     normalizePhone: normalizePhone,
     findCustomerByPhone: findCustomerByPhone,
     upsertCustomer: upsertCustomer,
