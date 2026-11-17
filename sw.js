@@ -5,7 +5,7 @@
    - يعمل offline بشكل محدود (الصفحات الأساسية + الهوية البصرية)
    ملاحظة: كل المسارات نسبية لتعمل على Netlify وGitHub Pages معًا.
    ========================================================================== */
-const CACHE_NAME = 'neon-media-v8';
+const CACHE_NAME = 'neon-media-v9';
 
 const PRECACHE = [
   './',
@@ -22,14 +22,14 @@ const PRECACHE = [
   './base.css',
   './Lalezar-arabic.woff2',
   './Lalezar-latin.woff2',
-  './vec-designer.png',
-  './vec-photographer.png',
-  './vec-marketer.png',
-  './vec-about.png',
-  './vec-services.png',
-  './vec-works.png',
-  './vec-contact.png',
-  './vec-scene-about.png',
+  './vec-designer.webp',
+  './vec-photographer.webp',
+  './vec-marketer.webp',
+  './vec-about.webp',
+  './vec-services.webp',
+  './vec-works.webp',
+  './vec-contact.webp',
+  './vec-scene-about.webp',
   './components.css',
   './chatbot.js',
   './assets/css/base.css',
