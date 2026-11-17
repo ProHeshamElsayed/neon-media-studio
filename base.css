@@ -99,7 +99,7 @@
 
 /* ----------------------------- Tokens ----------------------------------- */
 :root {
-  --font-display: 'Lalezar', 'Cairo', 'Tajawal', system-ui, sans-serif;
+  --font-display: 'Cairo', 'Tajawal', system-ui, sans-serif;
   --font-body: 'Tajawal', 'Cairo', system-ui, sans-serif;
 
   --neon-cyan: #22e7ff;
