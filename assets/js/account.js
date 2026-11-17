@@ -228,11 +228,15 @@
     if (UI && UI.toast) UI.toast(message, type || 'info', duration || 4500);
   }
 
-  function showNotice(message, tone) {
+  function showNotice(message, tone, autoHideMs) {
     if (!els.notice) return;
     els.notice.hidden = false;
     els.notice.setAttribute('data-tone', tone || 'warn');
     els.notice.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><span>' + message + '</span>';
+    if (autoHideMs) {
+      if (state.noticeTimer) window.clearTimeout(state.noticeTimer);
+      state.noticeTimer = window.setTimeout(hideNotice, autoHideMs);
+    }
   }
 
   function hideNotice() {
@@ -701,13 +705,77 @@
     '</article>';
   }
 
+  /* فتح الإيصال بطريقة موثوقة: Blob URL + طباعة تلقائية، ولو منع البوب-أب نمشي على iframe مخفي */
+  function emitReceiptWindow(html) {
+    var autoPrint = '<scr' + 'ipt>window.addEventListener("load",function(){setTimeout(function(){try{window.print()}catch(e){}},400)});</scr' + 'ipt>';
+    var full = html.replace('</body></html>', autoPrint + '</body></html>');
+    var url = '';
+    try {
+      var blob = new Blob([full], { type: 'text/html;charset=utf-8' });
+      url = URL.createObjectURL(blob);
+    } catch (error) { /* تجاهل */ }
+
+    var win = null;
+    try { win = url ? window.open(url, '_blank') : window.open('', '_blank'); } catch (error) { win = null; }
+
+    if (win && !url) {
+      try {
+        win.document.open();
+        win.document.write(full);
+        win.document.close();
+        win.focus();
+      } catch (error) { /* تجاهل */ }
+      return;
+    }
+    if (win) {
+      /* فُتح تبويب جديد بملف الإيصال — الطباعة التلقائية مدمجة في الصفحة */
+      setTimeout(function () { URL.revokeObjectURL(url); }, 120000);
+      showNotice('إيصالك فُتح في تبويب جديد — اختر «حفظ كـ PDF» من نافذة الطباعة.', 'info', 6000);
+      return;
+    }
+
+    /* البوب-أب ممنوع: طباعة عبر iframe مخفي */
+    try {
+      var frame = document.createElement('iframe');
+      frame.setAttribute('aria-hidden', 'true');
+      frame.style.cssText = 'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;';
+      frame.srcdoc = full;
+      frame.onload = function () {
+        try {
+          frame.contentWindow.focus();
+          frame.contentWindow.print();
+        } catch (error) { /* تجاهل */ }
+        window.setTimeout(function () {
+          try { frame.remove(); } catch (error) { /* تجاهل */ }
+          if (url) URL.revokeObjectURL(url);
+        }, 60000);
+      };
+      document.body.appendChild(frame);
+      showNotice('نافذة الطباعة فُتحت — لو ظهرت إعدادات الطباعة اختر «حفظ كـ PDF».', 'info', 6000);
+    } catch (error) {
+      showNotice('المتصفح منع فتح الإيصال. اسمح بالنوافذ المنبثقة للموقع وحاول مرة أخرى.', 'error', 7000);
+    }
+  }
+
   function printCustomerReceipt(receiptNo) {
+    /* مطابقة مرنة: نشيل الـ # ونقارن كل الصيغ المحتملة لرقم الطلب */
+    var wanted = String(receiptNo || '').replace(/#/g, '').trim();
+    function norm(value) {
+      return String(value == null ? '' : value).replace(/#/g, '').trim();
+    }
+    var storeRef = window.NeonStore || null;
     var order = (state.orders || []).filter(function (item) {
-      return String(item && (item.orderNo || item.numberPrefix || '')).trim() === String(receiptNo || '').trim();
-    })[0] || (state.orders || []).filter(function (item) {
-      return String(item && item.id || '').trim() === String(receiptNo || '').trim();
-    })[0] || (state.orders || []).filter(function (item) {
-      return String(item && item.number != null ? item.number : '') === String(receiptNo || '').trim();
+      if (!item) return false;
+      var candidates = [];
+      try { if (storeRef && storeRef.orderNoOf) candidates.push(norm(storeRef.orderNoOf(item))); } catch (error) { /* تجاهل */ }
+      candidates.push(norm(item.orderNo));
+      if (item.numberPrefix != null && item.number != null) candidates.push(norm(item.numberPrefix) + norm(item.number));
+      candidates.push(norm(item.number));
+      candidates.push(norm(item.id));
+      if (candidates.some(function (c) { return c && c === wanted; })) return true;
+      /* مطابقة رقمية: لو المطلوب مجرد رقم والطلب فيه رقم مطابق */
+      if (/^\d+$/.test(wanted) && item.number != null) return Number(item.number) === Number(wanted);
+      return false;
     })[0];
     if (!order) {
       showNotice('لم نجد الطلب في هذا الحساب.', 'error');
@@ -771,13 +839,7 @@
           ? 'هذا إيصال ضريبي معتمد — تم تنفيذ الطلب واستلام العميل له. صالح كمستند قانوني في إقرارك الضريبي الشهري.'
           : 'هذا إيصال استلام مقدم (غير ضريبي) — يُصدر بعد إنشاء الطلب. الإيصال الضريبي النهائي يصدر بعد التنفيذ وقفل الدفع.') + '</div>' +
       '</div></body></html>';
-    var win = window.open('', '_blank', 'width=820,height=1000');
-    if (!win) { showNotice('افتح المتصفح في وضع allow popups أو حاول من Chrome.', 'warn'); return; }
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(function () { try { win.print(); } catch (error) {} }, 320);
+    emitReceiptWindow(html);
   }
 
   function emptyOrders() {
