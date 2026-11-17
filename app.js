@@ -185,6 +185,15 @@
       else el.textContent = value;
     });
 
+    // شارة التوفر — تتبدل بين «متاح/غير متاح» حسب الإعدادات وتغيّر لونها تلقائيًا.
+    var availability = document.getElementById('availabilityBadge');
+    if (availability) {
+      var availabilitySettings = (root && root.settings) ? root.settings : (root || {});
+      var availableNow = availabilitySettings.availableNow !== false;
+      availability.classList.toggle('is-off', !availableNow);
+      availability.setAttribute('data-state', availableNow ? 'on' : 'off');
+    }
+
     qsa('[data-site-src]').forEach(function (el) {
       var value = getPath(root, el.getAttribute('data-site-src'));
       if (value) el.setAttribute('src', value);

@@ -43,13 +43,13 @@
   <link rel="preload" href="assets/fonts/Cairo-arabic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Tajawal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
-  <link rel="stylesheet" href="base.css?v=20261117i">
-  <link rel="stylesheet" href="home.css?v=20261117i">
-  <link rel="stylesheet" href="components.css?v=20261117i">
+  <link rel="stylesheet" href="base.css?v=20261117l">
+  <link rel="stylesheet" href="home.css?v=20261117l">
+  <link rel="stylesheet" href="components.css?v=20261117l">
   <link rel="stylesheet" href="assets/css/extras.css">
   <link rel="stylesheet" href="assets/css/features.css">
-  <link rel="stylesheet" href="glass.css?v=20261117i">
-  <link rel="stylesheet" href="assets/css/hero-fx.css?v=20261117i">
+  <link rel="stylesheet" href="glass.css?v=20261117l">
+  <link rel="stylesheet" href="assets/css/hero-fx.css?v=20261117l">
 
   <style id="sqStyles">
     /* ============================ CREW / SQUAD SECTION ============================ */
@@ -615,7 +615,13 @@
                 <div class="profile-frame" data-tilt="5" id="profileFrame">
                   <img src="assets/img/profile.svg" alt="الصورة الشخصية لمؤسس نِيون ميديا" id="ownerPhoto" data-site-src="settings.ownerPhoto" width="620" height="780">
                   <span class="profile-frame__shine" aria-hidden="true"></span>
-                  <span class="profile-frame__badge"><span class="dot-live" style="width:6px;height:6px;border-radius:50%;background:#35f5a0;box-shadow:0 0 10px #35f5a0;display:inline-block"></span> <span data-bind="settings.heroBadge">متاح لمشاريع جديدة</span></span>
+                  <span class="availability-badge" id="availabilityBadge" role="status" aria-live="polite">
+                    <span class="availability-badge__dot" aria-hidden="true"></span>
+                    <span class="availability-badge__text">
+                      <strong data-bind="settings.availableNowTitle">متاح للعمل الآن</strong>
+                      <small data-bind="settings.availableNowSub">نستقبل مشاريع جديدة</small>
+                    </span>
+                  </span>
                 </div>
                 <span class="chip-float chip-float--1">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg>
@@ -1589,10 +1595,10 @@
 
   <script src="assets/vendor/bootstrap.bundle.min.js"></script>
   <script src="assets/js/firebase-config.js"></script>
-  <script src="assets/js/firebase-sync.js?v=20261117i"></script>
+  <script src="assets/js/firebase-sync.js?v=20261117l"></script>
   <script src="assets/js/site-seed.js"></script>
-  <script src="assets/js/store.js?v=20261117i"></script>
-  <script src="app.js?v=20261117i"></script>
+  <script src="assets/js/store.js?v=20261117l"></script>
+  <script src="app.js?v=20261117l"></script>
   <script>
     /* ==================== SECTION MASCOTS + MICRO INTERACTIONS ==================== */
     (function () {
@@ -1753,11 +1759,11 @@
     })();
   </script>
 
-  <script src="home.js?v=20261117i"></script>
-  <script src="chatbot.js?v=20261117i"></script>
+  <script src="home.js?v=20261117l"></script>
+  <script src="chatbot.js?v=20261117l"></script>
   <script src="assets/js/extras.js"></script>
   <script src="assets/js/features.js"></script>
-  <script src="assets/js/hero-fx.js?v=20261117i"></script>
+  <script src="assets/js/hero-fx.js?v=20261117l"></script>
   <script>if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); }); }</script>
 </body>
 </html>

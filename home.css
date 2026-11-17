@@ -239,6 +239,103 @@
   font-size: 0.68rem;
   font-weight: 700;
 }
+
+/* شارة التوفر — معلقة بالنيون فوق الصورة الشخصية من الأعلى */
+.availability-badge {
+  position: absolute;
+  top: -64px;
+  left: 50%;
+  right: auto;
+  inset-inline-end: auto;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 20px;
+  background:
+    linear-gradient(155deg, rgba(18, 32, 48, 0.94), rgba(5, 10, 22, 0.94));
+  border: 1.5px solid rgba(53, 245, 160, 0.45);
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.6),
+    0 0 34px rgba(53, 245, 160, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  pointer-events: none;
+  user-select: none;
+  transform: translate(-50%, 0);
+  animation: availabilityFloat 3.4s ease-in-out infinite;
+}
+.availability-badge__dot {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #35f5a0;
+  box-shadow: 0 0 12px rgba(53, 245, 160, 0.95), 0 0 28px rgba(53, 245, 160, 0.5);
+  animation: availabilityPulse 1.9s ease-in-out infinite;
+}
+.availability-badge__text { display: flex; flex-direction: column; align-items: center; line-height: 1.22; }
+.availability-badge__text strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #d9ffe9;
+  letter-spacing: 0.2px;
+  text-shadow: 0 0 16px rgba(53, 245, 160, 0.55);
+  white-space: nowrap;
+}
+.availability-badge__text small {
+  font-size: 0.78rem;
+  color: rgba(215, 255, 232, 0.78);
+  white-space: nowrap;
+}
+html[data-theme='light'] .availability-badge {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.97), rgba(232, 255, 240, 0.96));
+  border-color: rgba(18, 201, 121, 0.45);
+  box-shadow:
+    0 12px 30px rgba(16, 60, 38, 0.18),
+    0 0 22px rgba(18, 201, 121, 0.22),
+    inset 0 1px 0 #ffffff;
+}
+html[data-theme='light'] .availability-badge__text strong { color: #0b5c38; text-shadow: none; }
+html[data-theme='light'] .availability-badge__text small { color: rgba(11, 92, 56, 0.75); }
+/* حالة «غير متاح» */
+.availability-badge.is-off {
+  border-color: rgba(255, 120, 120, 0.45);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.55),
+    0 0 26px rgba(255, 110, 110, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.availability-badge.is-off .availability-badge__dot {
+  background: #ff8b8b;
+  box-shadow: 0 0 10px rgba(255, 110, 110, 0.9), 0 0 22px rgba(255, 110, 110, 0.45);
+  animation: none;
+}
+.availability-badge.is-off .availability-badge__text strong { color: #ffd9d9; text-shadow: 0 0 14px rgba(255, 110, 110, 0.5); }
+.availability-badge.is-off .availability-badge__text small { color: rgba(255, 217, 217, 0.72); }
+html[data-theme='light'] .availability-badge.is-off { background: linear-gradient(155deg, #ffffff, #ffeaea); border-color: rgba(200, 60, 60, 0.4); }
+html[data-theme='light'] .availability-badge.is-off .availability-badge__text strong { color: #7a1f1f; text-shadow: none; }
+html[data-theme='light'] .availability-badge.is-off .availability-badge__text small { color: rgba(122, 31, 31, 0.75); }
+@keyframes availabilityPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(53, 245, 160, 0.95), 0 0 28px rgba(53, 245, 160, 0.5); }
+  50% { transform: scale(1.2); box-shadow: 0 0 18px rgba(53, 245, 160, 1), 0 0 36px rgba(53, 245, 160, 0.65); }
+}
+@keyframes availabilityFloat {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .availability-badge,
+  .availability-badge__dot { animation: none; }
+}
+@media (max-width: 480px) {
+  .availability-badge { padding: 0.55rem 0.95rem; gap: 0.55rem; border-radius: 18px; }
+  .availability-badge__dot { width: 14px; height: 14px; }
+  .availability-badge__text strong { font-size: 0.88rem; }
+  .availability-badge__text small { font-size: 0.65rem; }
+}
 .orbit-ring {
   position: absolute;
   border-radius: 50%;
