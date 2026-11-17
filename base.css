@@ -1041,7 +1041,7 @@ html[data-theme='light'] .icon-btn .sun-icon { display: none; }
   box-shadow: 0 16px 44px -10px rgba(var(--accent-rgb), 0.75), 0 0 44px rgba(var(--accent-3-rgb), 0.28);
 }
 .btn-neon:hover::before { transform: translateX(120%); }
-.btn-neon svg, .btn-ghost svg, .btn-soft svg, .btn-outline-neon svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.btn-neon svg, .btn-ghost svg, .btn-soft svg, .btn-outline-neon svg, .btn-wa svg { width: 18px; height: 18px; flex: 0 0 auto; }
 
 .btn-ghost {
   color: var(--text);
