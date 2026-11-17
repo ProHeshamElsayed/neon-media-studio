@@ -427,6 +427,16 @@ html[data-theme='light'] .account-tabs button.is-active { color: #041018; }
   color: var(--text);
 }
 .account-order__amount small { font-size: 0.68rem; color: var(--muted); }
+.account-order__receipt {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.account-order__receipt .btn-ghost svg { width: 16px; height: 16px; }
+.account-order__receipt small { font-size: 0.66rem; color: var(--muted-2); }
 
 .acc-chip {
   display: inline-flex;
