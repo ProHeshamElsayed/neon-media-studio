@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark" data-accent="cyan">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#04060c">
+  <meta name="description" content="مقالات نِيون ميديا — نصائح تسويق رقمي، تصميم، سوشيال ميديا.">
+  <meta name="robots" content="index, follow">
+  <title>المقالات | نِيون ميديا</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="manifest" href="site.webmanifest?v=20261115">
+  <link rel="apple-touch-icon" href="assets/img/icon-192.png">
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var theme = localStorage.getItem('neonTheme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <script src="assets/js/file-origin-guard.js" data-page="blog.html"></script>
+  <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="base.css?v=20261116f">
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/components.css?v=20261114i">
+  <link rel="stylesheet" href="assets/css/extras.css">
+  <link rel="stylesheet" href="assets/css/glass.css?v=20261114i">
+  <noscript><style>#preloader{display:none!important}html.js [data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body class="is-loading" data-fixed-meta>
+  <noscript><div class="noscript-note">يرجى تفعيل JavaScript.</div></noscript>
+  <a class="skip-link" href="#main">تخطي</a>
+  <div class="preloader" id="preloader" role="status"><div class="preloader__inner"><div class="loader-mark"><img src="assets/img/logo.svg" alt="نِيون ميديا"></div><div class="loader-bar"><span id="loaderProgress"></span></div><p class="preloader__hint">نجهّز…</p></div></div>
+  <div class="bg-effects" aria-hidden="true"><span class="aurora aurora--1"></span><span class="aurora aurora--2"></span><span class="aurora aurora--3"></span></div>
+
+  <header class="site-header" id="siteHeader">
+    <nav class="navbar"><div class="container">
+      <a class="navbar-brand" href="index.html"><span class="brand-mark"><img src="assets/img/logo.svg" alt=""></span><span class="brand-text"><strong data-bind="settings.siteName">نِيون ميديا</strong><span data-bind="settings.brandLatin">NEON MEDIA</span></span></a>
+      <div class="nav-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="index.html#services">خدماتنا</a>
+        <a href="index.html#works">أعمالنا</a>
+        <a href="contact.html">الاتصال</a>
+        <a href="account.html">حسابي</a>
+      </div>
+    </div></nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero"><div class="container">
+      <span class="eyebrow"><span class="pulse-dot"></span> مقالات</span>
+      <h1>نصائح <span class="text-gradient">للنمو</span></h1>
+      <p>مختصرات عملية من تجربتنا في التسويق والتصميم.</p>
+    </div></section>
+
+    <section class="section"><div class="container">
+      <div class="services-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <article class="card-neon" data-reveal>
+          <h3>5 نصائح لتصاميم سوشيال ميديا تجذب التوقف</h3>
+          <p class="text-muted">التباين، التسلسل، CTA واضح، صور حقيقية، واختبار A/B.</p>
+          <a class="btn-ghost btn-sm mt-2" href="#">اقرأ المزيد</a>
+        </article>
+        <article class="card-neon" data-reveal>
+          <h3>كيف تختار ألوان علامتك (بدون مبالغة)</h3>
+          <p class="text-muted">3 ألوان كحد أقصى، تباين للقراءة، واختبار على mobile.</p>
+          <a class="btn-ghost btn-sm mt-2" href="#">اقرأ المزيد</a>
+        </article>
+        <article class="card-neon" data-reveal>
+          <h3>التصوير: 3 إعدادات ترفع جودة صورك</h3>
+          <p class="text-muted">إضاءة، زاوية، ومعالجة لونية موحدة.</p>
+          <a class="btn-ghost btn-sm mt-2" href="#">اقرأ المزيد</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container"><div class="footer-bottom"><p>© <span data-year>2026</span> <span data-bind="settings.siteName">نِيون ميديا</span> — جميع الحقوق محفوظة.</p></div></div></footer>
+
+  <audio id="quranAudio" preload="none" loop aria-hidden="true"></audio>
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/firebase-sync.js?v=20261114i"></script>
+  <script src="assets/js/site-seed.js"></script>
+  <script src="assets/js/store.js?v=20261114i"></script>
+  <script src="assets/js/app.js"></script>
+  <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+</body>
+</html>
