@@ -228,11 +228,15 @@
     if (UI && UI.toast) UI.toast(message, type || 'info', duration || 4500);
   }
 
-  function showNotice(message, tone) {
+  function showNotice(message, tone, autoHideMs) {
     if (!els.notice) return;
     els.notice.hidden = false;
     els.notice.setAttribute('data-tone', tone || 'warn');
     els.notice.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><span>' + message + '</span>';
+    if (autoHideMs) {
+      if (state.noticeTimer) window.clearTimeout(state.noticeTimer);
+      state.noticeTimer = window.setTimeout(hideNotice, autoHideMs);
+    }
   }
 
   function hideNotice() {
@@ -643,6 +647,22 @@
     return rows.join('');
   }
 
+  function isFinalReceipt(order) {
+    var status = (order && order.status) || '';
+    if (status !== 'مكتمل') return false;
+    var payStatus = String((order && order.paymentStatus) || '').trim();
+    if (payStatus === 'مدفوع' || payStatus === 'مدفوع بالكامل') return true;
+    try {
+      var store = window.NeonStore;
+      if (store && store.orderPaid && store.orderBalance) {
+        var paid = Number(store.orderPaid(order)) || 0;
+        var balance = Number(store.orderBalance(order)) || 0;
+        if (paid > 0 && balance <= 0) return true;
+      }
+    } catch (e) { /* ignore */ }
+    return false;
+  }
+
   function orderCard(order) {
     var status = order.status || 'جديد';
     var payStatus = order.paymentStatus || 'غير مدفوع';
@@ -673,7 +693,7 @@
       '</div>' +
       trackHtml(order) +
       '<div class="account-order__receipt">' +
-        '<button type="button" class="btn-ghost btn-sm" data-print-receipt="' + esc(orderNo(order)) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Z"/><path d="m2 15 10 6 10-6"/><path d="m2 12 10 6 10-6"/></svg> تحميل الإيصال PDF</button>' +
+        '<button type="button" class="btn-ghost btn-sm" data-print-receipt="' + esc(orderNo(order)) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Z"/><path d="m2 15 10 6 10-6"/><path d="m2 12 10 6 10-6"/></svg> ' + (isFinalReceipt(order) ? 'الإيصال النهائي (PDF)' : 'تحميل الإيصال PDF') + '</button>' +
       '</div>' +
       '<details class="account-order__more">' +
         '<summary>تفاصيل الطلب</summary>' +
@@ -683,6 +703,58 @@
         '</div>' +
       '</details>' +
     '</article>';
+  }
+
+  /* فتح الإيصال بطريقة موثوقة: Blob URL + طباعة تلقائية، ولو منع البوب-أب نمشي على iframe مخفي */
+  function emitReceiptWindow(html) {
+    var autoPrint = '<scr' + 'ipt>window.addEventListener("load",function(){setTimeout(function(){try{window.print()}catch(e){}},400)});</scr' + 'ipt>';
+    var full = html.replace('</body></html>', autoPrint + '</body></html>');
+    var url = '';
+    try {
+      var blob = new Blob([full], { type: 'text/html;charset=utf-8' });
+      url = URL.createObjectURL(blob);
+    } catch (error) { /* تجاهل */ }
+
+    var win = null;
+    try { win = url ? window.open(url, '_blank') : window.open('', '_blank'); } catch (error) { win = null; }
+
+    if (win && !url) {
+      try {
+        win.document.open();
+        win.document.write(full);
+        win.document.close();
+        win.focus();
+      } catch (error) { /* تجاهل */ }
+      return;
+    }
+    if (win) {
+      /* فُتح تبويب جديد بملف الإيصال — الطباعة التلقائية مدمجة في الصفحة */
+      setTimeout(function () { URL.revokeObjectURL(url); }, 120000);
+      showNotice('إيصالك فُتح في تبويب جديد — اختر «حفظ كـ PDF» من نافذة الطباعة.', 'info', 6000);
+      return;
+    }
+
+    /* البوب-أب ممنوع: طباعة عبر iframe مخفي */
+    try {
+      var frame = document.createElement('iframe');
+      frame.setAttribute('aria-hidden', 'true');
+      frame.style.cssText = 'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;';
+      frame.srcdoc = full;
+      frame.onload = function () {
+        try {
+          frame.contentWindow.focus();
+          frame.contentWindow.print();
+        } catch (error) { /* تجاهل */ }
+        window.setTimeout(function () {
+          try { frame.remove(); } catch (error) { /* تجاهل */ }
+          if (url) URL.revokeObjectURL(url);
+        }, 60000);
+      };
+      document.body.appendChild(frame);
+      showNotice('نافذة الطباعة فُتحت — لو ظهرت إعدادات الطباعة اختر «حفظ كـ PDF».', 'info', 6000);
+    } catch (error) {
+      showNotice('المتصفح منع فتح الإيصال. اسمح بالنوافذ المنبثقة للموقع وحاول مرة أخرى.', 'error', 7000);
+    }
   }
 
   function printCustomerReceipt(receiptNo) {
@@ -712,8 +784,11 @@
     }
     totalsHtml += '<div class="row grand"><span>الإجمالي</span><strong>' + esc(money(total, currency)) + '</strong></div>';
     var payInfo = order.paymentMethod ? '<p>طريقة الدفع: ' + esc(order.paymentMethod) + '</p>' : '';
+    var finalReceipt = isFinalReceipt(order);
+    var receiptTitle = finalReceipt ? 'إيصال ضريبي معتمد' : 'إيصال استلام مقدم';
+    var receiptSubtitle = finalReceipt ? esc(siteName) + ' — تم التنفيذ والتسليم' : esc(siteName);
     var html = '<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">' +
-      '<title>إيصال ' + esc(orderNo(order)) + '</title>' +
+      '<title>' + esc(receiptTitle) + ' ' + esc(orderNo(order)) + '</title>' +
       '<style>' +
         '@page{margin:16mm}' +
         '*{box-sizing:border-box}body{font-family:Cairo,Tajawal,sans-serif;background:#fff;color:#1a2332;margin:0;padding:22px}' +
@@ -732,9 +807,9 @@
         '.foot{margin-top:22px;font-size:11px;color:#7a6a58;border-top:1px solid #e8dfd5;padding-top:10px;line-height:1.7}' +
         '@media print{body{padding:0}.wrap{border:none;border-radius:0;padding:0}}' +
       '</style></head><body><div class="wrap">' +
-        '<header><div><h1>إيصال استلام مقدم</h1><p>' + esc(siteName) + '</p>' +
+        '<header><div><h1>' + esc(receiptTitle) + '</h1><p>' + esc(receiptSubtitle) + '</p>' +
           (settingsLocal.taxNumber ? '<p>الرقم الضريبي: ' + esc(settingsLocal.taxNumber) + '</p>' : '') +
-        '</div><span class="pill">إيصال</span></header>' +
+        '</div><span class="pill">' + (finalReceipt ? 'معتمَد' : 'مقدم') + '</span></header>' +
         '<div class="meta">' +
           '<div><strong>رقم الطلب:</strong> ' + esc(orderNo(order)) + '</div>' +
           '<div><strong>التاريخ:</strong> ' + esc(formatDate(order.createdAt, true)) + '</div>' +
@@ -748,15 +823,11 @@
         '<table><thead><tr><th>الخدمة</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th></tr></thead><tbody>' + (lines || '<tr><td colspan="4">—</td></tr>') + '</tbody></table>' +
         '<div class="totals">' + totalsHtml + '</div>' +
         payInfo +
-        '<div class="foot">هذا إيصال استلام مقدم (غير ضريبي) — يُصدر بعد إنشاء الطلب. الإيصال الضريبي النهائي يصح بعد تنفيذ الخدمة وقفل الدفع.</div>' +
+        '<div class="foot">' + (finalReceipt
+          ? 'هذا إيصال ضريبي معتمد — تم تنفيذ الطلب واستلام العميل له. صالح كمستند قانوني في إقرارك الضريبي الشهري.'
+          : 'هذا إيصال استلام مقدم (غير ضريبي) — يُصدر بعد إنشاء الطلب. الإيصال الضريبي النهائي يصدر بعد التنفيذ وقفل الدفع.') + '</div>' +
       '</div></body></html>';
-    var win = window.open('', '_blank', 'width=820,height=1000');
-    if (!win) { showNotice('افتح المتصفح في وضع allow popups أو حاول من Chrome.', 'warn'); return; }
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(function () { try { win.print(); } catch (error) {} }, 320);
+    emitReceiptWindow(html);
   }
 
   function emptyOrders() {
