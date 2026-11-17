@@ -643,6 +643,22 @@
     return rows.join('');
   }
 
+  function isFinalReceipt(order) {
+    var status = (order && order.status) || '';
+    if (status !== 'مكتمل') return false;
+    var payStatus = String((order && order.paymentStatus) || '').trim();
+    if (payStatus === 'مدفوع' || payStatus === 'مدفوع بالكامل') return true;
+    try {
+      var store = window.NeonStore;
+      if (store && store.orderPaid && store.orderBalance) {
+        var paid = Number(store.orderPaid(order)) || 0;
+        var balance = Number(store.orderBalance(order)) || 0;
+        if (paid > 0 && balance <= 0) return true;
+      }
+    } catch (e) { /* ignore */ }
+    return false;
+  }
+
   function orderCard(order) {
     var status = order.status || 'جديد';
     var payStatus = order.paymentStatus || 'غير مدفوع';
@@ -661,7 +677,7 @@
             (count ? '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12L6 6Z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg>' + count + ' عنصر</span>' : '') +
           '</div>' +
         '</div>' +
-        '<div style="display:flex;gap:.35rem;flex-wrap:wrap">' +
+        '<div style="display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-end">' +
           '<span class="acc-chip acc-chip--' + (STATUS_CLASS[status] || 'new') + '">' + esc(status) + '</span>' +
           '<span class="acc-chip acc-chip--' + (PAY_CLASS[payStatus] || 'muted') + '">' + esc(payStatus) + '</span>' +
         '</div>' +
@@ -672,6 +688,9 @@
         '<small>شامل الضريبة عند تفعيلها</small>' +
       '</div>' +
       trackHtml(order) +
+      '<div class="account-order__receipt">' +
+        '<button type="button" class="btn-ghost btn-sm" data-print-receipt="' + esc(orderNo(order)) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Z"/><path d="m2 15 10 6 10-6"/><path d="m2 12 10 6 10-6"/></svg> ' + (isFinalReceipt(order) ? 'الإيصال النهائي (PDF)' : 'تحميل الإيصال PDF') + '</button>' +
+      '</div>' +
       '<details class="account-order__more">' +
         '<summary>تفاصيل الطلب</summary>' +
         '<div class="account-order__body">' +
@@ -680,6 +699,85 @@
         '</div>' +
       '</details>' +
     '</article>';
+  }
+
+  function printCustomerReceipt(receiptNo) {
+    var order = (state.orders || []).filter(function (item) {
+      return String(item && (item.orderNo || item.numberPrefix || '')).trim() === String(receiptNo || '').trim();
+    })[0] || (state.orders || []).filter(function (item) {
+      return String(item && item.id || '').trim() === String(receiptNo || '').trim();
+    })[0] || (state.orders || []).filter(function (item) {
+      return String(item && item.number != null ? item.number : '') === String(receiptNo || '').trim();
+    })[0];
+    if (!order) {
+      showNotice('لم نجد الطلب في هذا الحساب.', 'error');
+      return;
+    }
+    var settingsLocal = (window.NeonStore && window.NeonStore.get) ? window.NeonStore.get().settings || {} : {};
+    var siteName = settingsLocal.siteName || 'نِيون ميديا';
+    var currency = order.currency || settingsLocal.currency || 'ج.م';
+    var items = Array.isArray(order.items) ? order.items : [];
+    var lines = items.map(function (item) {
+      return '<tr><td>' + esc(item.title || item.name || '—') + '</td><td>' + esc(String(item.qty || n(item.qty) || 1)) + '</td><td>' + esc(money(item.price, currency)) + '</td><td>' + esc(money(item.total || (n(item.price) * (n(item.qty) || 1)), currency)) + '</td></tr>';
+    }).join('');
+    var total = order.total != null ? order.total : order.amount;
+    var vatAmount = Number(order.vatAmount || 0);
+    var totalsHtml = '';
+    if (order.vatEnabled) {
+      totalsHtml += '<div class="row"><span>الضريبة (' + esc(String(order.vatRate || 0)) + '%)</span><strong>' + esc(money(vatAmount, currency)) + '</strong></div>';
+    }
+    totalsHtml += '<div class="row grand"><span>الإجمالي</span><strong>' + esc(money(total, currency)) + '</strong></div>';
+    var payInfo = order.paymentMethod ? '<p>طريقة الدفع: ' + esc(order.paymentMethod) + '</p>' : '';
+    var finalReceipt = isFinalReceipt(order);
+    var receiptTitle = finalReceipt ? 'إيصال ضريبي معتمد' : 'إيصال استلام مقدم';
+    var receiptSubtitle = finalReceipt ? esc(siteName) + ' — تم التنفيذ والتسليم' : esc(siteName);
+    var html = '<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">' +
+      '<title>' + esc(receiptTitle) + ' ' + esc(orderNo(order)) + '</title>' +
+      '<style>' +
+        '@page{margin:16mm}' +
+        '*{box-sizing:border-box}body{font-family:Cairo,Tajawal,sans-serif;background:#fff;color:#1a2332;margin:0;padding:22px}' +
+        '.wrap{max-width:720px;margin:0 auto;border:1px solid #e8dfd5;border-radius:16px;padding:26px}' +
+        'header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #0f7a5a;padding-bottom:16px;margin-bottom:18px}' +
+        'h1{font-size:22px;margin:0;color:#0f7a5a}p{margin:4px 0;color:#4a5a6a;font-size:13px}' +
+        '.pill{padding:5px 10px;border-radius:999px;background:#f3fbf6;color:#0f7a5a;font-size:13px;font-weight:800;border:1px solid #b7eeda}' +
+        '.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:12px;margin:14px 0;line-height:1.8}' +
+        '.meta div{border-bottom:1px dashed #e8dfd5;padding-bottom:4px}' +
+        'table{width:100%;border-collapse:collapse;font-size:12px;margin:14px 0}' +
+        'th{background:#f7f1e8;padding:8px;border-bottom:1px solid #e8dfd5;text-align:right}' +
+        'td{padding:8px;border-bottom:1px solid #f2ede4}' +
+        '.totals{margin-top:12px;margin-inline-start:auto;width:70%}' +
+        '.row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px dashed #efe8dc}' +
+        '.grand{border-top:2px solid #0f7a5a;margin-top:6px;padding-top:10px;font-size:16px;font-weight:900;color:#0f7a5a}' +
+        '.foot{margin-top:22px;font-size:11px;color:#7a6a58;border-top:1px solid #e8dfd5;padding-top:10px;line-height:1.7}' +
+        '@media print{body{padding:0}.wrap{border:none;border-radius:0;padding:0}}' +
+      '</style></head><body><div class="wrap">' +
+        '<header><div><h1>' + esc(receiptTitle) + '</h1><p>' + esc(receiptSubtitle) + '</p>' +
+          (settingsLocal.taxNumber ? '<p>الرقم الضريبي: ' + esc(settingsLocal.taxNumber) + '</p>' : '') +
+        '</div><span class="pill">' + (finalReceipt ? 'معتمَد' : 'مقدم') + '</span></header>' +
+        '<div class="meta">' +
+          '<div><strong>رقم الطلب:</strong> ' + esc(orderNo(order)) + '</div>' +
+          '<div><strong>التاريخ:</strong> ' + esc(formatDate(order.createdAt, true)) + '</div>' +
+          '<div><strong>العميل:</strong> ' + esc(order.name || '—') + '</div>' +
+          '<div><strong>الهاتف:</strong> ' + esc(order.phone || '—') + '</div>' +
+          (order.email ? '<div><strong>البريد:</strong> ' + esc(order.email) + '</div>' : '') +
+          '<div><strong>طريقة الدفع:</strong> ' + esc(order.paymentMethod || '—') + '</div>' +
+          '<div><strong>حالة الطلب:</strong> ' + esc(order.status || 'جديد') + '</div>' +
+          '<div><strong>حالة الدفع:</strong> ' + esc(order.paymentStatus || 'غير مدفوع') + '</div>' +
+        '</div>' +
+        '<table><thead><tr><th>الخدمة</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th></tr></thead><tbody>' + (lines || '<tr><td colspan="4">—</td></tr>') + '</tbody></table>' +
+        '<div class="totals">' + totalsHtml + '</div>' +
+        payInfo +
+        '<div class="foot">' + (finalReceipt
+          ? 'هذا إيصال ضريبي معتمد — تم تنفيذ الطلب واستلام العميل له. صالح كمستند قانوني في إقرارك الضريبي الشهري.'
+          : 'هذا إيصال استلام مقدم (غير ضريبي) — يُصدر بعد إنشاء الطلب. الإيصال الضريبي النهائي يصدر بعد التنفيذ وقفل الدفع.') + '</div>' +
+      '</div></body></html>';
+    var win = window.open('', '_blank', 'width=820,height=1000');
+    if (!win) { showNotice('افتح المتصفح في وضع allow popups أو حاول من Chrome.', 'warn'); return; }
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(function () { try { win.print(); } catch (error) {} }, 320);
   }
 
   function emptyOrders() {
@@ -807,6 +905,11 @@
 
   /* ------------------------------- Events --------------------------------- */
   els.orders.addEventListener('click', function (event) {
+    var printBtn = event.target.closest('[data-print-receipt]');
+    if (printBtn) {
+      printCustomerReceipt(printBtn.getAttribute('data-print-receipt'));
+      return;
+    }
     var pageBtn = event.target.closest('[data-orders-page]');
     if (pageBtn) {
       state.page = Number(pageBtn.getAttribute('data-orders-page')) || 1;

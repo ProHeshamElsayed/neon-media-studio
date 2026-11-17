@@ -981,7 +981,8 @@ html[data-theme='light'] .package-card { background: rgba(255, 255, 255, 0.82); 
 }
 .work-card {
   position: relative;
-  border-radius: 20px;
+  border-radius: 16px;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   border: 1px solid var(--line);
   background: var(--surface-solid);
@@ -1060,8 +1061,8 @@ html[data-theme='light'] .work-card::after {
   transition: all 0.35s var(--ease-spring);
 }
 .work-card__open svg { width: 16px; height: 16px; }
-.work-card:hover img { transform: scale(1.06); filter: saturate(1.08); }
-.work-card:hover .work-card__content { transform: none; }
+.work-card:hover img { transform: scale(1.08); filter: saturate(1.1); }
+.work-card:hover .work-card__content { transform: translateY(-4px); }
 .work-card:hover .work-card__open { opacity: 1; transform: none; }
 .works-cta {
   display: flex;

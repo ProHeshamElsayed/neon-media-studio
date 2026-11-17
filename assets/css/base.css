@@ -185,6 +185,45 @@ html[data-theme='light'] {
   --shadow-pink: 0 0 38px rgba(var(--accent-3-rgb), 0.14);
 }
 
+/* ============================================================
+   BEIGE — «بيج أنيق» — لوحات المخبوزات والقهوة (من LIBERTA)
+   ============================================================ */
+html[data-accent='beige'] {
+  --accent: #9a5433;
+  --accent-2: #6f3f1f;
+  --accent-3: #c08b5c;
+  --accent-rgb: 154, 84, 51;
+  --accent-2-rgb: 111, 63, 31;
+  --accent-3-rgb: 192, 139, 92;
+  --gradient: linear-gradient(115deg, #6f3f1f 0%, #9a5433 46%, #c08b5c 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(154, 84, 51, 0.16), rgba(192, 139, 92, 0.15), rgba(111, 63, 31, 0.11));
+  --gradient-line: linear-gradient(90deg, transparent, #9a5433, #c08b5c, #6f3f1f, transparent);
+
+  --bg: #fdf6e6;
+  --bg-2: #f4ead9;
+  --bg-3: #ece0d0;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-solid: #fffdf8;
+  --surface-2: rgba(255, 255, 255, 0.92);
+  --surface-3: rgba(90, 61, 43, 0.06);
+  --glass: rgba(253, 246, 230, 0.72);
+  --glass-strong: rgba(253, 246, 230, 0.94);
+  --header-bg: rgba(253, 246, 230, 0.94);
+  --text: #5a3d2b;
+  --text-soft: #6f5038;
+  --muted: #7a5f4b;
+  --muted-2: #9a8268;
+  --line: rgba(90, 61, 43, 0.13);
+  --line-strong: rgba(90, 61, 43, 0.22);
+  --field-bg: rgba(90, 61, 43, 0.05);
+  --field-border: rgba(90, 61, 43, 0.18);
+  --shadow-soft: 0 22px 58px rgba(90, 61, 43, 0.17);
+  --shadow-card: 0 28px 64px -26px rgba(90, 61, 43, 0.42);
+  --shadow-neon: 0 0 46px rgba(154, 84, 51, 0.32);
+  --shadow-pink: 0 0 46px rgba(192, 139, 92, 0.3);
+  color-scheme: light;
+}
+
 /* ----------------------------- Reset ------------------------------------ */
 *,
 *::before,
@@ -204,8 +243,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.85;
+  font-size: 1.07rem;
+  line-height: 1.9;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

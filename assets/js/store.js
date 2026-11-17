@@ -68,6 +68,12 @@
       quranTitle: 'آية الكرسي — الشيخ مشاري العفاسي',
       quranUrl: 'https://everyayah.com/data/Alafasy_128kbps/002255.mp3',
       quranLocalUrl: 'assets/audio/quran.mp3',
+      quranMode: 'first-visit',
+      quranPages: 'all',
+      quranVolume: 55,
+      quranBismillah: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+      quranGateText: 'نبدأ يومنا بآية من القرآن الكريم، ثم نصنع لك حضورًا يخطف الأنظار.',
+      quranWelcomeTitle: 'أهلًا بك في نِيون ميديا',
       announcement: 'عرض الافتتاح · خصم 15% على باقة إدارة السوشيال ميديا — لفترة محدودة',
       announcementLink: '#packages',
       announcementEnabled: true,
@@ -804,6 +810,7 @@
     orders: [],
     messages: [],
     customers: [],
+    receipts: [],
     banners: [],
     popups: [],
     campaignStats: {},
@@ -1068,6 +1075,48 @@
       });
     }
 
+    // إزالة تكرار العملاء: نفس رقم الهاتف = عميل واحد فقط مهما كان الاسم/الصيغة
+    if (Array.isArray(target.customers) && target.customers.length > 1) {
+      var byPhone = {};
+      var unique = [];
+      target.customers.forEach(function (customer) {
+        if (!customer || typeof customer !== 'object') { return; }
+        var key = normalizePhone(customer.phone);
+        if (!key) { unique.push(customer); return; }
+        var prev = byPhone[key];
+        if (prev) {
+          var newer = String(customer.updatedAt || customer.createdAt || '') > String(prev.updatedAt || prev.createdAt || '') ? customer : prev;
+          var older = newer === customer ? prev : customer;
+          // جمع النقاط والمقاييس من الأحدث والأقدم
+          newer.points = Number(newer.points || 0) + Number(older.points || 0);
+          newer.totalPointsEarned = Number(newer.totalPointsEarned || 0) + Number(older.totalPointsEarned || 0);
+          newer.totalPointsRedeemed = Number(newer.totalPointsRedeemed || 0) + Number(older.totalPointsRedeemed || 0);
+          // الاحتفاظ بأفضل بيانات التواصل
+          if (!newer.email && older.email) newer.email = older.email;
+          if (!newer.name && older.name) newer.name = older.name;
+          if (!newer.phone && older.phone) newer.phone = older.phone;
+          if (older.consent) newer.consent = true;
+          if (older.active !== false) newer.active = true;
+          // ضم الوسوم والملاحظات
+          var tags = {};
+          [newer, older].forEach(function (c) {
+            (Array.isArray(c.tags) ? c.tags : []).forEach(function (t) { tags[String(t).toLowerCase()] = t; });
+          });
+          newer.tags = Object.keys(tags).slice(0, 12).map(function (k) { return tags[k]; });
+          if (older.notes && String(newer.notes || '').indexOf(String(older.notes).trim()) === -1) {
+            newer.notes = String(newer.notes || '').trim()
+              ? String(newer.notes).trim() + '\n' + String(older.notes).trim()
+              : String(older.notes).trim();
+          }
+          newer.updatedAt = newer.updatedAt || older.updatedAt || older.createdAt;
+        } else {
+          byPhone[key] = customer;
+        }
+      });
+      Object.keys(byPhone).forEach(function (key) { unique.push(byPhone[key]); });
+      if (unique.length !== target.customers.length) { target.customers = unique; changed = true; }
+    }
+
     return changed;
   }
 
@@ -1191,7 +1240,7 @@
   }
 
   // مستند الموقع العام للزوار لا يحتوي بيانات العملاء أو الطلبات (خصوصية).
-  var CLOUD_EXCLUDED = ['orders', 'messages', 'customers', 'notifications'];
+  var CLOUD_EXCLUDED = ['orders', 'messages', 'customers', 'notifications', 'receipts'];
 
   function cloudPayload(source) {
     var payload = {};
@@ -1445,11 +1494,20 @@
     return true;
   }
 
+  // تحويل الأرقام العربية الهندية ٠-٩ +الفارسية ۰-۹ إلى الإنجليزية
+  var ARABIC_DIGIT_MAP = { '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9','۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9' };
   function normalizePhone(phone) {
-    var digits = String(phone == null ? '' : phone).replace(/\D/g, '');
+    var raw = String(phone == null ? '' : phone);
+    var cleaned = raw.replace(/[٠-٩۰-۹]/g, function (ch) { return ARABIC_DIGIT_MAP[ch] || ch; });
+    var digits = cleaned.replace(/\D/g, '');
     if (!digits) return '';
     if (digits.indexOf('00') === 0) digits = digits.slice(2);
-    if (digits.indexOf('20') === 0 && digits.length > 10) digits = digits.slice(2);
+    if (digits.indexOf('0020') === 0) digits = digits.slice(4);
+    if (digits.indexOf('20') === 0 && digits.length >= 12) digits = digits.slice(2);
+    if (digits.indexOf('2') === 0 && digits.length === 10 && digits.charAt(0) !== '0') {
+      // "1012345678" (رقم مصري/عربي بدون 0 في البداية)
+      digits = '0' + digits;
+    }
     if (digits.charAt(0) === '0' && digits.length > 9) digits = digits.slice(1);
     return digits;
   }
@@ -1753,6 +1811,212 @@
     return lines.join('\n');
   }
 
+  /* ============================================================
+     الإيصالات والفواتير الاستلامية
+     ============================================================ */
+
+  // الدفعات المسجلة لهذا الطلب (مصفوفة)
+  function orderPaymentsOf(order) {
+    if (!order) return [];
+    if (!Array.isArray(order.payments)) order.payments = [];
+    return order.payments;
+  }
+
+  // المدفوع (من الدفعات + المبالغ اليدوية fallback للطلبات القديمة)
+  function orderPaid(order) {
+    if (!order) return 0;
+    var manual = (order.amountPaid != null && isFinite(Number(order.amountPaid))) ? Number(order.amountPaid) : 0;
+    var sum = orderPaymentsOf(order).reduce(function (s, p) { return s + (Number(p && p.amount) || 0); }, 0);
+    return roundMoney(sum || manual);
+  }
+
+  // الباقي المستحق على العميل
+  function orderBalance(order) {
+    var totals = orderTotals(order || {}).total;
+    return Math.max(0, roundMoney(totals - orderPaid(order)));
+  }
+
+  // أرقام ومعلومات الإيصال العرضي
+  function orderReceiptNo(order) {
+    if (!order) return '';
+    if (order.receiptNo) return String(order.receiptNo);
+    var stem = orderNoLabel(order);
+    return stem; // نفس رقم الطلب لكل إيصال (العميل يربط بينهما)
+  }
+
+  function receiptBucket(order) {
+    if (!order) return [];
+    if (!Array.isArray(order.receipts)) order.receipts = [];
+    return order.receipts;
+  }
+
+  // الإيصال الفعلي لكل دفعة (يعاد توليدها عند الحاجة)
+  function buildReceiptEntry(order, payment, options) {
+    var opts = options || {};
+    var totals = orderTotals(order || {});
+    var paid = orderPaid(order);
+    var balance = Math.max(0, roundMoney(totals.total - paid));
+    var kind = opts.kind || (payment ? 'advance' : (balance === 0 ? 'final' : 'expected'));
+    var when = invoiceDateParts((payment && payment.paidAt) || (payment && payment.date) || (order && order.createdAt));
+    return {
+      id: (payment && payment.id) ? payment.id : 'RCP-' + (order && order.orderNo ? order.orderNo : Date.now().toString(36).toUpperCase()),
+      orderId: order ? order.id : null,
+      orderNo: order ? orderNoLabel(order) : '',
+      kind: kind,
+      amount: payment ? roundMoney(Number(payment.amount) || 0) : 0,
+      paidSoFar: paid,
+      balance: balance,
+      subtotal: totals.subtotal,
+      vatIncluded: !!totals.vatEnabled,
+      vatRate: totals.vatRate,
+      vatAmount: totals.vatAmount,
+      total: totals.total,
+      customerName: (order && order.name) || '',
+      customerPhone: (order && order.phone) || '',
+      customerEmail: (order && order.customerEmail) || '',
+      method: (payment && payment.method) || (order && order.paymentMethod) || '',
+      date: when.date,
+      time: when.time,
+      day: when.day,
+      createdAt: (payment && payment.createdAt) || nowISO(),
+      paidAt: (payment && payment.paidAt) || (order && order.paidAt) || null,
+      status: balance === 0 ? 'collected' : 'pending',
+      currency: (order && order.currency) || (data.settings && data.settings.currency) || 'ج.م'
+    };
+  }
+
+  // بناء الفاتورة الاستلامية (نص للواتساب/نسخ/معاينة)
+  function buildAdvanceReceipt(order, options) {
+    var opts = options || {};
+    if (!order) return 'لا يوجد طلب.';
+    var s = data.settings || {};
+    var siteName = s.siteName || 'نِيون ميديا';
+    var currency = (order && order.currency) || s.currency || 'ج.م';
+    var totals = orderTotals(order || {});
+    var paid = orderPaid(order);
+    var balance = Math.max(0, roundMoney(totals.total - paid));
+    var when = invoiceDateParts(order && order.createdAt);
+    var receiptNo = orderReceiptNo(order);
+    var sep = '------------------------------';
+    var lines = [];
+
+    lines.push('إيصال استلام مقدم — ' + siteName);
+    lines.push(sep);
+    lines.push('رقم الإيصال: ' + receiptNo);
+    lines.push('رقم الطلب: ' + orderNoLabel(order));
+    lines.push('اليوم: ' + when.day);
+    lines.push('التاريخ: ' + when.date);
+    lines.push('الوقت: ' + when.time);
+    lines.push('حالة الدفع: ' + (balance === 0 ? 'مكتمل الدفع' : 'متبقي دفع'));
+    lines.push(sep);
+    lines.push('بيانات العميل:');
+    lines.push('* الاسم: ' + ((order && order.name) || '—'));
+    lines.push('* الجوال: ' + ((order && order.phone) || '—'));
+    lines.push('* نوع الطلب: ' + ((order && (order.orderType || order.serviceTitle)) || '—'));
+    lines.push('* ملاحظات: ' + ((order && order.notes) || 'لا يوجد'));
+    lines.push('');
+    lines.push('تفاصيل الطلب:');
+    totals.items.forEach(function (item) {
+      lines.push('* ' + (item.title || '—'));
+      lines.push('   الكمية: ' + item.qty + ' × ' + formatMoneyFixed(item.price, currency) + ' = ' + formatMoneyFixed(item.total, currency));
+    });
+    lines.push('');
+    lines.push(sep);
+    if (totals.vatEnabled) {
+      lines.push('ضريبة القيمة المضافة (' + formatPercent(totals.vatRate) + '%): ' + formatMoneyFixed(totals.vatAmount, currency));
+      if (s.taxNumber) lines.push('الرقم الضريبي: ' + s.taxNumber);
+    }
+    lines.push('الإجمالي: ' + formatMoneyFixed(totals.total, currency));
+    lines.push('المدفوع: ' + formatMoneyFixed(paid, currency));
+    lines.push('الباقي: ' + formatMoneyFixed(balance, currency));
+    lines.push('');
+    lines.push(sep);
+    lines.push('إيصال استلام مقدم — وثيقة غير ملزمة ضريبيًا لحين صدور"إيصال ضريبي نهائي" بعد التسليم وقفل الطلب.');
+    if (s.invoiceNote) {
+      lines.push(String(s.invoiceNote)
+        .replace(/\{siteName\}/g, siteName)
+        .replace(/\{orderNo\}/g, orderNoLabel(order))
+        .replace(/\{total\}/g, formatMoneyFixed(totals.total, currency)));
+    }
+    return lines.join('\n');
+  }
+
+  // تسجيل دفعة مقدم جديدة لهذا الطلب
+  function addOrderPayment(orderId, payment) {
+    if (!orderId) return null;
+    var order = (data.orders || []).find(function (x) { return x.id === orderId; });
+    if (!order) return null;
+    if (!Array.isArray(order.payments)) order.payments = [];
+    var amount = roundMoney(Number(payment && payment.amount) || 0);
+    if (!isFinite(amount) || amount <= 0) return null;
+    var now = nowISO();
+    var entry = {
+      id: 'PAY-' + Date.now().toString(36).toUpperCase(),
+      amount: amount,
+      method: String((payment && payment.method) || 'تحويل بنكي').trim(),
+      notes: String((payment && payment.notes) || '').trim(),
+      paidAt: (payment && payment.paidAt) || now,
+      createdAt: now
+    };
+    order.payments.push(entry);
+    if (!Array.isArray(order.receipts)) order.receipts = [];
+    var receipt = buildReceiptEntry(order, entry, { kind: 'advance' });
+    order.receipts.push(receipt);
+
+    var paid = orderPaid(order);
+    var totals = orderTotals(order);
+    order.amountPaid = paid;
+    order.balance = Math.max(0, roundMoney(totals.total - paid));
+    if (order.balance <= 0) {
+      order.paymentStatus = 'مدفوع';
+      order.paidAt = now;
+      receipt.status = 'collected';
+      order.receipts[order.receipts.length - 1] = receipt;
+    } else if (paid > 0) {
+      order.paymentStatus = 'دفع مقدم';
+      if (!order.paidAt) order.paidAt = now;
+      receipt.status = 'paid';
+      order.receipts[order.receipts.length - 1] = receipt;
+    }
+    order.updatedAt = now;
+    persistLocal(true);
+    notify('order-payment');
+    return { payment: entry, receipt: receipt, paid: paid, balance: order.balance };
+  }
+
+  // كل إيصالات/فواتير الطلبات (بدون القائمة القديمة أو المرفقات)
+  function getAllReceipts() {
+    var out = [];
+    (data.orders || []).forEach(function (order) {
+      if (!order) return;
+      var receipts = Array.isArray(order.receipts) ? order.receipts : [];
+      if (!receipts.length) {
+        if (orderTotals(order).total > 0) {
+          out.push(buildReceiptEntry(order, null, { kind: 'expected' }));
+        }
+        return;
+      }
+      receipts.forEach(function (r) { if (r) out.push(r); });
+    });
+    return out;
+  }
+
+  // إيصال ضريبي نهائي (يضيف أيضًا لقائمة الإيصالات)
+  function recordFinalReceipt(orderId) {
+    var order = (data.orders || []).find(function (x) { return x.id === orderId; });
+    if (!order) return null;
+    if (!Array.isArray(order.receipts)) order.receipts = [];
+    var entry = buildReceiptEntry(order, null, { kind: 'final' });
+    entry.status = 'issued';
+    order.receipts.push(entry);
+    if (!data.receipts) data.receipts = [];
+    data.receipts.push(entry);
+    order.updatedAt = nowISO();
+    persistLocal(true);
+    notify('final-receipt');
+    return entry;
+  }
+
   // إيصال ضريبي معتمد يُصدر من لوحة التحكم بعد تنفيذ الطلب واستلام العميل.
   function buildTaxReceipt(order, options) {
     var opts = options || {};
@@ -1831,6 +2095,14 @@
     entry.vatAmount = totals.vatAmount;
     entry.total = totals.total;
     entry.amount = totals.total;
+    entry.amountPaid = 0;
+    entry.balance = totals.total;
+    if (!Array.isArray(entry.payments)) entry.payments = [];
+    entry.receipts = entry.receipts || [];
+    // إيصال استلام مقدم تلقائي — يشير للإجمالي + الباقي (0 دفع فعلاً عند إنشاء الطلب)
+    entry.receipts.push(buildReceiptEntry(entry, null, { kind: 'expected' }));
+    if (!Array.isArray(data.receipts)) data.receipts = [];
+    data.receipts.push(entry.receipts[entry.receipts.length - 1]);
 
     if (!Array.isArray(data.orders)) data.orders = [];
     data.orders.unshift(entry);
@@ -2009,6 +2281,13 @@
     orderTotals: orderTotals,
     buildInvoice: buildInvoice,
     buildTaxReceipt: buildTaxReceipt,
+    buildAdvanceReceipt: buildAdvanceReceipt,
+    getAllReceipts: getAllReceipts,
+    addOrderPayment: addOrderPayment,
+    recordFinalReceipt: recordFinalReceipt,
+    orderPaymentsOf: orderPaymentsOf,
+    orderPaid: orderPaid,
+    orderBalance: orderBalance,
     getCloudData: getCloudData,
     formatDate: function (value, withTime) {
       if (!value) return '—';

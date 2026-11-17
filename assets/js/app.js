@@ -283,7 +283,7 @@
       if (!audio.dataset.initialized) {
         audio.dataset.initialized = '1';
         audio.src = settings.quranUrl;
-        audio.volume = 0.55;
+        audio.volume = Math.max(0, Math.min(1, (Number(settings.quranVolume) || 55) / 100));
         audio.setAttribute('data-local-src', settings.quranLocalUrl || '');
       }
     }
@@ -316,13 +316,24 @@
     var audio = qs('#quranAudio');
     var gate = qs('#welcomeGate');
     var settings = window.NeonStore ? window.NeonStore.get().settings : {};
-    if (!settings.quranEnabled) {
+    var mode = settings.quranMode || 'first-visit';
+    var pages = settings.quranPages || 'all';
+    var page = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    var isHome = !page || page === 'index.html' || page === 'default.aspx';
+    var pagesAllowed = pages === 'all' || (pages === 'home' && isHome) || (pages === 'not-home' && !isHome);
+    // «أبداً» = مفيش بوابة خالص، والدخول مباشرة (زر التلاوة في الهيدر كافي)
+    if (!settings.quranEnabled || mode === 'never' || !pagesAllowed) {
       if (audio) audio.remove();
       if (gate) gate.remove();
       qsa('[data-audio-toggle]').forEach(function (btn) { btn.setAttribute('hidden', ''); });
       return;
     }
     if (!audio) return;
+
+    var bis = qs('.welcome-card__bismillah');
+    if (bis && settings.quranBismillah) bis.textContent = settings.quranBismillah;
+    var welTitle = qs('#welcomeTitle');
+    if (welTitle && (settings.quranWelcomeTitle || settings.welcomePopupTitle)) welTitle.textContent = settings.quranWelcomeTitle || settings.welcomePopupTitle;
 
     var toggles = qsa('[data-audio-toggle]');
     var eqs = qsa('.audio-equalizer');
@@ -372,11 +383,19 @@
     });
 
     var GATE_KEY = 'neonQuranGateSeen_v2';
+    // أول زيارة: علم دائم في localStorage · كل جلسة: علم في sessionStorage · كل زيارة: من غير علم
+    var useSession = mode === 'every-session';
+    function store2() {
+      try { return useSession ? window.sessionStorage : window.localStorage; } catch (e) { return null; }
+    }
     function markGateSeen() {
-      try { localStorage.setItem(GATE_KEY, '1'); } catch (e) { /* ignore */ }
+      var s = store2();
+      if (s) { try { s.setItem(GATE_KEY, '1'); } catch (e) { /* ignore */ } }
     }
     function hasSeenGate() {
-      try { return localStorage.getItem(GATE_KEY) === '1'; } catch (e) { return false; }
+      if (mode === 'every-visit') return false;
+      var s = store2();
+      try { return s ? s.getItem(GATE_KEY) === '1' : false; } catch (e) { return false; }
     }
     var gateSeen = hasSeenGate();
 
@@ -433,6 +452,7 @@
     var header = qs('#siteHeader');
     var progress = qs('#scrollProgress');
     var backTop = qs('[data-back-top]');
+    var backBottom = qs('[data-scroll-bottom]');
 
     var onScroll = function () {
       var y = window.scrollY || window.pageYOffset;
@@ -443,6 +463,7 @@
         progress.style.width = value + '%';
       }
       if (backTop) backTop.classList.toggle('is-visible', y > 520);
+      if (backBottom) backBottom.classList.toggle('is-visible', y < (document.documentElement.scrollHeight - window.innerHeight - 480));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -450,6 +471,11 @@
     if (backTop) {
       backTop.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: isReducedMotion ? 'auto' : 'smooth' });
+      });
+    }
+    if (backBottom) {
+      backBottom.addEventListener('click', function () {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: isReducedMotion ? 'auto' : 'smooth' });
       });
     }
 
@@ -972,11 +998,67 @@
   /* ------------------------------------------------------------------------
      Init
      ------------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------------
+     Header account pill: shows customer first name when signed in
+     ------------------------------------------------------------------------ */
+  function initHeaderAccount() {
+    var label = qs('#headerAccountName');
+    var link = qs('#headerAccountLink');
+    if (!label || !link) return;
+    var cloud = window.NeonCloud;
+    if (!cloud || !cloud.whenCustomerReady) {
+      // Fallback: no cloud — keep default label
+      return;
+    }
+    var setLabel = function (text) {
+      if (!label) return;
+      label.textContent = text || 'حسابي';
+      link.setAttribute('title', text ? ('حسابي — ' + text) : 'حسابي');
+    };
+    cloud.whenCustomerReady(6000).then(function (user) {
+      if (!user) { setLabel('حسابي'); return; }
+      if (cloud.getCustomerProfile) {
+        cloud.getCustomerProfile().then(function (profile) {
+          var name = (profile && profile.name) || (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
+          setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
+        }).catch(function () {
+          var name = (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
+          setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
+        });
+      } else {
+        var name = (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
+        setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
+      }
+    }).catch(function () { setLabel('حسابي'); });
+    window.addEventListener('neon:customerauth', function (event) {
+      var user = event && event.detail ? event.detail.user : null;
+      if (!user) { setLabel('حسابي'); return; }
+      var name = (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
+      setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
+    });
+  }
+
+  /* ------------------------------------------------------------------------
+     Notifications: inbox helpers (account notifications)
+     ------------------------------------------------------------------------ */
+  function initNotificationHelpers() {
+    // If any customer gets a notification (e.g. new reply from admin), surface it here.
+    // Currently used to trigger subtle UI highlight on account link.
+    var link = qs('#headerAccountLink');
+    if (!link) return;
+    window.addEventListener('neon:customerauth', function (event) {
+      var user = event && event.detail ? event.detail.user : null;
+      if (user) link.classList.add('is-signed-in'); else link.classList.remove('is-signed-in');
+    });
+  }
+
   function init() {
     document.documentElement.classList.add('js');
     initTheme();
     initPreloader();
     initNavigation();
+    initHeaderAccount();
+    initNotificationHelpers();
     refreshReveal();
     initTilt();
     initSpotlight();

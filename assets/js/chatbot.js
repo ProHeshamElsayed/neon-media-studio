@@ -102,6 +102,19 @@
     return items;
   }
 
+  var NINO_SVG = '<svg class="nino-fig" viewBox="0 0 48 48" fill="none" aria-hidden="true">'
+    + '<circle cx="24" cy="24" r="22.6" fill="#0b1220" stroke="#22e7ff" stroke-opacity=".78" stroke-width="1.8"/>'
+    + '<path d="M10 44 C11.5 36.5 15.5 32.6 24 32.6 C32.5 32.6 36.5 36.5 38 44 Z" fill="#17203a"/>'
+    + '<path d="M24 14 C30.5 14 33 18.5 33 24.4 C33 29.6 29.4 32.4 24 32.4 C18.6 32.4 15 29.6 15 24.4 C15 18.5 17.5 14 24 14 Z" fill="#f0c3a4"/>'
+    + '<path d="M15 24.2 C14.5 15 19 11.5 24 11.5 C29 11.5 33.5 15 33 24.2 C29.3 17.6 26.5 16.2 24 16.2 C21.5 16.2 18.7 17.6 15 24.2 Z" fill="#191f2e"/>'
+    + '<rect x="9.3" y="22.4" width="4.9" height="9" rx="2.45" fill="#0f1520"/><rect x="33.8" y="22.4" width="4.9" height="9" rx="2.45" fill="#0f1520"/>'
+    + '<path d="M14 22.8 C15.2 14.7 19.1 12 24 12 C28.9 12 32.8 14.7 34 22.8" stroke="#0f1520" stroke-width="3" stroke-linecap="round" fill="none"/>'
+    + '<path d="M17.8 24.2 L21.7 23.9 M26.3 23.9 L30.2 24.2" stroke="#20283a" stroke-width="2" stroke-linecap="round"/>'
+    + '<circle cx="19.5" cy="26.4" r="1.6" fill="#141a27"/><circle cx="28.5" cy="26.4" r="1.6" fill="#141a27"/>'
+    + '<path d="M21.4 30 Q24 32 26.6 30" stroke="#b3765e" stroke-width="1.5" stroke-linecap="round" fill="none"/>'
+    + '<circle cx="38.6" cy="33.6" r="2.7" fill="#35f5a0"/>'
+    + '</svg>';
+
   /* ---------------------------------------------------------------------- */
   /* Rendering                                                              */
   /* ---------------------------------------------------------------------- */
@@ -109,25 +122,24 @@
     root = document.createElement('div');
     root.className = 'chatbot';
     root.innerHTML = '' +
-      '<div class="chatbot-panel" id="chatbotPanel" role="dialog" aria-label="مساعد نِيون ميديا" aria-modal="false">' +
+      '<div class="chatbot-panel" id="chatbotPanel" role="dialog" aria-label="تحدث مع نِينو" aria-modal="false">' +
         '<div class="chatbot-head">' +
-          '<span class="chatbot-avatar" aria-hidden="true">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M12 7V4M8 12h.01M16 12h.01M9 16h6"/></svg>' +
-          '</span>' +
-          '<div class="chatbot-head__text"><strong id="chatbotTitle">مساعد هشام السيد</strong><span>ردّ فوري من محتوى الموقع · متاح 24/7</span></div>' +
+          '<span class="chatbot-avatar chatbot-avatar--nino" aria-hidden="true">' + NINO_SVG + '</span>' +
+          '<div class="chatbot-head__text"><strong id="chatbotTitle">تحدث مع نِينو</strong><span>نِينو · مساعد نِيون · ردّ فوري من محتوى الموقع · متاح 24/7</span></div>' +
           '<button type="button" class="chatbot-close" data-chat-action="close" aria-label="إغلاق المحادثة">×</button>' +
         '</div>' +
         '<div class="chatbot-log" id="chatbotLog" role="log" aria-live="polite"></div>' +
         '<div class="chatbot-suggest" id="chatbotSuggest"></div>' +
         '<form class="chatbot-form" id="chatbotForm">' +
-          '<input type="text" id="chatbotInput" autocomplete="off" placeholder="اكتب سؤالك… مثلاً: عايز أعرف الأسعار" aria-label="اكتب رسالتك">' +
+          '<input type="text" id="chatbotInput" autocomplete="off" placeholder="اسأل نِينو… مثلاً: عايز أعرف الأسعار" aria-label="اكتب رسالتك">' +
           '<button type="submit" aria-label="إرسال">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 16-8-6 16-2-6-8-2Z"/></svg>' +
           '</button>' +
         '</form>' +
       '</div>' +
-      '<button type="button" class="chatbot-fab" data-chat-action="toggle" aria-label="افتح المساعد الذكي" title="مساعد نِيون">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H8l-4 3v-4.4A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>' +
+      '<button type="button" class="chatbot-fab" data-chat-action="toggle" aria-label="تحدث مع نِينو" title="تحدث مع نِينو">' +
+        NINO_SVG +
+        '<span class="chatbot-fab__label" aria-hidden="true">تحدث مع <strong>نِينو</strong></span>' +
         '<span class="chatbot-fab__dot" aria-hidden="true"></span>' +
       '</button>';
     document.body.appendChild(root);
@@ -383,7 +395,7 @@
   }
 
   function helpText() {
-    return '<strong>أقدر أساعدك في إيه؟ 🤖</strong>' +
+    return '<strong>أقدر أساعدك في إيه؟ ⚡</strong>' +
       '<div class="chatbot-lines">' +
         '🛠️ الخدمات والأسعار • 📦 الباقات الشهرية • 💳 طرق الدفع' +
         '<br>📋 حالة الطلب • 🧾 الإيصال الضريبي • 🎁 العروض' +
@@ -430,10 +442,10 @@
 
   function welcomeMessage() {
     var messages = [
-      timeGreeting() + ' 👋<br>أنا مساعد <strong>' + esc(fullBrand()) + '</strong> 🤖<br>أقدر أقولك أسعار الخدمات، الباقات، طرق الدفع، حالة طلبك، أو أوصلك بالفريق مباشرة.<br>تحب نبدأ بإيه؟ 😊',
-      'أهلًا وسهلًا بيك في <strong>' + esc(fullBrand()) + '</strong> ✨<br>أنا هنا عشان أسهّل عليك: خدمات وأسعار 🛠️، باقات 📦، دفع 💳، متابعة طلب 📋، أو تواصل مباشر 💬.<br>اسألني أي حاجة!',
-      'نوّرت الاستوديو! 🌟<br>معاك مساعد <strong>' + esc(brand()) + '</strong> 🤖<br>عايز تعرف الأسعار؟ الباقات؟ طرق الدفع؟ أو حالة طلبك؟ اختار من الأزرار أو اكتب سؤالك 👇',
-      'أهلًا بيك يا فندم 🌹<br>أنا مساعد <strong>' + esc(fullBrand()) + '</strong>.<br>أقدر أساعدك تختار الخدمة المناسبة، تعرف التكلفة، تتابع طلبك، أو تتواصل معنا على واتساب 💬<br>إزاي أقدر أساعدك النهاردة؟ 😊'
+      timeGreeting() + ' 👋<br>أنا <strong>نِينو</strong>، مساعد نِيون ⚡<br>أقدر أقولك أسعار الخدمات، الباقات، طرق الدفع، حالة طلبك، أو أوصلك بالفريق مباشرة.<br>تحب نبدأ بإيه؟ 😊',
+      'أهلًا وسهلًا بيك ✨<br>معاك <strong>نِينو</strong>، مساعد نِيون —<br>أنا هنا عشان أسهّل عليك: خدمات وأسعار 🛠️، باقات 📦، دفع 💳، متابعة طلب 📋، أو تواصل مباشر 💬.<br>اسألني أي حاجة!',
+      'نوّرت الاستوديو 🌟<br>أنا <strong>نِينو</strong>، مساعد نِيون.<br>عايز تعرف الأسعار؟ الباقات؟ طرق الدفع؟ أو حالة طلبك؟ اختار من الأزرار أو اكتب سؤالك 👇',
+      'أهلًا بيك يا فندم 🌹<br>معاك <strong>نِينو</strong>، مساعد نِيون.<br>أقدر أساعدك تختار الخدمة المناسبة، تعرف التكلفة، تتابع طلبك، أو تتواصل معنا على واتساب 💬<br>إزاي أقدر أساعدك النهاردة؟ 😊'
     ];
     return messages[Math.floor(Math.random() * messages.length)];
   }
@@ -470,7 +482,7 @@
     }
 
     if (has(q, ['مين انت', 'من انت', 'اسمك', 'who are you', 'انت مين'])) {
-      botReply('أنا مساعد <strong>' + esc(fullBrand()) + '</strong> 🤖<br>مساعد ذكي بيجاوب من محتوى الموقع نفسه: خدمات، باقات، دفع، أسئلة شائعة، ومتابعة الطلبات.<br>مش بشر، لكن بفهم عليك 😄', QUICK);
+      botReply('أنا <strong>نِينو</strong>، مساعد نِيون ⚡<br>مساعد ذكي بيجاوب من محتوى الموقع نفسه: خدمات، باقات، دفع، أسئلة شائعة، ومتابعة الطلبات.<br>مش بشر، لكن بفهم عليك 😄', QUICK);
       return;
     }
 
@@ -695,8 +707,7 @@
     build();
     window.addEventListener('neon:datachange', function () {
       data = store.get();
-      var title = document.getElementById('chatbotTitle');
-      if (title) title.textContent = 'مساعد ' + (settings().siteName ? String(settings().siteName).split(' ')[0] : 'هشام السيد');
+      // الهوية الثابتة للمساعد: نِينو — لا تُستبدل باسم الموقع
     });
   }
 

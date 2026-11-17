@@ -565,6 +565,20 @@
     return rows;
   }
 
+  async function createCustomerOrder(payload) {
+    await initCustomer();
+    if (!customer.user) return null;
+    var body = cleanPayload(payload);
+    if (!body) return null;
+    // ربط تلقائي بحساب العميل (إن لم يُرسل)
+    if (!body.userId) body.userId = customer.user.uid;
+    if (!body.customerEmail && customer.user.email) body.customerEmail = customer.user.email;
+    if (!body.email && customer.user.email) body.email = customer.user.email;
+    var fs = customer.mods.fs;
+    var ref = await fs.addDoc(fs.collection(customer.db, 'orders'), body);
+    return ref.id;
+  }
+
   window.NeonCloud = {
     isConfigured: isConfigured,
     init: init,
@@ -601,6 +615,7 @@
     sendCustomerVerification: sendCustomerVerification,
     reloadCustomerUser: reloadCustomerUser,
     customerChangePassword: customerChangePassword,
-    fetchCustomerOrders: fetchCustomerOrders
+    fetchCustomerOrders: fetchCustomerOrders,
+    createCustomerOrder: createCustomerOrder
   };
 })();
