@@ -452,7 +452,6 @@
     var header = qs('#siteHeader');
     var progress = qs('#scrollProgress');
     var backTop = qs('[data-back-top]');
-    var backBottom = qs('[data-scroll-bottom]');
 
     var onScroll = function () {
       var y = window.scrollY || window.pageYOffset;
@@ -463,7 +462,6 @@
         progress.style.width = value + '%';
       }
       if (backTop) backTop.classList.toggle('is-visible', y > 520);
-      if (backBottom) backBottom.classList.toggle('is-visible', y < (document.documentElement.scrollHeight - window.innerHeight - 480));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -471,11 +469,6 @@
     if (backTop) {
       backTop.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: isReducedMotion ? 'auto' : 'smooth' });
-      });
-    }
-    if (backBottom) {
-      backBottom.addEventListener('click', function () {
-        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: isReducedMotion ? 'auto' : 'smooth' });
       });
     }
 
@@ -998,67 +991,11 @@
   /* ------------------------------------------------------------------------
      Init
      ------------------------------------------------------------------------ */
-  /* ------------------------------------------------------------------------
-     Header account pill: shows customer first name when signed in
-     ------------------------------------------------------------------------ */
-  function initHeaderAccount() {
-    var label = qs('#headerAccountName');
-    var link = qs('#headerAccountLink');
-    if (!label || !link) return;
-    var cloud = window.NeonCloud;
-    if (!cloud || !cloud.whenCustomerReady) {
-      // Fallback: no cloud — keep default label
-      return;
-    }
-    var setLabel = function (text) {
-      if (!label) return;
-      label.textContent = text || 'حسابي';
-      link.setAttribute('title', text ? ('حسابي — ' + text) : 'حسابي');
-    };
-    cloud.whenCustomerReady(6000).then(function (user) {
-      if (!user) { setLabel('حسابي'); return; }
-      if (cloud.getCustomerProfile) {
-        cloud.getCustomerProfile().then(function (profile) {
-          var name = (profile && profile.name) || (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
-          setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
-        }).catch(function () {
-          var name = (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
-          setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
-        });
-      } else {
-        var name = (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
-        setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
-      }
-    }).catch(function () { setLabel('حسابي'); });
-    window.addEventListener('neon:customerauth', function (event) {
-      var user = event && event.detail ? event.detail.user : null;
-      if (!user) { setLabel('حسابي'); return; }
-      var name = (user.displayName || '') || (user.email ? user.email.split('@')[0] : 'عميلنا');
-      setLabel(String(name).trim().split(' ')[0] || 'عميلنا');
-    });
-  }
-
-  /* ------------------------------------------------------------------------
-     Notifications: inbox helpers (account notifications)
-     ------------------------------------------------------------------------ */
-  function initNotificationHelpers() {
-    // If any customer gets a notification (e.g. new reply from admin), surface it here.
-    // Currently used to trigger subtle UI highlight on account link.
-    var link = qs('#headerAccountLink');
-    if (!link) return;
-    window.addEventListener('neon:customerauth', function (event) {
-      var user = event && event.detail ? event.detail.user : null;
-      if (user) link.classList.add('is-signed-in'); else link.classList.remove('is-signed-in');
-    });
-  }
-
   function init() {
     document.documentElement.classList.add('js');
     initTheme();
     initPreloader();
     initNavigation();
-    initHeaderAccount();
-    initNotificationHelpers();
     refreshReveal();
     initTilt();
     initSpotlight();
