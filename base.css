@@ -1410,6 +1410,18 @@ html.js [data-reveal].is-visible {
 @media (max-width: 575.98px) {
   body { line-height: 1.75; }
   .container { padding-inline: 1rem; }
+  /* النارب سطر واحد دايمًا — الشعار جنبه الأيقونات (بدون قفز سطر) */
+  .navbar > .container { flex-wrap: nowrap; gap: 0.5rem; }
+  .navbar-brand { gap: 0.45rem; }
+  .brand-mark { width: 36px; height: 36px; border-radius: 11px; }
+  .brand-mark img { width: 26px; height: 26px; }
+  .brand-text { gap: 0; }
+  .brand-text strong { font-size: 0.95rem; letter-spacing: -0.25px; white-space: nowrap; }
+  .brand-text span { font-size: 0.44rem; letter-spacing: 1.6px; white-space: nowrap; }
+  .header-actions { gap: 0.22rem; }
+  .header-actions .icon-btn { width: 33px; height: 33px; }
+  .header-actions .icon-btn svg { width: 16px; height: 16px; }
+  .nav-toggle { width: 37px; height: 37px; }
   .brand-mark { width: 40px; height: 40px; border-radius: 12px; }
   .brand-mark img { width: 29px; height: 29px; }
   .brand-text span { letter-spacing: 2.4px; font-size: 0.5rem; }

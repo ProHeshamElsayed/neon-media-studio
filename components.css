@@ -1063,7 +1063,7 @@ html[data-theme='light'] .account-link { background: linear-gradient(140deg, rgb
   .float-btn svg { width: 18px; height: 18px; }
   .float-wa { width: 52px; height: 52px; }
   .float-wa svg { width: 24px; height: 24px; }
-  .float-audio { display: none; }
+  .float-audio { display: inline-grid; place-items: center; }
   .modal-dialog { margin: 0.6rem; }
   .modal-content { border-radius: 20px; }
   .modal-header, .modal-body, .modal-footer { padding-inline: 1rem; }
