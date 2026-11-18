@@ -85,6 +85,8 @@
       vatRate: 14,
       pushEnabled: false,
       pushTopic: '',
+      adminTotpEnabled: false,
+      adminTotpSecret: '',
       taxNumber: '',
       invoiceNote: 'هذا إيصال إلكتروني صادر من {siteName} — الطلب رقم {orderNo}. الدفع عبر تحويل بنكي أو عند الاستلام فقط، ولا نطلب أي بيانات بطاقة.',
       accent: 'cyan',
@@ -1246,12 +1248,21 @@
 
   // مستند الموقع العام للزوار لا يحتوي بيانات العملاء أو الطلبات (خصوصية).
   var CLOUD_EXCLUDED = ['orders', 'messages', 'customers', 'notifications', 'receipts'];
+  // مفاتيح أمان لا يجوز أن تصل إلى السحابة العامة أبدًا — تبقى على هذا الجهاز فقط
+  var CLOUD_SETTING_SECRETS = ['adminTotpEnabled', 'adminTotpSecret'];
 
   function cloudPayload(source) {
     var payload = {};
     Object.keys(source || {}).forEach(function (key) {
       if (CLOUD_EXCLUDED.indexOf(key) === -1) payload[key] = source[key];
     });
+    if (payload.settings && typeof payload.settings === 'object') {
+      var filtered = {};
+      Object.keys(payload.settings).forEach(function (key) {
+        if (CLOUD_SETTING_SECRETS.indexOf(key) === -1) filtered[key] = payload.settings[key];
+      });
+      payload.settings = filtered;
+    }
     return payload;
   }
 
@@ -1263,6 +1274,15 @@
   function preserveLocalPrivate(target) {
     CLOUD_EXCLUDED.forEach(function (key) {
       if (Array.isArray(data[key]) && data[key].length) target[key] = data[key];
+    });
+    return target;
+  }
+
+  // مفاتيح الأمان (Authenticator) لا تأتي من السحابة ولا تُمسح عند تحديثها — المحلية تفوز دومًا
+  function preserveLocalSecrets(target) {
+    if (!target || !target.settings || !data.settings) return target;
+    CLOUD_SETTING_SECRETS.forEach(function (key) {
+      if (data.settings[key] !== undefined) target.settings[key] = data.settings[key];
     });
     return target;
   }
@@ -1320,6 +1340,7 @@
             var localStats = data.campaignStats;
             var incoming = mergeWithDefaults(remote);
             preserveLocalPrivate(incoming);
+            preserveLocalSecrets(incoming);
             mergeCampaignStats(incoming, localStats);
             if (JSON.stringify(incoming) !== JSON.stringify(data)) {
               data = incoming;
@@ -1334,6 +1355,7 @@
               var localStats = data.campaignStats;
               var incoming = mergeWithDefaults(remoteData);
               preserveLocalPrivate(incoming);
+              preserveLocalSecrets(incoming);
               mergeCampaignStats(incoming, localStats);
               if (JSON.stringify(incoming) === JSON.stringify(data)) return;
               data = incoming;
