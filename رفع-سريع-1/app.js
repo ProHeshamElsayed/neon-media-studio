@@ -80,6 +80,39 @@
     }
   }
 
+  function hexToRgb(hex) {
+    hex = String(hex || '').trim().replace(/^#/, '');
+    if (hex.length === 3) hex = hex.split('').map(function (c) { return c + c; }).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+    return {
+      r: parseInt(hex.substring(0, 2), 16),
+      g: parseInt(hex.substring(2, 4), 16),
+      b: parseInt(hex.substring(4, 6), 16)
+    };
+  }
+
+  function setCustomColors(primary, secondary, persist) {
+    var root = document.documentElement;
+    var p = hexToRgb(primary);
+    var s = hexToRgb(secondary);
+    if (p) {
+      root.style.setProperty('--accent', '#' + (primary.replace(/^#/, '')));
+      root.style.setProperty('--accent-rgb', p.r + ', ' + p.g + ', ' + p.b);
+    }
+    if (s) {
+      root.style.setProperty('--accent-2', '#' + (secondary.replace(/^#/, '')));
+      root.style.setProperty('--accent-2-rgb', s.r + ', ' + s.g + ', ' + s.b);
+      root.style.setProperty('--accent-3', '#' + (secondary.replace(/^#/, '')));
+      root.style.setProperty('--accent-3-rgb', s.r + ', ' + s.g + ', ' + s.b);
+    }
+    if (persist) {
+      try {
+        if (primary) localStorage.setItem('neonAccentColor', primary);
+        if (secondary) localStorage.setItem('neonAccentSecondary', secondary);
+      } catch (e) { /* ignore */ }
+    }
+  }
+
   function toggleTheme() {
     var current = document.documentElement.getAttribute('data-theme') || 'dark';
     setTheme(current === 'dark' ? 'light' : 'dark', true);
@@ -298,6 +331,52 @@
     }
 
     if (settings.accent) setAccent(settings.accent, false);
+
+    // ألوان نيون مخصصة (أساسي + ثانوي) — تتجاوز الألوان المُعرّفة مسبقًا.
+    if (settings.accentColor || settings.accentSecondary) {
+      setCustomColors(settings.accentColor, settings.accentSecondary);
+    }
+
+    // SEO — تطبيق البيانات التفصيلية.
+    var fixedMeta = document.body && document.body.hasAttribute('data-fixed-meta');
+    if (settings.seoTitle && !fixedMeta) document.title = settings.seoTitle;
+    var metaDesc = qs('meta[name="description"]');
+    if (metaDesc && settings.seoDescription && !fixedMeta) metaDesc.setAttribute('content', settings.seoDescription);
+    if (settings.seoKeywords) {
+      var metaKw = qs('meta[name="keywords"]');
+      if (!metaKw) { metaKw = document.createElement('meta'); metaKw.setAttribute('name', 'keywords'); document.head.appendChild(metaKw); }
+      metaKw.setAttribute('content', settings.seoKeywords);
+    }
+    if (settings.seoAuthor) {
+      var metaAuthor = qs('meta[name="author"]');
+      if (metaAuthor) metaAuthor.setAttribute('content', settings.seoAuthor);
+    }
+    if (settings.seoRobots) {
+      var metaRobots = qs('meta[name="robots"]');
+      if (!metaRobots) { metaRobots = document.createElement('meta'); metaRobots.setAttribute('name', 'robots'); document.head.appendChild(metaRobots); }
+      metaRobots.setAttribute('content', settings.seoRobots);
+    }
+    if (settings.seoCanonical) {
+      var linkCanon = qs('link[rel="canonical"]');
+      if (!linkCanon) { linkCanon = document.createElement('link'); linkCanon.setAttribute('rel', 'canonical'); document.head.appendChild(linkCanon); }
+      linkCanon.setAttribute('href', settings.seoCanonical);
+    }
+    // Open Graph
+    function setOg(prop, val) {
+      if (!val) return;
+      var el = qs('meta[property="' + prop + '"]');
+      if (!el) { el = document.createElement('meta'); el.setAttribute('property', prop); document.head.appendChild(el); }
+      el.setAttribute('content', val);
+    }
+    if (settings.seoOgTitle) setOg('og:title', settings.seoOgTitle);
+    if (settings.seoOgDescription) setOg('og:description', settings.seoOgDescription);
+    if (settings.seoOgImage) setOg('og:image', settings.seoOgImage);
+    // Twitter Card
+    if (settings.seoTwitterCard) {
+      var metaTw = qs('meta[name="twitter:card"]');
+      if (!metaTw) { metaTw = document.createElement('meta'); metaTw.setAttribute('name', 'twitter:card'); document.head.appendChild(metaTw); }
+      metaTw.setAttribute('content', settings.seoTwitterCard);
+    }
 
     var fixedMeta = document.body && document.body.hasAttribute('data-fixed-meta');
     if (settings.seoTitle && !fixedMeta) document.title = settings.seoTitle;
