@@ -1,7 +1,0 @@
-# robots.txt — نِيون ميديا
-User-agent: *
-Allow: /
-Disallow: /admin.html
-Disallow: /track.html
-
-Sitemap: https://neon-media-studio.netlify.app/sitemap.xml
