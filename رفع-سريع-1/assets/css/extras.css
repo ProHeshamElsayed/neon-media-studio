@@ -1,0 +1,320 @@
+/* ==========================================================================
+   NEON MEDIA — Extras (المؤثرات الإضافية)
+   يُحمَّل بعد باقي ملفات CSS. كل المؤثرات مرتبطة بالكلاس html.fx-on
+   حتى يمكن إيقافها بالكامل من زر ✨ في الأزرار العائمة (neonFxPlus).
+   لا يوجد هنا أي شيء يغيّر ملفات التصميم الأصلية.
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------
+   0) إصلاحات
+   ------------------------------------------------------------------------- */
+
+/* الصفحة كانت تتزحزح ~24px أفقيًا على الموبايل (عرض التخطيط 414 بدل 390).
+   overflow-x: clip لا يصنع حاوية تمرير، فلا يكسر position: sticky للهيدر. */
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+/* الهيدر عند التمرير كان شفافًا بما يكفي لتظهر نصوص الأقسام من تحته. */
+@supports (background: color-mix(in srgb, red 50%, transparent)) {
+  .site-header.is-scrolled {
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+  }
+}
+
+/* شبكة الأعمال: مع 8 أعمال (الوضع الافتراضي) كانت تبقى خانة فاضية في آخر صف
+   على الشاشات الكبيرة (4 أعمدة) والتابلت (عمودان). نمدّد آخر بطاقة لتسدّ الفراغ. */
+@media (min-width: 1200px), (min-width: 576px) and (max-width: 991.98px) {
+  .works-grid:not(.is-filtered) .work-card:nth-child(8):last-child { grid-column: span 2; }
+}
+
+/* -------------------------------------------------------------------------
+   1) زر تشغيل/إيقاف المؤثرات
+   ------------------------------------------------------------------------- */
+.float-fx svg { transition: transform 0.5s var(--ease-spring); }
+.float-fx:hover svg { transform: rotate(18deg) scale(1.1); }
+.float-fx[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.5);
+  box-shadow: 0 0 26px rgba(var(--accent-rgb), 0.28);
+}
+
+/* -------------------------------------------------------------------------
+   2) تموّج عند الضغط على الأزرار (Ripple)
+   ------------------------------------------------------------------------- */
+.fx-ripple {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 65%);
+  transform: scale(0);
+  opacity: 0.9;
+  animation: fxRipple 0.65s var(--ease) forwards;
+}
+@keyframes fxRipple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* -------------------------------------------------------------------------
+   3) ذيل المؤشر (Cursor trail)
+   ------------------------------------------------------------------------- */
+.fx-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 10069;
+  pointer-events: none;
+}
+html:not(.fx-on) .fx-trail { display: none; }
+
+/* -------------------------------------------------------------------------
+   4) نقاط التنقل بين الأقسام (Dot nav)
+   ------------------------------------------------------------------------- */
+.fx-dotnav {
+  position: fixed;
+  inset-inline-start: 14px;
+  top: 50%;
+  z-index: 1020;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: 99px;
+  background: rgba(var(--accent-rgb), 0.04);
+  border: 1px solid var(--line);
+  transform: translateY(-50%);
+}
+.fx-dotnav a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  outline-offset: 2px;
+}
+.fx-dotnav i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted, rgba(160, 175, 200, 0.55));
+  opacity: 0.55;
+  transition: transform 0.35s var(--ease-spring), background 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+}
+.fx-dotnav a:hover i,
+.fx-dotnav a:focus-visible i { opacity: 1; transform: scale(1.5); }
+.fx-dotnav a.is-active i {
+  opacity: 1;
+  transform: scale(1.7);
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.9);
+}
+.fx-dotnav a::after {
+  content: attr(data-label);
+  position: absolute;
+  inset-inline-start: calc(100% + 10px);
+  top: 50%;
+  padding: 0.28rem 0.7rem;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text, #fff);
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(6px, -50%);
+  transition: opacity 0.25s ease, transform 0.25s var(--ease);
+}
+[dir='rtl'] .fx-dotnav a::after { transform: translate(-6px, -50%); }
+.fx-dotnav a:hover::after,
+.fx-dotnav a:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+
+@media (min-width: 1280px) {
+  html.fx-on .fx-dotnav { display: flex; }
+}
+
+/* -------------------------------------------------------------------------
+   5) عناوين الأقسام: ظهور كلمة بكلمة
+   ------------------------------------------------------------------------- */
+html.fx-on .fx-split .fx-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translate3d(0, 0.5em, 0);
+  transition: opacity 0.7s var(--ease), transform 0.8s var(--ease);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+/* الكتل ذات التدرّج اللوني تبقى inline حتى لا يتكسّر التدرّج ولا يتغيّر تقطيع السطور */
+html.fx-on .fx-split .fx-unit {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+html.fx-on .fx-split.fx-in .fx-word,
+html.fx-on .fx-split.fx-in .fx-unit {
+  opacity: 1;
+  transform: none;
+}
+
+/* -------------------------------------------------------------------------
+   6) شريط النص العملاق بين الهيرو والنبذة
+   ------------------------------------------------------------------------- */
+.fx-band {
+  display: none;
+  position: relative;
+  overflow: hidden;
+  padding: 1.1rem 0;
+  margin-block: 0.5rem;
+  border-block: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.05), rgba(var(--accent-3-rgb), 0.05));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+html.fx-on .fx-band { display: block; }
+
+.fx-band__row { overflow: hidden; }
+.fx-band__row + .fx-band__row { margin-top: 0.25rem; }
+.fx-band__track {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+  width: max-content;
+  will-change: transform;
+  font-family: var(--font-display, var(--font-body));
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.fx-band__track span { font-size: clamp(2.6rem, 8vw, 6.4rem); }
+.fx-band__track b {
+  font-size: clamp(1.4rem, 3vw, 2.6rem);
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.8);
+}
+.fx-band__row--a span {
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(var(--accent-rgb), 0.6);
+}
+.fx-band__row--b span {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.85;
+}
+
+/* -------------------------------------------------------------------------
+   7) بارالاكس للهيرو والخلفية
+   ------------------------------------------------------------------------- */
+html.fx-on .hero__visual .chip-float--1 { translate: calc(var(--px, 0) * 18px) calc(var(--py, 0) * 12px); }
+html.fx-on .hero__visual .chip-float--2 { translate: calc(var(--px, 0) * -22px) calc(var(--py, 0) * 16px); }
+html.fx-on .hero__visual .chip-float--3 { translate: calc(var(--px, 0) * 14px) calc(var(--py, 0) * -14px); }
+html.fx-on .hero__visual .orbit-ring--1 { translate: calc(var(--px, 0) * -10px) calc(var(--py, 0) * -8px); }
+html.fx-on .hero__visual .orbit-ring--2 { translate: calc(var(--px, 0) * 12px) calc(var(--py, 0) * 9px); }
+
+html.fx-on .aurora--1 { translate: calc(var(--fx-sy, 0) * 90px) calc(var(--fx-sy, 0) * 520px); }
+html.fx-on .aurora--2 { translate: calc(var(--fx-sy, 0) * -120px) calc(var(--fx-sy, 0) * -340px); }
+html.fx-on .aurora--3 { translate: calc(var(--fx-sy, 0) * 160px) calc(var(--fx-sy, 0) * -420px); }
+
+/* -------------------------------------------------------------------------
+   8) أعمالنا: كشف الصورة بمسح (clip-path)
+   ------------------------------------------------------------------------- */
+html.fx-on .work-card.fx-armed img {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1.05s var(--ease), transform 0.7s var(--ease);
+}
+html.fx-on .work-card.fx-armed:not(.fx-in) img { clip-path: inset(0 0 100% 0); }
+
+/* -------------------------------------------------------------------------
+   9) حدود دوّارة للبطاقات المميزة
+   ------------------------------------------------------------------------- */
+@property --fx-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes fxSpin { to { --fx-angle: 360deg; } }
+
+html.fx-on .service-card--featured,
+html.fx-on .package-card--featured { position: relative; }
+
+html.fx-on .service-card--featured::after,
+html.fx-on .package-card--featured::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(from var(--fx-angle), transparent 0 55%, rgba(var(--accent-rgb), 0.95), rgba(var(--accent-3-rgb), 0.95), transparent 95%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: fxSpin 6s linear infinite;
+}
+
+/* -------------------------------------------------------------------------
+   10) انتقال الصفحات (ستارة دائرية)
+   ------------------------------------------------------------------------- */
+.fx-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  visibility: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--fx-cx, 50%) var(--fx-cy, 50%), rgba(var(--accent-rgb), 0.35), transparent 45%),
+    radial-gradient(circle at 80% 90%, rgba(var(--accent-3-rgb), 0.3), transparent 50%),
+    var(--bg, #04060c);
+  clip-path: circle(0% at var(--fx-cx, 50%) var(--fx-cy, 50%));
+}
+.fx-curtain.is-in {
+  visibility: visible;
+  clip-path: circle(150% at var(--fx-cx, 50%) var(--fx-cy, 50%));
+  transition: clip-path 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.fx-curtain.is-covering {
+  visibility: visible;
+  clip-path: circle(150% at var(--fx-cx, 50%) var(--fx-cy, 50%));
+}
+.fx-curtain.is-covering.is-out {
+  clip-path: circle(0% at var(--fx-cx, 50%) var(--fx-cy, 50%));
+  transition: clip-path 0.65s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+/* -------------------------------------------------------------------------
+   11) وضع الحفلة 🎉 (Konami: ↑ ↑ ↓ ↓ ← → ← → B A)
+   ------------------------------------------------------------------------- */
+html.fx-party .bg-effects { animation: fxHue 2.4s linear infinite; }
+html.fx-party .brand-mark { animation: fxWiggle 0.5s ease-in-out infinite alternate; }
+@keyframes fxHue { to { filter: hue-rotate(360deg); } }
+@keyframes fxWiggle { from { transform: rotate(-8deg) scale(1); } to { transform: rotate(8deg) scale(1.12); } }
+
+/* -------------------------------------------------------------------------
+   12) أجهزة ضعيفة / موبايل / تقليل الحركة
+   ------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+  html.fx-on .service-card--featured::after,
+  html.fx-on .package-card--featured::after { animation: none; background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.9), rgba(var(--accent-3-rgb), 0.9)); }
+  .fx-band__track span { font-size: clamp(2rem, 11vw, 3.4rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-ripple,
+  .fx-trail,
+  .fx-curtain { display: none !important; }
+  html.fx-on .fx-split .fx-word,
+  html.fx-on .fx-split .fx-unit { opacity: 1; transform: none; transition: none; }
+  html.fx-on .work-card.fx-armed:not(.fx-in) img { clip-path: none; }
+  html.fx-on .service-card--featured::after,
+  html.fx-on .package-card--featured::after { animation: none; }
+  html.fx-party .bg-effects,
+  html.fx-party .brand-mark { animation: none; }
+}
