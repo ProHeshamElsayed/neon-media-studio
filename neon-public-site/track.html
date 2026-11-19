@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark" data-accent="cyan">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#04060c">
+  <meta name="description" content="تتبّع طلبك في نِيون ميديا — أدخل رقم الطلب لتشوف حالته وحالة الدفع.">
+  <meta name="robots" content="noindex, nofollow">
+  <title>تتبّع الطلب | نِيون ميديا</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="manifest" href="site.webmanifest?v=20261115">
+  <link rel="apple-touch-icon" href="assets/img/icon-192.png">
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var theme = localStorage.getItem('neonTheme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+        var accent = localStorage.getItem('neonAccent');
+        if (accent && ['cyan', 'magenta', 'violet', 'lime'].indexOf(accent) !== -1) document.documentElement.setAttribute('data-accent', accent);
+      } catch (e) {}
+    })();
+  </script>
+  <script src="assets/js/file-origin-guard.js" data-page="track.html"></script>
+  <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="base.css?v=20261117z">
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/components.css?v=20261117z">
+  <link rel="stylesheet" href="assets/css/extras.css">
+  <link rel="stylesheet" href="assets/css/glass.css?v=20261117z">
+  <link rel="stylesheet" href="assets/css/account.css?v=20261117z">
+  <noscript><style>#preloader{display:none!important}html.js [data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body class="is-loading" data-fixed-meta>
+  <noscript><div class="noscript-note">يرجى تفعيل JavaScript.</div></noscript>
+  <a class="skip-link" href="#main">تخطي</a>
+  <div class="preloader" id="preloader" role="status"><div class="preloader__inner"><div class="loader-mark"><img src="assets/img/logo.svg" alt="نِيون ميديا"></div><div class="loader-bar"><span id="loaderProgress"></span></div><p class="preloader__hint">نجهّز…</p></div></div>
+  <div class="bg-effects" aria-hidden="true"><span class="aurora aurora--1"></span><span class="aurora aurora--2"></span><span class="aurora aurora--3"></span></div>
+
+  <header class="site-header" id="siteHeader">
+    <nav class="navbar"><div class="container">
+      <a class="navbar-brand" href="index.html"><span class="brand-mark"><img src="assets/img/logo.svg" alt=""></span><span class="brand-text"><strong data-bind="settings.siteName">نِيون ميديا</strong><span data-bind="settings.brandLatin">NEON MEDIA</span></span></a>
+      <div class="header-actions"><a class="icon-btn account-link" href="account.html" aria-label="حسابي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></a></div>
+    </div></nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero"><div class="container">
+      <span class="eyebrow"><span class="pulse-dot"></span> تتبّع الطلب</span>
+      <h1>أين <span class="text-gradient">طلبك</span>؟</h1>
+      <p>أدخل رقم الطلب (مثال: HE-1001) لتشوف حالته وحالة الدفع.</p>
+    </div></section>
+
+    <section class="account-page"><div class="container"><div class="account-shell">
+      <div class="account-notice" id="accountNotice" role="status" hidden></div>
+      <div class="account-auth" id="accountAuth">
+        <div class="account-card" data-reveal="left" style="max-width:560px;margin-inline:auto">
+          <h2 class="mb-3">تتبّع طلبك</h2>
+          <div id="trackAuthMsg" class="account-status" role="status" data-tone="info" style="display:block;margin-bottom:1rem">
+            إذا كنت مسجّل الدخول، سنعرض طلباتك تلقائيًا. وإلا، سجّل الدخول في «حسابي» أو تواصل معنا على واتساب.
+          </div>
+          <form class="account-form" id="trackForm" novalidate>
+            <div>
+              <label class="form-label" for="trackNumber">رقم الطلب</label>
+              <input class="form-control" id="trackNumber" name="number" type="text" placeholder="HE-1001" required>
+            </div>
+            <button type="submit" class="btn-neon btn-block account-submit">بحث</button>
+          </form>
+          <div class="account-status" id="trackStatus" role="status" aria-live="polite" hidden></div>
+          <div id="trackResult" style="margin-top:1.2rem"></div>
+          <p class="account-form__hint mt-3">لتفاصيل إضافية (إيصال ضريبي، تعديل)، تواصل معنا على واتساب.</p>
+        </div>
+      </div>
+    </div></div></section>
+  </main>
+
+  <footer class="site-footer"><div class="container"><div class="footer-bottom"><p>© <span data-year>2026</span> <span data-bind="settings.siteName">نِيون ميديا</span> — جميع الحقوق محفوظة.</p></div></div></footer>
+
+  <audio id="quranAudio" preload="none" loop aria-hidden="true"></audio>
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/firebase-sync.js?v=20261117z"></script>
+  <script src="assets/js/site-seed.js"></script>
+  <script src="assets/js/store.js?v=20261117z"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/track.js?v=20261117z"></script>
+  <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+</body>
+</html>
