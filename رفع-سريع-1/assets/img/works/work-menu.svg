@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="مشروع منيو تفاعلي على الويب">
+  <defs>
+    <linearGradient id="m1" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse"><stop stop-color="#07101c"/><stop offset=".55" stop-color="#080613"/><stop offset="1" stop-color="#12081b"/></linearGradient>
+    <linearGradient id="m2" x1="240" y1="100" x2="600" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff"/><stop offset=".5" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/></linearGradient>
+    <linearGradient id="m3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0e2131"/><stop offset="1" stop-color="#170d29"/></linearGradient>
+    <radialGradient id="m4" cx="0" cy="0" r="1" gradientTransform="translate(400 290) rotate(90) scale(320)" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff" stop-opacity=".18"/><stop offset="1" stop-color="#22e7ff" stop-opacity="0"/></radialGradient>
+    <filter id="m5"><feGaussianBlur stdDeviation="32"/></filter>
+    <filter id="m6" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="m7" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0H0v44" fill="none" stroke="#7dd3fc" stroke-opacity=".055"/></pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#m1)"/><rect width="800" height="600" fill="url(#m4)"/><rect width="800" height="600" fill="url(#m7)"/>
+  <circle cx="120" cy="120" r="150" fill="#8b5cff" fill-opacity=".12" filter="url(#m5)"/><circle cx="690" cy="500" r="150" fill="#22e7ff" fill-opacity=".1" filter="url(#m5)"/>
+  <g transform="translate(240 48) rotate(3 210 260)">
+    <rect width="420" height="500" rx="30" fill="#060a12" stroke="url(#m2)" stroke-width="2.5"/>
+    <rect x="12" y="12" width="396" height="476" rx="22" fill="url(#m3)"/>
+    <rect x="100" y="24" width="220" height="30" rx="15" fill="#050810"/>
+    <circle cx="300" cy="39" r="3" fill="#22e7ff"/>
+    <text x="210" y="92" text-anchor="middle" fill="#eafcff" font-family="Cairo, Tajawal, Arial, sans-serif" font-size="24" font-weight="800">قائمة الطعام</text>
+    <text x="210" y="112" text-anchor="middle" fill="#7dd3fc" fill-opacity=".7" font-family="Tajawal, Arial, sans-serif" font-size="10" letter-spacing="2">DIGITAL MENU</text>
+    <g transform="translate(36 138)">
+      <rect width="56" height="24" rx="12" fill="#22e7ff" fill-opacity=".2" stroke="#22e7ff" stroke-opacity=".4"/><text x="28" y="16" text-anchor="middle" fill="#dffaff" font-family="Tajawal, Arial, sans-serif" font-size="10">الكل</text>
+      <rect x="66" width="58" height="24" rx="12" fill="#ffffff" fill-opacity=".04"/><text x="95" y="16" text-anchor="middle" fill="#ffffff" fill-opacity=".4" font-family="Tajawal, Arial, sans-serif" font-size="10">مشروبات</text>
+      <rect x="134" width="58" height="24" rx="12" fill="#ffffff" fill-opacity=".04"/><text x="163" y="16" text-anchor="middle" fill="#ffffff" fill-opacity=".4" font-family="Tajawal, Arial, sans-serif" font-size="10">حلويات</text>
+    </g>
+    <g transform="translate(36 190)">
+      <g>
+        <rect width="174" height="118" rx="14" fill="#0a1420" stroke="#ffffff" stroke-opacity=".06"/>
+        <circle cx="50" cy="46" r="28" fill="#22e7ff" fill-opacity=".12" stroke="#22e7ff" stroke-opacity=".2"/>
+        <path d="M36 40h28v18H36zM36 40c0-8 28-8 28 0" fill="none" stroke="#a9f7ff" stroke-width="1.8"/>
+        <rect x="92" y="26" width="62" height="6" rx="3" fill="#ffffff" fill-opacity=".5"/>
+        <rect x="92" y="42" width="46" height="4" rx="2" fill="#ffffff" fill-opacity=".18"/>
+        <text x="92" y="78" fill="#22e7ff" font-family="Tajawal, Arial, sans-serif" font-size="15" font-weight="700">45 ج.م</text>
+        <rect x="20" y="94" width="134" height="4" rx="2" fill="#ffffff" fill-opacity=".05"/>
+      </g>
+      <g transform="translate(184 0)">
+        <rect width="174" height="118" rx="14" fill="#0a1420" stroke="#ffffff" stroke-opacity=".06"/>
+        <circle cx="50" cy="46" r="28" fill="#ff3ddc" fill-opacity=".12" stroke="#ff3ddc" stroke-opacity=".2"/>
+        <path d="M34 50h32M34 42h32M42 32c0 20 16 20 16 0" fill="none" stroke="#ffd6f8" stroke-width="1.8"/>
+        <rect x="92" y="26" width="62" height="6" rx="3" fill="#ffffff" fill-opacity=".5"/>
+        <rect x="92" y="42" width="46" height="4" rx="2" fill="#ffffff" fill-opacity=".18"/>
+        <text x="92" y="78" fill="#ff3ddc" font-family="Tajawal, Arial, sans-serif" font-size="15" font-weight="700">60 ج.م</text>
+        <rect x="20" y="94" width="134" height="4" rx="2" fill="#ffffff" fill-opacity=".05"/>
+      </g>
+    </g>
+    <g transform="translate(36 322)">
+      <g>
+        <rect width="174" height="118" rx="14" fill="#0a1420" stroke="#ffffff" stroke-opacity=".06"/>
+        <circle cx="50" cy="46" r="28" fill="#8b5cff" fill-opacity=".14" stroke="#8b5cff" stroke-opacity=".25"/>
+        <path d="M32 52h36M38 52l6-18h12l6 18" fill="none" stroke="#d9caff" stroke-width="1.8"/>
+        <rect x="92" y="26" width="62" height="6" rx="3" fill="#ffffff" fill-opacity=".5"/>
+        <rect x="92" y="42" width="46" height="4" rx="2" fill="#ffffff" fill-opacity=".18"/>
+        <text x="92" y="78" fill="#b79aff" font-family="Tajawal, Arial, sans-serif" font-size="15" font-weight="700">55 ج.م</text>
+        <rect x="20" y="94" width="134" height="4" rx="2" fill="#ffffff" fill-opacity=".05"/>
+      </g>
+      <g transform="translate(184 0)">
+        <rect width="174" height="118" rx="14" fill="#0a1420" stroke="#ffffff" stroke-opacity=".06"/>
+        <circle cx="50" cy="46" r="28" fill="#22e7ff" fill-opacity=".1" stroke="#22e7ff" stroke-opacity=".16"/>
+        <path d="M40 58c0-16 8-28 10-28s10 12 10 28H40Z" fill="none" stroke="#a9f7ff" stroke-width="1.8"/>
+        <rect x="92" y="26" width="62" height="6" rx="3" fill="#ffffff" fill-opacity=".5"/>
+        <rect x="92" y="42" width="46" height="4" rx="2" fill="#ffffff" fill-opacity=".18"/>
+        <text x="92" y="78" fill="#22e7ff" font-family="Tajawal, Arial, sans-serif" font-size="15" font-weight="700">38 ج.م</text>
+        <rect x="20" y="94" width="134" height="4" rx="2" fill="#ffffff" fill-opacity=".05"/>
+      </g>
+    </g>
+  </g>
+  <g transform="translate(636 150)">
+    <rect width="92" height="92" rx="16" fill="#0b1220" stroke="#22e7ff" stroke-opacity=".3"/>
+    <g fill="#dffaff"><rect x="16" y="16" width="22" height="22" rx="2"/><rect x="54" y="16" width="22" height="22" rx="2"/><rect x="16" y="54" width="22" height="22" rx="2"/></g>
+    <g fill="#22e7ff"><rect x="48" y="48" width="10" height="10"/><rect x="62" y="62" width="8" height="8"/><rect x="48" y="70" width="8" height="8"/><rect x="70" y="48" width="6" height="6"/></g>
+  </g>
+  <g transform="translate(636 292)"><text x="46" y="0" text-anchor="middle" fill="#dffaff" font-family="Tajawal, Arial, sans-serif" font-size="13">امسح الكود</text><text x="46" y="18" text-anchor="middle" fill="#ffffff" fill-opacity=".35" font-family="Tajawal, Arial, sans-serif" font-size="9">SCAN TO ORDER</text></g>
+  <g transform="translate(100 470)">
+    <rect width="132" height="40" rx="20" fill="#0b1220" stroke="#ff3ddc" stroke-opacity=".25"/>
+    <circle cx="22" cy="20" r="6" fill="#ff3ddc" fill-opacity=".3"/><text x="78" y="25" text-anchor="middle" fill="#ffd9f8" font-family="Tajawal, Arial, sans-serif" font-size="12">منيو تفاعلي</text>
+  </g>
+  <text x="42" y="52" fill="#7dd3fc" fill-opacity=".55" font-family="Tajawal, Arial, sans-serif" font-size="12" letter-spacing="2">WEB MENU / 2026</text>
+  <text x="758" y="562" text-anchor="end" fill="#ffffff" fill-opacity=".28" font-family="Tajawal, Arial, sans-serif" font-size="11" letter-spacing="2">NEON MEDIA</text>
+</svg>

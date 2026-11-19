@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 780" width="620" height="780" role="img" aria-label="صورة شخصية مؤقتة — استبدلها من لوحة التحكم">
+  <defs>
+    <linearGradient id="pbg" x1="0" y1="0" x2="620" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08101f"/>
+      <stop offset=".52" stop-color="#0a0718"/>
+      <stop offset="1" stop-color="#12061a"/>
+    </linearGradient>
+    <radialGradient id="pglow1" cx="0" cy="0" r="1" gradientTransform="translate(150 230) rotate(52) scale(380)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e7ff" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#22e7ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pglow2" cx="0" cy="0" r="1" gradientTransform="translate(520 560) rotate(-130) scale(430)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff3ddc" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#ff3ddc" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pskin" x1="255" y1="210" x2="390" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1a2740"/>
+      <stop offset=".5" stop-color="#101a2e"/>
+      <stop offset="1" stop-color="#0a1120"/>
+    </linearGradient>
+    <linearGradient id="prim" x1="180" y1="200" x2="450" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e7ff"/>
+      <stop offset=".48" stop-color="#8b5cff"/>
+      <stop offset="1" stop-color="#ff3ddc"/>
+    </linearGradient>
+    <linearGradient id="pcloth" x1="120" y1="560" x2="510" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0c1728"/>
+      <stop offset="1" stop-color="#0b0916"/>
+    </linearGradient>
+    <filter id="pblur"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="psoft"><feGaussianBlur stdDeviation="5"/></filter>
+    <pattern id="pgrid" width="46" height="46" patternUnits="userSpaceOnUse">
+      <path d="M46 0H0v46" fill="none" stroke="#7dd3fc" stroke-opacity=".07"/>
+    </pattern>
+  </defs>
+  <rect width="620" height="780" rx="0" fill="url(#pbg)"/>
+  <rect width="620" height="780" fill="url(#pglow1)"/>
+  <rect width="620" height="780" fill="url(#pglow2)"/>
+  <rect width="620" height="780" fill="url(#pgrid)" opacity=".55"/>
+  <g opacity=".5">
+    <circle cx="310" cy="372" r="250" fill="none" stroke="#22e7ff" stroke-opacity=".18"/>
+    <circle cx="310" cy="372" r="205" fill="none" stroke="#ff3ddc" stroke-opacity=".16" stroke-dasharray="4 12"/>
+    <circle cx="310" cy="372" r="160" fill="none" stroke="#8b5cff" stroke-opacity=".2"/>
+  </g>
+  <g filter="url(#pblur)" opacity=".55">
+    <ellipse cx="196" cy="420" rx="120" ry="180" fill="#22e7ff" fill-opacity=".22"/>
+    <ellipse cx="458" cy="470" rx="120" ry="190" fill="#ff3ddc" fill-opacity=".18"/>
+  </g>
+  <path d="M92 780c18-134 90-213 218-213s200 79 218 213H92Z" fill="url(#pcloth)"/>
+  <path d="M92 780c18-134 90-213 218-213 50 0 94 10 131 29" fill="none" stroke="url(#prim)" stroke-width="2" stroke-opacity=".65"/>
+  <path d="M275 505h70v91c0 25-15 39-35 39s-35-14-35-39v-91Z" fill="url(#pskin)"/>
+  <ellipse cx="310" cy="352" rx="120" ry="150" fill="url(#pskin)"/>
+  <path d="M190 342c0-99 53-172 120-172s120 73 120 172c0 18-4 35-10 51-4-79-28-118-54-133-36 27-99 35-138 21-12 20-19 52-22 92-10-9-16-19-16-31Z" fill="#070c16"/>
+  <path d="M192 356c-4 0-8 26-2 43 4 12 12 19 19 17M428 356c4 0 8 26 2 43-4 12-12 19-19 17" fill="none" stroke="#22e7ff" stroke-opacity=".3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M197 322c0-93 48-157 113-157 62 0 112 62 113 152" fill="none" stroke="url(#prim)" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+  <path d="M247 338c17-9 36-9 53 0M360 338c17-9 36-9 53 0" fill="none" stroke="#d8f7ff" stroke-opacity=".65" stroke-width="4" stroke-linecap="round"/>
+  <g stroke="#22e7ff" stroke-opacity=".75" stroke-width="2.5">
+    <rect x="239" y="352" width="62" height="43" rx="17" fill="#07101d"/>
+    <rect x="319" y="352" width="62" height="43" rx="17" fill="#07101d"/>
+    <path d="M301 371h18M239 368h-14M381 368h14" fill="none"/>
+    <path d="M252 357c8-4 15-4 22 0" fill="none" stroke="#f8fdff" stroke-opacity=".38"/>
+  </g>
+  <path d="M310 390v35c0 10 7 17 17 17" fill="none" stroke="#7dd3fc" stroke-opacity=".25" stroke-width="2" stroke-linecap="round"/>
+  <path d="M283 456c17 10 37 10 54 0" fill="none" stroke="#d8f7ff" stroke-opacity=".48" stroke-width="3" stroke-linecap="round"/>
+  <path d="M175 674c34-24 68-36 101-36M445 674c-34-24-68-36-101-36" fill="none" stroke="#22e7ff" stroke-opacity=".25" stroke-width="2"/>
+  <g fill="#22e7ff">
+    <circle cx="135" cy="206" r="3"/><circle cx="140" cy="226" r="1.5"/><circle cx="490" cy="300" r="3"/><circle cx="505" cy="280" r="1.4"/>
+  </g>
+  <g fill="#ff3ddc">
+    <circle cx="470" cy="180" r="2.5"/><circle cx="160" cy="545" r="2"/><circle cx="520" cy="620" r="1.8"/>
+  </g>
+  <g opacity=".36" stroke="#ffffff" stroke-width="1">
+    <path d="M70 640h40M70 650h22M510 120h40M528 130h22"/>
+  </g>
+  <g transform="translate(310 720)" opacity=".75">
+    <rect x="-92" y="-18" width="184" height="34" rx="17" fill="#050a12" stroke="#22e7ff" stroke-opacity=".28"/>
+    <text x="0" y="4" text-anchor="middle" fill="#dffaff" font-family="Tajawal, Cairo, Arial, sans-serif" font-size="11" letter-spacing="2">NEON MEDIA PROFILE</text>
+  </g>
+</svg>
