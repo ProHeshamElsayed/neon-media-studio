@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" width="900" height="720" role="img" aria-label="مساحة عمل إبداعية بإضاءة نيون">
+  <defs>
+    <linearGradient id="abg" x1="0" y1="0" x2="900" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07101e"/><stop offset=".55" stop-color="#090616"/><stop offset="1" stop-color="#110617"/>
+    </linearGradient>
+    <linearGradient id="aneon" x1="120" y1="120" x2="780" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e7ff"/><stop offset=".5" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/>
+    </linearGradient>
+    <linearGradient id="ascreen" x1="270" y1="180" x2="650" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0d2436"/><stop offset="1" stop-color="#150d2a"/>
+    </linearGradient>
+    <radialGradient id="ahal" cx="0" cy="0" r="1" gradientTransform="translate(450 300) rotate(90) scale(330)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e7ff" stop-opacity=".2"/><stop offset="1" stop-color="#22e7ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="aglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="abigblur"><feGaussianBlur stdDeviation="35"/></filter>
+    <pattern id="agrid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0v50" fill="none" stroke="#7dd3fc" stroke-opacity=".055"/></pattern>
+  </defs>
+  <rect width="900" height="720" fill="url(#abg)"/>
+  <rect width="900" height="720" fill="url(#ahal)"/>
+  <rect width="900" height="720" fill="url(#agrid)"/>
+  <circle cx="120" cy="620" r="150" fill="#22e7ff" fill-opacity=".13" filter="url(#abigblur)"/>
+  <circle cx="800" cy="180" r="170" fill="#ff3ddc" fill-opacity=".12" filter="url(#abigblur)"/>
+  <rect x="168" y="520" width="564" height="26" rx="13" fill="#0b1422" stroke="#22e7ff" stroke-opacity=".18"/>
+  <rect x="202" y="546" width="28" height="86" rx="10" fill="#0a111d"/>
+  <rect x="670" y="546" width="28" height="86" rx="10" fill="#0a111d"/>
+  <g>
+    <rect x="238" y="156" width="424" height="320" rx="22" fill="#060b14" stroke="url(#aneon)" stroke-width="2"/>
+    <rect x="254" y="176" width="392" height="262" rx="12" fill="url(#ascreen)"/>
+    <rect x="254" y="176" width="392" height="30" rx="12" fill="#ffffff" fill-opacity=".035"/>
+    <circle cx="272" cy="191" r="4" fill="#ff3ddc"/><circle cx="286" cy="191" r="4" fill="#ffb020"/><circle cx="300" cy="191" r="4" fill="#22e7ff"/>
+    <g filter="url(#aglow)">
+      <text x="450" y="274" text-anchor="middle" fill="#eafcff" font-family="Cairo, Tajawal, Arial, sans-serif" font-size="42" font-weight="800">نِيون ميديا</text>
+      <text x="450" y="308" text-anchor="middle" fill="#22e7ff" font-family="Tajawal, Cairo, Arial, sans-serif" font-size="15" letter-spacing="2">CREATIVE · DIGITAL · GROWTH</text>
+    </g>
+    <rect x="326" y="340" width="248" height="8" rx="4" fill="#ffffff" fill-opacity=".08"/>
+    <rect x="326" y="360" width="176" height="8" rx="4" fill="#22e7ff" fill-opacity=".28"/>
+    <g>
+      <rect x="336" y="392" width="70" height="26" rx="13" fill="#22e7ff" fill-opacity=".15" stroke="#22e7ff" stroke-opacity=".4"/>
+      <rect x="416" y="392" width="70" height="26" rx="13" fill="#ff3ddc" fill-opacity=".13" stroke="#ff3ddc" stroke-opacity=".35"/>
+      <rect x="496" y="392" width="70" height="26" rx="13" fill="#8b5cff" fill-opacity=".15" stroke="#8b5cff" stroke-opacity=".4"/>
+    </g>
+    <path d="M438 476h24l14 24h-52l14-24Z" fill="#0a1220"/>
+    <rect x="396" y="500" width="108" height="10" rx="5" fill="#0a1220"/>
+  </g>
+  <g>
+    <rect x="96" y="286" width="118" height="234" rx="18" fill="#0a111d" stroke="#22e7ff" stroke-opacity=".25"/>
+    <rect x="110" y="302" width="90" height="62" rx="9" fill="#22e7ff" fill-opacity=".2"/>
+    <rect x="110" y="376" width="90" height="8" rx="4" fill="#ffffff" fill-opacity=".1"/>
+    <rect x="110" y="394" width="58" height="8" rx="4" fill="#ff3ddc" fill-opacity=".4"/>
+    <rect x="110" y="428" width="90" height="50" rx="9" fill="#ff3ddc" fill-opacity=".13"/>
+    <circle cx="155" cy="490" r="10" fill="none" stroke="#22e7ff" stroke-opacity=".6" stroke-width="2"/>
+  </g>
+  <g>
+    <rect x="700" y="338" width="104" height="182" rx="16" fill="#0a111d" stroke="#ff3ddc" stroke-opacity=".22"/>
+    <rect x="716" y="356" width="72" height="72" rx="36" fill="#ff3ddc" fill-opacity=".12" stroke="#ff3ddc" stroke-opacity=".3"/>
+    <path d="M734 392h36M752 374v36" stroke="#ff3ddc" stroke-width="2" stroke-linecap="round"/>
+    <rect x="716" y="448" width="72" height="8" rx="4" fill="#ffffff" fill-opacity=".09"/>
+    <rect x="716" y="466" width="46" height="8" rx="4" fill="#22e7ff" fill-opacity=".25"/>
+  </g>
+  <g>
+    <rect x="306" y="566" width="82" height="96" rx="12" fill="#0a111d" stroke="#ffffff" stroke-opacity=".07"/>
+    <path d="M326 566v-28c0-18 11-30 21-30s21 12 21 30v28" fill="none" stroke="#22e7ff" stroke-opacity=".4" stroke-width="2"/>
+    <rect x="326" y="588" width="42" height="8" rx="4" fill="#22e7ff" fill-opacity=".25"/>
+    <rect x="326" y="604" width="28" height="8" rx="4" fill="#ffffff" fill-opacity=".08"/>
+  </g>
+  <g>
+    <rect x="512" y="590" width="112" height="66" rx="12" fill="#0b1220" stroke="#8b5cff" stroke-opacity=".25"/>
+    <rect x="528" y="610" width="36" height="26" rx="6" fill="#8b5cff" fill-opacity=".25"/>
+    <rect x="574" y="610" width="34" height="4" rx="2" fill="#ffffff" fill-opacity=".14"/>
+    <rect x="574" y="622" width="24" height="4" rx="2" fill="#22e7ff" fill-opacity=".3"/>
+    <rect x="528" y="644" width="80" height="4" rx="2" fill="#ffffff" fill-opacity=".07"/>
+  </g>
+  <g opacity=".7">
+    <circle cx="790" cy="600" r="3" fill="#22e7ff"/><circle cx="148" cy="180" r="2.5" fill="#ff3ddc"/><circle cx="812" cy="260" r="1.6" fill="#22e7ff"/><circle cx="78" cy="470" r="1.8" fill="#8b5cff"/>
+  </g>
+  <text x="450" y="686" text-anchor="middle" fill="#7dd3fc" fill-opacity=".4" font-family="Tajawal, Cairo, Arial, sans-serif" font-size="12" letter-spacing="3">WHERE IDEAS GLOW</text>
+</svg>

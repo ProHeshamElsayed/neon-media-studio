@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="نِيون ميديا — استوديو التسويق الرقمي">
+  <defs>
+    <linearGradient id="obg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050810"/><stop offset=".5" stop-color="#080514"/><stop offset="1" stop-color="#12051a"/>
+    </linearGradient>
+    <linearGradient id="ograd" x1="160" y1="170" x2="1050" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e7ff"/><stop offset=".52" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3ddc"/>
+    </linearGradient>
+    <radialGradient id="oglow1" cx="0" cy="0" r="1" gradientTransform="translate(180 180) rotate(45) scale(420)" gradientUnits="userSpaceOnUse"><stop stop-color="#22e7ff" stop-opacity=".25"/><stop offset="1" stop-color="#22e7ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="oglow2" cx="0" cy="0" r="1" gradientTransform="translate(1000 520) rotate(-130) scale(460)" gradientUnits="userSpaceOnUse"><stop stop-color="#ff3ddc" stop-opacity=".22"/><stop offset="1" stop-color="#ff3ddc" stop-opacity="0"/></radialGradient>
+    <filter id="oglowf" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="ogrid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0v60" fill="none" stroke="#7dd3fc" stroke-opacity=".06"/></pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#obg)"/>
+  <rect width="1200" height="630" fill="url(#oglow1)"/>
+  <rect width="1200" height="630" fill="url(#oglow2)"/>
+  <rect width="1200" height="630" fill="url(#ogrid)"/>
+  <g transform="translate(560 190)" opacity=".95">
+    <path d="M60 0 120 34v68L60 136 0 102V34L60 0Z" fill="#060a14" stroke="url(#ograd)" stroke-width="3"/>
+    <path d="M40 96V38l40 44V36" fill="none" stroke="url(#ograd)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#oglowf)"/>
+  </g>
+  <text x="600" y="400" text-anchor="middle" fill="#f5fbff" font-family="Cairo, Tajawal, Arial, sans-serif" font-size="88" font-weight="900">نِيون ميديا</text>
+  <text x="600" y="460" text-anchor="middle" fill="#22e7ff" font-family="Tajawal, Cairo, Arial, sans-serif" font-size="24" letter-spacing="6">DIGITAL MARKETING · DESIGN · MEDIA</text>
+  <rect x="450" y="500" width="300" height="2" rx="1" fill="url(#ograd)" opacity=".7"/>
+  <text x="600" y="552" text-anchor="middle" fill="#a9bad6" font-family="Tajawal, Cairo, Arial, sans-serif" font-size="22">نصنع حضوراً رقمياً يخطف الأنظار</text>
+  <g fill="#22e7ff"><circle cx="140" cy="120" r="3"/><circle cx="1080" cy="160" r="2"/><circle cx="1000" cy="560" r="2.5"/></g>
+  <g fill="#ff3ddc"><circle cx="1110" cy="420" r="2"/><circle cx="110" cy="500" r="2.4"/></g>
+</svg>
