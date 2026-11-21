@@ -1546,3 +1546,79 @@ html[data-theme='light'] .accordion-button::after { filter: invert(0.25) sepia(1
   .filter-row { gap: 0.35rem; margin-bottom: 1.6rem; }
   .filter-btn { font-size: 0.72rem; padding: 0.4rem 0.72rem; }
 }
+
+/* ============================ VIDEO PRESENTATION ============================ */
+.video-presentation {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(900px 520px at 50% 0%, rgba(var(--accent-rgb), 0.08), transparent 60%), var(--bg-2);
+}
+.video-presentation__wrap {
+  max-width: 960px;
+  margin-inline: auto;
+}
+.video-presentation__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1.5px solid rgba(var(--accent-rgb), 0.25);
+  box-shadow: 0 30px 80px -30px rgba(var(--accent-rgb), 0.35), 0 0 0 1px rgba(255,255,255,0.04);
+  background: var(--surface);
+}
+.video-presentation__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.video-presentation__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(600px 300px at 50% 30%, rgba(var(--accent-rgb), 0.12), transparent 60%),
+    linear-gradient(135deg, rgba(var(--accent-rgb), 0.05), rgba(var(--accent-3-rgb), 0.04));
+}
+.video-presentation__play {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.18), rgba(var(--accent-2-rgb), 0.14));
+  border: 1.5px solid rgba(var(--accent-rgb), 0.35);
+  box-shadow: 0 0 0 8px rgba(var(--accent-rgb), 0.06), 0 12px 30px -10px rgba(var(--accent-rgb), 0.4);
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+.video-presentation__play svg {
+  width: 28px;
+  height: 28px;
+  margin-inline-start: 4px;
+}
+.video-presentation__placeholder span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--soft);
+}
+.video-presentation__placeholder small {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+@media (max-width: 767px) {
+  .video-presentation__frame { border-radius: 14px; }
+  .video-presentation__play { width: 60px; height: 60px; }
+  .video-presentation__play svg { width: 22px; height: 22px; }
+  .video-presentation__placeholder span { font-size: 0.9rem; }
+}
+/* ============================ END VIDEO ============================ */

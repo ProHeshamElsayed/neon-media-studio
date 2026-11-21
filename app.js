@@ -72,13 +72,22 @@
   }
 
   function setAccent(accent, persist) {
-    var allowed = ['cyan', 'magenta', 'violet', 'lime'];
+    var allowed = ['cyan', 'magenta', 'violet', 'lime', 'beige'];
     var next = allowed.indexOf(accent) !== -1 ? accent : 'cyan';
     document.documentElement.setAttribute('data-accent', next);
     if (persist) {
       try { localStorage.setItem(accentKey, next); } catch (e) { /* ignore */ }
     }
   }
+
+  // ألوان الـ 5 presets (نيون جاهزة) — hex + rgb
+  var PRESET_COLORS = {
+    cyan:    { primary: '#22e7ff', secondary: '#ff3ddc' },
+    magenta: { primary: '#ff3ddc', secondary: '#22e7ff' },
+    violet:  { primary: '#8b5cff', secondary: '#ff3ddc' },
+    lime:    { primary: '#b7ff3c', secondary: '#22e7ff' },
+    beige:   { primary: '#9a5433', secondary: '#c08b5c' }
+  };
 
   function hexToRgb(hex) {
     hex = String(hex || '').trim().replace(/^#/, '');
@@ -332,9 +341,33 @@
 
     if (settings.accent) setAccent(settings.accent, false);
 
-    // ألوان نيون مخصصة (أساسي + ثانوي) — تتجاوز الألوان المُعرّفة مسبقًا.
-    if (settings.accentColor || settings.accentSecondary) {
-      setCustomColors(settings.accentColor, settings.accentSecondary);
+    // Video presentation section
+    var videoSection = document.getElementById('videoPresentation');
+    if (videoSection) {
+      if (settings.videoEnabled === false) {
+        videoSection.style.display = 'none';
+      } else {
+        videoSection.style.display = '';
+      }
+      var videoIframe = document.getElementById('videoIframe');
+      var videoPlaceholder = document.getElementById('videoPlaceholder');
+      if (videoIframe && settings.videoUrl) {
+        videoIframe.src = settings.videoUrl;
+        videoIframe.style.display = '';
+        if (videoPlaceholder) videoPlaceholder.style.display = 'none';
+      } else if (videoIframe) {
+        videoIframe.src = 'about:blank';
+        videoIframe.style.display = 'none';
+        if (videoPlaceholder) videoPlaceholder.style.display = '';
+      }
+    }
+
+    // ألوان: if «useCustomColors» مفعّل → استخدم Hex مخصص. else → استخدم one من 5 presets.
+    if (settings.useCustomColors && (settings.accentColor || settings.accentSecondary)) {
+      setCustomColors(settings.accentColor || '#22e7ff', settings.accentSecondary || '#ff3ddc');
+    } else {
+      var preset = PRESET_COLORS[settings.accent] || PRESET_COLORS.cyan;
+      setCustomColors(preset.primary, preset.secondary);
     }
 
     // SEO — تطبيق البيانات التفصيلية.

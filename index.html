@@ -43,13 +43,13 @@
   <link rel="preload" href="assets/fonts/Cairo-arabic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Tajawal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/vendor/bootstrap.rtl.min.css">
-  <link rel="stylesheet" href="base.css?v=20261117z">
-  <link rel="stylesheet" href="home.css?v=20261117z">
-  <link rel="stylesheet" href="components.css?v=20261117z">
+  <link rel="stylesheet" href="base.css?v=20261118f">
+  <link rel="stylesheet" href="home.css?v=20261118f">
+  <link rel="stylesheet" href="components.css?v=20261118f">
   <link rel="stylesheet" href="assets/css/extras.css">
   <link rel="stylesheet" href="assets/css/features.css">
-  <link rel="stylesheet" href="glass.css?v=20261117z">
-  <link rel="stylesheet" href="assets/css/hero-fx.css?v=20261117z">
+  <link rel="stylesheet" href="glass.css?v=20261118f">
+  <link rel="stylesheet" href="assets/css/hero-fx.css?v=20261118f">
 
   <style id="sqStyles">
     /* ============================ CREW / SQUAD SECTION ============================ */
@@ -434,6 +434,7 @@
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script> --></head>
 
 <body class="is-loading">
+  <a class="skip-link" href="#main">تخطي إلى المحتوى الرئيسي</a>
   <div class="noscript-note" id="noscriptNote" hidden>يرجى تفعيل JavaScript لتجربة الموقع كاملة.</div>
   <noscript><div class="noscript-note">يرجى تفعيل JavaScript لتجربة الموقع كاملة.</div></noscript>
 
@@ -655,6 +656,29 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= VIDEO PRESENTATION ======================= -->
+    <section class="section video-presentation" id="videoPresentation" aria-labelledby="videoPresentationTitle">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <span class="eyebrow"><span class="pulse-dot"></span> <span data-bind="settings.videoKicker">عرض مرئي</span></span>
+          <h2 id="videoPresentationTitle"><span data-bind="settings.videoTitle">شاهد</span> <span class="text-gradient" data-bind="settings.videoTitleAccent">أعمالنا في 60 ثانية</span></h2>
+          <p data-bind="settings.videoText">لمحة سريعة عن ما نقدمه — من الهوية إلى الإعلانات، من التصوير إلى التسويق.</p>
+        </div>
+        <div class="video-presentation__wrap" data-reveal>
+          <div class="video-presentation__frame" id="videoFrame">
+            <iframe id="videoIframe" data-site-src="settings.videoUrl" src="about:blank" title="عرض مرئي" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" style="display:none"></iframe>
+            <div class="video-presentation__placeholder" id="videoPlaceholder">
+              <div class="video-presentation__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+              </div>
+              <span>أضف رابط فيديو من لوحة التحكم</span>
+              <small>من «الإعدادات ← الفيديو الترويجي» في لوحة التحكم</small>
             </div>
           </div>
         </div>
@@ -1595,10 +1619,10 @@
 
   <script src="assets/vendor/bootstrap.bundle.min.js"></script>
   <script src="assets/js/firebase-config.js"></script>
-  <script src="assets/js/firebase-sync.js?v=20261117z"></script>
+  <script src="assets/js/firebase-sync.js?v=20261118f"></script>
   <script src="assets/js/site-seed.js"></script>
-  <script src="assets/js/store.js?v=20261117z"></script>
-  <script src="app.js?v=20261117z"></script>
+  <script src="assets/js/store.js?v=20261118f"></script>
+  <script src="app.js?v=20261118f"></script>
   <script>
     /* ==================== SECTION MASCOTS + MICRO INTERACTIONS ==================== */
     (function () {
@@ -1759,11 +1783,11 @@
     })();
   </script>
 
-  <script src="home.js?v=20261117z"></script>
-  <script src="chatbot.js?v=20261117z"></script>
+  <script src="home.js?v=20261118f"></script>
+  <script src="chatbot.js?v=20261118f"></script>
   <script src="assets/js/extras.js"></script>
   <script src="assets/js/features.js"></script>
-  <script src="assets/js/hero-fx.js?v=20261117z"></script>
+  <script src="assets/js/hero-fx.js?v=20261118f"></script>
   <script>if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); }); }</script>
 </body>
 </html>
