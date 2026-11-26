@@ -1466,11 +1466,19 @@ html.js [data-reveal].is-visible {
 .nav-toggle { display: grid; }
 .header-actions { margin-inline-start: auto; gap: 0.35rem; }
 .nav-whatsapp { display: none; }
-.account-link__label { display: none; }
-.header-actions .account-link { width: 40px; height: 40px; padding: 0; justify-content: center; }
+.account-link__label { display: none !important; }
+/* components.css بيخلي الأيقونة Pill عريضة؛ هنا نظبطها زر دائري متجاوب */
+.header-actions .account-link.icon-btn {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  justify-content: center;
+  border-radius: 50% !important;
+}
 .header-actions > [data-theme-toggle],
-.header-actions > .neon-lang-switch,
-.header-actions > .neon-country-switch { display: none !important; }
+.header-actions > .neon-lang-switch { display: none !important; }
+/* العملة رجعت للناف بار بشكل كود مختصر متجاوب */
+.header-actions .account-link svg { width: 19px !important; height: 19px !important; }
 .mobile-menu__controls { display: flex; }
 /* الشاشات الكبيرة جدًا: اللينكات تفضل ظاهرة وزر القائمة كمان */
 @media (min-width: 1400px) {
@@ -1498,7 +1506,9 @@ html.js [data-reveal].is-visible {
   .brand-text span { display: none; }
   .header-actions { gap: 0.22rem; }
   .header-actions .icon-btn { width: 33px; height: 33px; }
+  .header-actions .account-link.icon-btn { width: 33px !important; height: 33px !important; }
   .header-actions .icon-btn svg { width: 16px; height: 16px; }
+  .header-actions .account-link svg { width: 16px !important; height: 16px !important; }
   .nav-toggle { width: 35px; height: 35px; }
   .section { padding: 3.8rem 0; }
 }
@@ -1507,6 +1517,8 @@ html.js [data-reveal].is-visible {
   .navbar > .container { gap: 0.35rem; }
   .header-actions { gap: 0.18rem; }
   .header-actions .icon-btn, .nav-toggle { width: 32px; height: 32px; }
+  .header-actions .account-link.icon-btn { width: 32px !important; height: 32px !important; }
+  .header-actions .account-link svg { width: 15px !important; height: 15px !important; }
   .neon-lang-switch button { min-width: 32px; height: 30px; }
 }
 
