@@ -130,7 +130,7 @@
       '.mobile-menu__country select{max-width:200px;height:34px;padding:0 10px;border-radius:999px;' +
       'border:1px solid rgba(167,139,250,.45);background:rgba(8,14,26,.72);color:#c4b5fd;' +
       'font-size:12px;font-weight:700;cursor:pointer;outline:none}' +
-      '@media(max-width:991.98px){.mobile-menu__country{display:flex}}';
+      '@media(max-width:1399.98px){.mobile-menu__country{display:flex}}';
     document.head.appendChild(style);
   }
 
