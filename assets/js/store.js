@@ -7,7 +7,6 @@
   'use strict';
 
   var STORAGE_KEY = 'neonMediaStudio_v1';
-  var DEFAULT_ADMIN_PASSWORD = 'Admin@2026';
   var SCHEMA_VERSION = 1;
 
   /* ------------------------------------------------------------------------
@@ -78,6 +77,12 @@
       announcementLink: '#packages',
       announcementEnabled: true,
       currency: 'ج.م',
+      countries: [
+        { code: 'EG', nameAr: 'مصر', nameEn: 'Egypt', currency: 'EGP', symbol: 'ج.م', rate: 1, enabled: true, primary: true },
+        { code: 'SA', nameAr: 'السعودية', nameEn: 'Saudi Arabia', currency: 'SAR', symbol: 'ر.س', rate: 0.08, enabled: true, primary: false },
+        { code: 'AE', nameAr: 'الإمارات', nameEn: 'UAE', currency: 'AED', symbol: 'د.إ', rate: 0.09, enabled: true, primary: false }
+      ],
+      activeCountry: 'EG',
       orderNumberPrefix: 'HE-',
       orderStartNumber: 1001,
       orderNumberPadding: 4,
@@ -104,7 +109,7 @@
       seoOgDescription: 'استوديو نِيون ميديا: تصميم جرافيك، إدارة سوشيال ميديا، تصوير منتجات وعقارات، تصميم مواقع ومنيوهات تفاعلية.',
       seoOgImage: '',
       seoTwitterCard: 'summary_large_image',
-      paymentNote: 'الدفع الإلكتروني متاح عبر إنستاباي، فودافون كاش، التحويل البنكي، PayPal أو رابط دفع آمن. الطلب يُأكد عبر واتساب قبل البدء.',
+      paymentNote: 'الدفع الإلكتروني متاح (إنستاباي، فودافون كاش، تحويل بنكي أو رابط دفع آمن)، لا نطلب بيانات بطاقة داخل الموقع',
       onlinePaymentEnabled: true,
     videoEnabled: true,
     videoUrl: '',
@@ -776,20 +781,20 @@
       },
       {
         id: 'pay-paypal',
-        name: 'PayPal',
+        name: 'رابط دفع خارجي (PayPal)',
         type: 'paypal',
-        value: 'paypal.me/neonmedia',
-        link: 'https://paypal.me/neonmedia',
-        instructions: 'ادفع بالدولار عبر رابط PayPal الآمن، ثم أرسل رقم العملية على واتساب.',
-        active: true
+        value: '',
+        link: '',
+        instructions: 'إن احتجت رابط دفع خارجي، ضع الرابط من لوحة التحكم. لا تُطلب بيانات بطاقة داخل الموقع.',
+        active: false
       },
       {
         id: 'pay-link',
         name: 'رابط دفع آمن',
         type: 'card',
-        value: 'ادفع بالفيزا أو ماستركارد عبر رابط Stripe',
+        value: 'رابط دفع آمن — يُفتح خارج الموقع',
         link: '',
-        instructions: 'أضف رابط الدفع الخاص بك من لوحة التحكم (Stripe Payment Link أو أي بوابة تدعم الروابط الثابتة).',
+        instructions: 'أضف رابط الدفع الخاص بك من لوحة التحكم. لا تُطلب بيانات بطاقة داخل الموقع.',
         active: false
       }
     ],
@@ -821,7 +826,7 @@
       {
         id: 'faq-5',
         question: 'كيف يتم الدفع؟',
-        answer: 'ندعم إنستاباي، فودافون كاش، التحويل البنكي، PayPal، وروابط الدفع الآمنة. عادة يتم دفع 50% مقدمًا و50% عند التسليم، أو حسب اتفاق المشروع.',
+        answer: 'ندعم إنستاباي، فودافون كاش، التحويل البنكي، أو رابط دفع آمن. لا نطلب بيانات بطاقة داخل الموقع. عادة يتم دفع 50% مقدمًا و50% عند التسليم، أو حسب اتفاق المشروع.',
         active: true
       },
       {
@@ -1144,10 +1149,65 @@
     return changed;
   }
 
+  function ensureCountries(target) {
+    if (!target || typeof target !== 'object') return target;
+    var s = target.settings || (target.settings = {});
+    var list = Array.isArray(s.countries) ? s.countries.filter(function (c) {
+      return c && typeof c === 'object' && String(c.code || '').trim();
+    }).map(function (c) {
+      var rate = Number(c.rate);
+      return {
+        code: String(c.code).trim().toUpperCase().slice(0, 3),
+        nameAr: String(c.nameAr || c.code),
+        nameEn: String(c.nameEn || c.code),
+        currency: String(c.currency || c.code).trim().toUpperCase().slice(0, 6),
+        symbol: String(c.symbol || c.currency || c.code),
+        rate: isFinite(rate) && rate > 0 ? rate : 1,
+        enabled: c.enabled !== false,
+        primary: !!c.primary
+      };
+    }) : [];
+    if (!list.length) list = clone(DEFAULTS.settings.countries);
+    if (!list.some(function (c) { return c.enabled; })) {
+      var first = list[0];
+      if (first) first.enabled = true;
+    }
+    var primary = list.filter(function (c) { return c.enabled && c.primary; })[0];
+    if (!primary) {
+      primary = list.filter(function (c) { return c.enabled; })[0];
+      if (primary) primary.primary = true;
+    }
+    list.forEach(function (c) { if (c !== primary) c.primary = false; });
+    s.countries = list;
+    return target;
+  }
+
+  var PAYMENT_COPY = 'الدفع الإلكتروني متاح (إنستاباي، فودافون كاش، تحويل بنكي أو رابط دفع آمن)، لا نطلب بيانات بطاقة داخل الموقع';
+
+  function migratePaymentCopy(target) {
+    if (!target || typeof target !== 'object') return target;
+    var s = target.settings || (target.settings = {});
+    if (!s.paymentNote || /PayPal|الدفع الإلكتروني متاح عبر/.test(s.paymentNote)) s.paymentNote = PAYMENT_COPY;
+    if (Array.isArray(target.faqs)) {
+      target.faqs.forEach(function (faq) {
+        if (faq && /PayPal/.test(String(faq.answer || ''))) {
+          faq.answer = 'ندعم إنستاباي، فودافون كاش، التحويل البنكي، أو رابط دفع آمن. لا نطلب بيانات بطاقة داخل الموقع. عادة يتم دفع 50% مقدمًا و50% عند التسليم، أو حسب اتفاق المشروع.';
+        }
+      });
+    }
+    if (Array.isArray(target.payments)) {
+      target.payments.forEach(function (p) {
+        if (p && p.id === 'pay-paypal') p.active = false;
+        if (p && p.id === 'pay-link' && /فيزا|ماستركارد/.test(String(p.value || ''))) p.value = 'رابط دفع آمن — يُفتح خارج الموقع';
+      });
+    }
+    return target;
+  }
+
   function mergeWithDefaults(incoming) {
     if (incoming && typeof incoming === 'object') migrateIdentity(incoming);
     var merged = deepMerge(clone(DEFAULTS), incoming && typeof incoming === 'object' ? incoming : {});
-    return ensureCampaigns(merged);
+    return ensureCountries(migratePaymentCopy(ensureCampaigns(merged)));
   }
 
   function loadLocal() {
@@ -1266,7 +1326,7 @@
   // مستند الموقع العام للزوار لا يحتوي بيانات العملاء أو الطلبات (خصوصية).
   var CLOUD_EXCLUDED = ['orders', 'messages', 'customers', 'notifications', 'receipts'];
   // مفاتيح أمان لا يجوز أن تصل إلى السحابة العامة أبدًا — تبقى على هذا الجهاز فقط
-  var CLOUD_SETTING_SECRETS = ['adminTotpEnabled', 'adminTotpSecret'];
+  var CLOUD_SETTING_SECRETS = ['adminPasswordHash', 'adminTotpEnabled', 'adminTotpSecret', 'pushTopic'];
 
   function cloudPayload(source) {
     var payload = {};
@@ -2255,7 +2315,7 @@
 
   function checkPassword(password) {
     var stored = data.settings.adminPasswordHash;
-    if (!stored) return String(password) === DEFAULT_ADMIN_PASSWORD;
+    if (!stored) return false;
     return hashPassword(password) === stored;
   }
 
@@ -2264,14 +2324,29 @@
     persist();
   }
 
+  function keepLocalSecrets(target) {
+    var current = (data && data.settings) || {};
+    if (!target || typeof target !== 'object') return target;
+    target.settings = target.settings || {};
+    CLOUD_SETTING_SECRETS.forEach(function (key) {
+      if (current[key] !== undefined) target.settings[key] = clone(current[key]);
+    });
+    return target;
+  }
+
   function reset() {
-    data = mergeWithDefaults({});
+    var fresh = mergeWithDefaults({});
+    data = keepLocalSecrets(fresh);
     try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* ignore */ }
     persist({ cloud: true, source: 'reset' });
   }
 
   function exportJSON() {
-    return JSON.stringify(data, null, 2);
+    var copy = clone(data);
+    if (copy && copy.settings && typeof copy.settings === 'object') {
+      CLOUD_SETTING_SECRETS.forEach(function (key) { delete copy.settings[key]; });
+    }
+    return JSON.stringify(copy, null, 2);
   }
 
   function importJSON(text) {
@@ -2284,7 +2359,7 @@
     if (!parsed || typeof parsed !== 'object') {
       throw new Error('ملف غير صالح');
     }
-    data = mergeWithDefaults(parsed);
+    data = keepLocalSecrets(mergeWithDefaults(parsed));
     persist({ source: 'import' });
     return true;
   }
@@ -2339,7 +2414,6 @@
   window.NeonStore = {
     DEFAULTS: DEFAULTS,
     STORAGE_KEY: STORAGE_KEY,
-    DEFAULT_ADMIN_PASSWORD: DEFAULT_ADMIN_PASSWORD,
     ready: ready,
     get: get,
     save: save,

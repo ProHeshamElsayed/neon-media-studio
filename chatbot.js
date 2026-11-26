@@ -210,7 +210,7 @@
     var services = list('services');
     if (!services.length) return 'الخدمات هتظهر هنا قريبًا. ✨';
     return '<strong>الخدمات المتاحة 🛠️</strong><div class="chatbot-list">' + services.slice(0, 10).map(function (service) {
-      return '<div class="chatbot-list__row"><span>' + esc(service.title) + '</span><b>' + esc(money(service.price)) + (service.unit ? ' ' + esc(service.unit) : '') + '</b></div>';
+      return '<div class="chatbot-list__row"><span data-no-i18n="">' + esc(service.title) + '</span><b data-no-i18n="">' + esc(money(service.price)) + (service.unit ? ' ' + esc(service.unit) : '') + '</b></div>';
     }).join('') + '</div><span class="chatbot-note">الأسعار تقديرية — التفاصيل النهائية تُتفق عليها في الطلب. عندنا ' + services.length + ' خدمة تقدر تختار منها 👌</span>' +
       actionRow([{ label: 'اطلب الآن 🛒', action: 'order', primary: true }, { label: 'الباقات الشهرية 📦', action: 'packages' }]);
   }
@@ -218,13 +218,13 @@
   function serviceDetail(service) {
     if (!service) return servicesText();
     var features = Array.isArray(service.features) ? service.features.filter(Boolean) : [];
-    return '<strong>' + esc(service.title) + ' ✨</strong>' +
-      '<p class="chatbot-answer">' + esc(service.short || service.description || '') + '</p>' +
+    return '<strong data-no-i18n="">' + esc(service.title) + ' ✨</strong>' +
+      '<p class="chatbot-answer" data-no-i18n="">' + esc(service.short || service.description || '') + '</p>' +
       '<div class="chatbot-list">' +
-        '<div class="chatbot-list__row"><span>السعر</span><b>' + esc(money(service.price)) + (service.unit ? ' ' + esc(service.unit) : '') + '</b></div>' +
-        (service.duration ? '<div class="chatbot-list__row"><span>مدة التنفيذ</span><b>' + esc(service.duration) + '</b></div>' : '') +
+        '<div class="chatbot-list__row"><span data-i18n-ui>السعر</span><b data-no-i18n="">' + esc(money(service.price)) + (service.unit ? ' ' + esc(service.unit) : '') + '</b></div>' +
+        (service.duration ? '<div class="chatbot-list__row"><span data-i18n-ui>مدة التنفيذ</span><b data-no-i18n="">' + esc(service.duration) + '</b></div>' : '') +
       '</div>' +
-      (features.length ? '<div class="chatbot-note">تشمل: ' + features.slice(0, 5).map(esc).join(' · ') + '</div>' : '') +
+      (features.length ? '<div class="chatbot-note" data-no-i18n="">تشمل: ' + features.slice(0, 5).map(esc).join(' · ') + '</div>' : '') +
       actionRow([
         { label: 'اطلب الخدمة 🛒', action: 'order', primary: true },
         { label: 'كل الخدمات 🛠️', action: 'services' },
@@ -236,7 +236,7 @@
     var packages = list('packages');
     if (!packages.length) return 'الباقات الشهرية هتظهر هنا قريبًا. 📦';
     return '<strong>الباقات الشهرية 📦</strong><div class="chatbot-list">' + packages.map(function (pkg) {
-      return '<div class="chatbot-list__row"><span>' + esc(pkg.name) + (pkg.badge ? ' · ' + esc(pkg.badge) : '') + '</span><b>' + esc(money(pkg.price)) + (pkg.period ? ' ' + esc(pkg.period) : '') + '</b></div>';
+      return '<div class="chatbot-list__row"><span data-no-i18n="">' + esc(pkg.name) + (pkg.badge ? ' · ' + esc(pkg.badge) : '') + '</span><b data-no-i18n="">' + esc(money(pkg.price)) + (pkg.period ? ' ' + esc(pkg.period) : '') + '</b></div>';
     }).join('') + '</div><span class="chatbot-note">كل باقة قابلة للتخصيص حسب حجم مشروعك، وتقدر تبدأ بأصغر باقة وتطوّرها في أي وقت 📈</span>' +
       actionRow([{ label: 'اطلب باقة 🛒', action: 'order', primary: true }, { label: 'الخدمات المفردة 🛠️', action: 'services' }]);
   }
@@ -245,7 +245,7 @@
     var payments = list('payments');
     if (!payments.length) return 'الدفع حاليًا يتم بالاتفاق عبر واتساب. 💳';
     return '<strong>طرق الدفع المتاحة 💳</strong><div class="chatbot-list">' + payments.map(function (payment) {
-      return '<div class="chatbot-list__row"><span>' + esc(payment.name) + '</span><b dir="ltr">' + esc(payment.value || '—') + '</b></div>';
+      return '<div class="chatbot-list__row"><span data-no-i18n="">' + esc(payment.name) + '</span><b dir="ltr" data-no-i18n="">' + esc(payment.value || '—') + '</b></div>';
     }).join('') + '</div><span class="chatbot-note">🔒 لا نطلب بيانات بطاقة داخل الموقع نهائيًا. الدفع الإلكتروني متاح (إنستاباي، فودافون كاش، تحويل بنكي أو رابط دفع آمن)، والإيصال متاح بعد اكتمال الطلب.</span>' +
       actionRow([{ label: 'اطلب الآن 🛒', action: 'order', primary: true }, { label: 'الفاتورة الضريبية 🧾', action: 'send', value: 'الفاتورة الضريبية' }]);
   }
@@ -254,7 +254,7 @@
     var works = list('works');
     if (!works.length) return 'الأعمال هتظهر هنا قريبًا. 🎨';
     return '<strong>مختارات من أعمالنا 🎨</strong><div class="chatbot-list">' + works.slice(0, 6).map(function (work) {
-      return '<div class="chatbot-list__row"><span>' + esc(work.title) + (work.client ? ' — ' + esc(work.client) : '') + '</span><b>' + esc(work.year || '') + '</b></div>';
+      return '<div class="chatbot-list__row"><span data-no-i18n="">' + esc(work.title) + (work.client ? ' — ' + esc(work.client) : '') + '</span><b data-no-i18n="">' + esc(work.year || '') + '</b></div>';
     }).join('') + '</div><span class="chatbot-note">تقدر تشوف كل الأعمال والتفاصيل من قسم «أعمالنا» في الصفحة الرئيسية 👀</span>' +
       actionRow([{ label: 'شوف الأعمال 👀', action: 'works', primary: true }, { label: 'اطلب مشروعك 🚀', action: 'order' }]);
   }
@@ -269,7 +269,7 @@
       if (banner.title) lines.push('✨ ' + banner.title + (banner.code ? ' · كود: ' + banner.code : ''));
     });
     if (!lines.length) return 'مفيش عروض منشورة حاليًا، لكن عندنا أسعار مرنة وباقات تناسب كل مشروع 💡 ابعتلنا تفاصيل مشروعك ونعملك عرض مخصص.';
-    return '<strong>العروض الحالية 🎁</strong><div class="chatbot-lines">' + lines.map(esc).join('<br>') + '</div>' +
+    return '<strong data-i18n-ui>العروض الحالية 🎁</strong><div class="chatbot-lines" data-no-i18n="">' + lines.map(esc).join('<br>') + '</div>' +
       actionRow([{ label: 'احجز العرض 🎟️', action: 'order', primary: true }, { label: 'الباقات 📦', action: 'packages' }]);
   }
 
@@ -277,7 +277,7 @@
     var faqs = list('faqs');
     if (!faqs.length) return '';
     return '<strong>أسئلة شائعة ❓</strong><div class="chatbot-faq">' + faqs.slice(0, limit || 4).map(function (faq) {
-      return '<details><summary>' + esc(faq.question) + '</summary><p>' + esc(faq.answer) + '</p></details>';
+      return '<details><summary data-no-i18n="">' + esc(faq.question) + '</summary><p data-no-i18n="">' + esc(faq.answer) + '</p></details>';
     }).join('') + '</div>';
   }
 
@@ -295,7 +295,7 @@
         return '<a href="' + esc(item.url) + '" target="_blank" rel="noopener noreferrer">' + esc(item.name) + '</a>';
       }).join(' · '));
     }
-    return '<strong>تواصل معنا 📬</strong><div class="chatbot-lines">' + parts.join('<br>') + '</div>' +
+    return '<strong data-i18n-ui>تواصل معنا 📬</strong><div class="chatbot-lines" data-no-i18n="">' + parts.join('<br>') + '</div>' +
       actionRow([
         { label: 'واتساب فوري 💬', action: 'whatsapp', primary: true },
         { label: 'صفحة التواصل 📄', action: 'contact' }
@@ -305,9 +305,9 @@
   function aboutText() {
     var s = settings();
     var highlights = Array.isArray(s.aboutHighlights) ? s.aboutHighlights.filter(Boolean) : [];
-    return '<strong>مين إحنا؟ 👋</strong>' +
-      '<p class="chatbot-answer">' + esc(s.aboutText ? String(s.aboutText).split('\n')[0] : 'استوديو متكامل للتسويق الرقمي والتصميم والتصوير.') + '</p>' +
-      '<div class="chatbot-lines">' +
+    return '<strong data-i18n-ui>مين إحنا؟ 👋</strong>' +
+      '<p class="chatbot-answer" data-no-i18n="">' + esc(s.aboutText ? String(s.aboutText).split('\n')[0] : 'استوديو متكامل للتسويق الرقمي والتصميم والتصوير.') + '</p>' +
+      '<div class="chatbot-lines" data-no-i18n="">' +
         '👤 المؤسس: <strong>' + esc(s.ownerName || 'م. هشام السيد') + '</strong>' +
         (s.ownerTitle ? '<br>💼 ' + esc(s.ownerTitle) : '') +
         (s.aboutYears ? '<br>⭐ خبرة ' + esc(s.aboutYears) + ' سنوات' : '') +
@@ -338,9 +338,9 @@
     var statusEmoji = status === 'مكتمل' ? '✅' : status === 'قيد التنفيذ' ? '⚙️' : status === 'ملغي' ? '❌' : '🆕';
     return '<strong>تفاصيل الطلب ' + esc(found.orderNo || found.id) + ' ' + statusEmoji + '</strong>' +
       '<div class="chatbot-list">' +
-        '<div class="chatbot-list__row"><span>الحالة</span><b>' + esc(status) + '</b></div>' +
-        '<div class="chatbot-list__row"><span>الدفع</span><b>' + esc(store.orderPaymentStatus ? store.orderPaymentStatus(found) : (found.paymentStatus || '—')) + '</b></div>' +
-        '<div class="chatbot-list__row"><span>الإجمالي</span><b>' + esc(money(found.total != null ? found.total : found.amount, found.currency)) + '</b></div>' +
+        '<div class="chatbot-list__row"><span data-i18n-ui>الحالة</span><b data-no-i18n="">' + esc(status) + '</b></div>' +
+        '<div class="chatbot-list__row"><span data-i18n-ui>الدفع</span><b data-no-i18n="">' + esc(store.orderPaymentStatus ? store.orderPaymentStatus(found) : (found.paymentStatus || '—')) + '</b></div>' +
+        '<div class="chatbot-list__row"><span data-i18n-ui>الإجمالي</span><b data-no-i18n="">' + esc(money(found.total != null ? found.total : found.amount, found.currency)) + '</b></div>' +
       '</div>' +
       (status === 'مكتمل' ? '<span class="chatbot-note">تم تنفيذ الطلب بنجاح 🎉 تقدر تطلب الإيصال الضريبي المعتمد من صفحة «حسابي» أو واتساب 🧾</span>' : '<span class="chatbot-note">هنحدّث الحالة أول ما يبدأ التنفيذ أو يكتمل، وتقدر تتابعها من «حسابي» 👤</span>') +
       actionRow([{ label: 'افتح حسابي 👤', action: 'account', primary: true }, { label: 'كل الخدمات 🛠️', action: 'services' }]);

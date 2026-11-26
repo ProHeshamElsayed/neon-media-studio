@@ -534,7 +534,7 @@
       var customer = store.findCustomerByPhone ? store.findCustomerByPhone(phone.value) : null;
       if (customer) {
         hint.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg>' +
-          '<span>لديك <b>' + n(customer.points) + '</b> ' + esc(label) + (rate > 0 ? ' — وتكسب نقاطًا مع كل طلب جديد.' : '') + '</span>';
+          '<span data-no-i18n="">لديك <b>' + n(customer.points) + '</b> ' + esc(label) + (rate > 0 ? ' — وتكسب نقاطًا مع كل طلب جديد.' : '') + '</span>';
         hint.hidden = false;
         return;
       }

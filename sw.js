@@ -37,6 +37,8 @@ const PRECACHE = [
   './assets/css/extras.css',
   './assets/js/app.js',
   './assets/js/store.js',
+  './assets/js/i18n.js',
+  './assets/js/countries.js',
   './assets/js/home.js',
   './assets/img/logo.svg',
   './assets/img/icon-192.png',

@@ -21,6 +21,9 @@
   function n(value) { return Number(value) || 0; }
 
   function money(value, currency) {
+    if (window.NeonCountries && typeof window.NeonCountries.format === 'function') {
+      return window.NeonCountries.format(value, currency);
+    }
     var num = n(value);
     var text;
     try {
@@ -630,16 +633,16 @@
       return '<div class="account-order__line"><span>' + esc(title) + ' × ' + qty + '</span><b>' + esc(money(price * qty, order.currency)) + '</b></div>';
     });
     if (order.vatEnabled === true && n(order.vatAmount) > 0) {
-      rows.push('<div class="account-order__line"><span>ضريبة القيمة المضافة (' + esc(n(order.vatRate)) + '%)</span><b>' + esc(money(order.vatAmount, order.currency)) + '</b></div>');
+      rows.push('<div class="account-order__line"><span data-i18n-ui>ضريبة القيمة المضافة (' + esc(n(order.vatRate)) + '%)</span><b>' + esc(money(order.vatAmount, order.currency)) + '</b></div>');
     }
     if (order.paymentMethod) {
-      rows.push('<div class="account-order__line"><span>طريقة الدفع</span><b>' + esc(order.paymentMethod) + '</b></div>');
+      rows.push('<div class="account-order__line"><span data-i18n-ui>طريقة الدفع</span><b>' + esc(order.paymentMethod) + '</b></div>');
     }
     if (order.executedAt) {
-      rows.push('<div class="account-order__line"><span>تاريخ التنفيذ</span><b>' + esc(formatDate(order.executedAt)) + '</b></div>');
+      rows.push('<div class="account-order__line"><span data-i18n-ui>تاريخ التنفيذ</span><b>' + esc(formatDate(order.executedAt)) + '</b></div>');
     }
     if (order.paidAt) {
-      rows.push('<div class="account-order__line"><span>تاريخ السداد</span><b>' + esc(formatDate(order.paidAt)) + '</b></div>');
+      rows.push('<div class="account-order__line"><span data-i18n-ui>تاريخ السداد</span><b>' + esc(formatDate(order.paidAt)) + '</b></div>');
     }
     if (order.notes) {
       rows.push('<p class="account-order__note">ملاحظات: ' + esc(order.notes) + '</p>');
@@ -689,17 +692,17 @@
       '<p class="account-order__title">' + esc(serviceTitle) + '</p>' +
       '<div class="account-order__amount">' +
         '<b>' + esc(money(total, order.currency)) + '</b>' +
-        '<small>شامل الضريبة عند تفعيلها</small>' +
+        '<small data-i18n-ui>شامل الضريبة عند تفعيلها</small>' +
       '</div>' +
       trackHtml(order) +
       '<div class="account-order__receipt">' +
-        '<button type="button" class="btn-ghost btn-sm" data-print-receipt="' + esc(orderNo(order)) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Z"/><path d="m2 15 10 6 10-6"/><path d="m2 12 10 6 10-6"/></svg> ' + (isFinalReceipt(order) ? 'الإيصال النهائي (PDF)' : 'تحميل الإيصال PDF') + '</button>' +
+        '<button type="button" class="btn-ghost btn-sm" data-i18n-ui data-print-receipt="' + esc(orderNo(order)) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Z"/><path d="m2 15 10 6 10-6"/><path d="m2 12 10 6 10-6"/></svg> ' + (isFinalReceipt(order) ? 'الإيصال النهائي (PDF)' : 'تحميل الإيصال PDF') + '</button>' +
       '</div>' +
       '<details class="account-order__more">' +
-        '<summary>تفاصيل الطلب</summary>' +
+        '<summary data-i18n-ui>تفاصيل الطلب</summary>' +
         '<div class="account-order__body">' +
           orderLines(order) +
-          '<div class="account-order__line"><span>حالة الدفع</span><b>' + esc(payStatus) + '</b></div>' +
+          '<div class="account-order__line"><span data-i18n-ui>حالة الدفع</span><b>' + esc(payStatus) + '</b></div>' +
         '</div>' +
       '</details>' +
     '</article>';
@@ -1002,6 +1005,10 @@
 
   window.addEventListener('neon:customerauth', function (event) {
     handleAuth(event && event.detail ? event.detail.user : null);
+  });
+
+  window.addEventListener('neon:countrychange', function () {
+    if (typeof renderOrders === 'function') renderOrders();
   });
 
   /* -------------------------------- Boot ---------------------------------- */

@@ -10,7 +10,10 @@
 
   function qs(s, r) { return (r || document).querySelector(s); }
   function esc(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function money(v) { return (window.NeonStore && window.NeonStore.formatPrice) ? window.NeonStore.formatPrice(v) : (Number(v)||0).toLocaleString('en-US'); }
+  function money(v, currency) {
+    if (window.NeonCountries && typeof window.NeonCountries.format === 'function') return window.NeonCountries.format(v, currency);
+    return (window.NeonStore && window.NeonStore.formatPrice) ? window.NeonStore.formatPrice(v, currency) : (Number(v)||0).toLocaleString('en-US');
+  }
 
   var els = {
     form: qs('#trackForm'),
@@ -42,7 +45,7 @@
       var done = i <= currentIdx;
       return '<div class="track-step' + (done ? ' is-done' : '') + (i === currentIdx ? ' is-current' : '') + '">' +
         '<span class="track-step__dot"></span>' +
-        '<span class="track-step__label">' + esc(s) + '</span>' +
+        '<span class="track-step__label" data-i18n-ui>' + esc(s) + '</span>' +
       '</div>';
     }).join('');
 
@@ -54,11 +57,11 @@
         '</div>' +
         '<div class="track-timeline">' + stepsHtml + '</div>' +
         '<div class="track-meta">' +
-          '<div><span>الخدمة</span><strong>' + esc(order.serviceTitle || '—') + '</strong></div>' +
-          '<div><span>الإجمالي</span><strong>' + esc(money(order.total)) + ' ' + esc(order.currency || 'ج.م') + '</strong></div>' +
-          '<div><span>حالة الدفع</span><strong>' + esc(payStatus) + '</strong></div>' +
-          '<div><span>طريقة الدفع</span><strong>' + esc(order.paymentMethod || '—') + '</strong></div>' +
-          '<div><span>تاريخ الطلب</span><strong>' + esc(order.createdAt || '—') + '</strong></div>' +
+          '<div><span data-i18n-ui>الخدمة</span><strong data-no-i18n="">' + esc(order.serviceTitle || '—') + '</strong></div>' +
+          '<div><span data-i18n-ui>الإجمالي</span><strong data-no-i18n="">' + esc(money(order.total, order.currency)) + '</strong></div>' +
+          '<div><span data-i18n-ui>حالة الدفع</span><strong data-no-i18n="">' + esc(payStatus) + '</strong></div>' +
+          '<div><span data-i18n-ui>طريقة الدفع</span><strong data-no-i18n="">' + esc(order.paymentMethod || '—') + '</strong></div>' +
+          '<div><span data-i18n-ui>تاريخ الطلب</span><strong data-no-i18n="">' + esc(order.createdAt || '—') + '</strong></div>' +
         '</div>' +
         '<p class="track-hint">لتفاصيل إضافية (إيصال ضريبي، تعديل)، تواصل معنا على واتساب.</p>' +
       '</div>';

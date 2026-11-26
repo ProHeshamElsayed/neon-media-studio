@@ -271,8 +271,8 @@
             '<strong>' + money(service.price) + (service.unit ? ' <em>' + escapeHTML(service.unit) + '</em>' : '') + '</strong>' +
           '</div>' +
           '<div class="service-actions">' +
-            '<button type="button" class="service-link" data-service-detail="' + escapeHTML(service.id) + '" aria-label="تفاصيل ' + escapeHTML(service.title) + '" title="التفاصيل">' + icon('info') + '</button>' +
-            '<button type="button" class="service-order-btn" data-service-order="' + escapeHTML(service.id) + '">اطلب ' + icon('arrowUpLeft') + '</button>' +
+            '<button type="button" class="service-link" data-i18n-ui data-service-detail="' + escapeHTML(service.id) + '" aria-label="التفاصيل" title="التفاصيل">' + icon('info') + '</button>' +
+            '<button type="button" class="service-order-btn" data-i18n-ui data-service-order="' + escapeHTML(service.id) + '">اطلب ' + icon('arrowUpLeft') + '</button>' +
           '</div>' +
         '</div>' +
       '</article>';
@@ -323,11 +323,11 @@
           '<div class="package-icon">' + icon(icons[index % icons.length]) + '</div>' +
           '<h3>' + escapeHTML(pkg.name) + '</h3>' +
           '<p class="package-card__sub">' + escapeHTML(pkg.subtitle || '') + '</p>' +
-          '<div class="package-price"><strong>' + n(pkg.price).toLocaleString('en-US') + '</strong><span>' + escapeHTML((data.settings.currency || 'ج.م') + ' ' + (pkg.period || '')) + '</span></div>' +
+          '<div class="package-price"><strong>' + money(pkg.price) + '</strong><span>' + escapeHTML(pkg.period || '') + '</span></div>' +
           '<ul class="package-features">' + (Array.isArray(pkg.features) ? pkg.features.map(function (feature) {
             return '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + CHECK + '</svg><span>' + escapeHTML(feature) + '</span></li>';
           }).join('') : '') + '</ul>' +
-          '<button type="button" class="btn-neon" data-package-order="' + escapeHTML(pkg.id) + '">اطلب الباقة ' + icon('arrowUpLeft') + '</button>' +
+          '<button type="button" class="btn-neon" data-i18n-ui data-package-order="' + escapeHTML(pkg.id) + '">اطلب الباقة ' + icon('arrowUpLeft') + '</button>' +
         '</article>';
     }).join('') : emptyState('لا توجد باقات منشورة حاليًا.');
     if (UI) UI.refreshReveal(grid);
@@ -1239,6 +1239,20 @@ function renderClientsMarquee() {
         var payment = paymentInput ? byId('payments', paymentInput.value) : null;
         var formData = new FormData(orderForm);
         var items = cartPayload();
+        var selectedCountry = (window.NeonCountries && typeof window.NeonCountries.active === 'function')
+          ? window.NeonCountries.active() : null;
+        var countryRate = selectedCountry ? Number(selectedCountry.rate) : 1;
+        if (!isFinite(countryRate) || countryRate <= 0) countryRate = 1;
+        var countryCode = selectedCountry ? selectedCountry.code : '';
+        var countryCurrency = selectedCountry ? selectedCountry.currency : (data.settings.currency || 'ج.م');
+        // الأسعار المعروضة تُحوّل من الجنيه، لذلك يُخزَّن الطلب بنفس عملة العرض.
+        if (countryRate !== 1) {
+          items = items.map(function (line) {
+            var copy = Object.assign({}, line);
+            copy.price = Math.round((n(copy.price) * countryRate) * 100) / 100;
+            return copy;
+          });
+        }
         var totalQty = items.reduce(function (sum, line) { return sum + line.qty; }, 0);
         var totalPrice = items.reduce(function (sum, line) { return sum + (n(line.price) * line.qty); }, 0);
         var startNumber = Number(data.settings.orderStartNumber) || 1001;
@@ -1274,7 +1288,8 @@ function renderClientsMarquee() {
             items: items,
             vatEnabled: data.settings.vatEnabled === true,
             vatRate: n(data.settings.vatRate),
-            currency: data.settings.currency,
+            currency: countryCurrency,
+            country: countryCode,
             paymentId: payment ? payment.id : '',
             paymentMethod: payment ? payment.name : 'الدفع عند الاستلام',
             paymentType: payment ? (payment.type || '') : 'cash',
@@ -1315,6 +1330,7 @@ function renderClientsMarquee() {
             total: order.total,
             amount: order.amount,
             currency: order.currency,
+            country: order.country || '',
             paymentId: order.paymentId,
             paymentMethod: order.paymentMethod,
             paymentType: order.paymentType,
