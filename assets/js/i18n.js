@@ -2,12 +2,20 @@
    NÉON MEDIA — English UI layer (public pages only)
    - يحفظ الاختيار في localStorage: neonLang
    - يبدّل dir بين rtl وltr بدون مسح أي بيانات أخرى
-   - يترجم النصوص الثابتة فقط؛ محتوى الأدمن يبقى كما أدخل
+   - النصوص الثابتة من القاموس، وأي نص عربي متبقٍ (بما فيه نصوص الأدمن)
+     يُترجم تلقائيًا عبر /api/public/translate ويُخزّن في كاش محلي.
+   - أي تعديل في لوحة التحكم يُنتج نصًا جديدًا فيُترجم تلقائيًا بدون تدخل.
    ========================================================================== */
 (function () {
   'use strict';
 
   var KEY = 'neonLang';
+  var API_BASE = window.NEON_API_BASE || (/pages\.dev$/.test(location.hostname) ? location.origin : 'https://neon-media-admin.pages.dev');
+  var API_URL = String(API_BASE).replace(/\/$/, '') + '/api/public/translate';
+  var CACHE_KEY = 'neonTranslationCache';
+  var ARABIC = /[\u0600-\u06FF]/;
+  // عناصر تتولى هي لغتها بنفسها (مفتاح اللغة/الوضع/الدولة) — لا تُرسل للترجمة.
+  var SKIP_API = '#neonLangSwitch button, [data-mobile-lang-label], [data-mobile-theme-label], #neonCountrySelect, script, style, noscript';
   var DICT = {
     "— جميع الحقوق محفوظة.": "— All rights reserved.",
     "> فكرة": "> Idea",
@@ -487,13 +495,23 @@
     "عنصر": "item"
   };
 
-  var ATTRS = ['placeholder', 'title', 'aria-label', 'alt', 'value'];
-  // محتوى يدخله الأدمن أو يأتي من الطلبات/الرسائل لا يُترجم أبدًا، حتى لو طابق كلمة في القاموس.
-  var USER_CONTENT = '[data-no-i18n], [data-user-content]';
-  var UI_OVERRIDE = '[data-i18n-ui]';
+  // value لا يُترجم أبدًا: قيم النماذج والخيارات تُستخدم في منطق الطلبات.
+  var ATTRS = ['placeholder', 'title', 'aria-label', 'alt'];
   var USER_CONTAINERS = '.service-card, .package-card, .work-card, .testimonial-card, .account-order, .track-empty, .filter-empty, .order-cart, .service-detail__body';
   var textOriginals = new WeakMap();
+  var translatedCache = {};
+  var queued = Object.create(null);
+  var failedAt = Object.create(null);
+  var queue = [];
+  var timer = null;
+  var inFlight = false;
+  var originalTitle = null;
   var lang = 'ar';
+
+  try {
+    var storedCache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+    if (storedCache && typeof storedCache === 'object' && !Array.isArray(storedCache)) translatedCache = storedCache;
+  } catch (e) { translatedCache = {}; }
 
   function getLang() {
     try { return localStorage.getItem(KEY) === 'en' ? 'en' : 'ar'; } catch (e) { return 'ar'; }
@@ -503,23 +521,115 @@
     try { localStorage.setItem(KEY, value); } catch (e) { /* تجاهل */ }
   }
 
-  function isUserContent(el) {
-    return !!(el && el.closest && el.closest(USER_CONTENT) && !el.closest(UI_OVERRIDE));
+  function saveCache() {
+    try {
+      var keys = Object.keys(translatedCache);
+      if (keys.length > 800) {
+        keys.slice(0, keys.length - 800).forEach(function (key) { delete translatedCache[key]; });
+      }
+      localStorage.setItem(CACHE_KEY, JSON.stringify(translatedCache));
+    } catch (e) { /* تجاهل */ }
+  }
+
+  function skipApi(el) {
+    return !!(el && el.closest && el.closest(SKIP_API));
+  }
+
+  function enqueue(item) {
+    if (lang !== 'en') return;
+    var source = String(item.original || '').trim();
+    if (!ARABIC.test(source)) return;
+    if (skipApi(item.el || (item.node && item.node.parentElement))) return;
+    if (translatedCache[source]) { applyApi(item, translatedCache[source]); return; }
+    if (queued[source]) return;
+    var failed = failedAt[source];
+    if (failed && Date.now() - failed < 60000) return;
+    queued[source] = true;
+    queue.push(item);
+    if (!timer) timer = setTimeout(flushQueue, 140);
+  }
+
+  function applyApi(item, english) {
+    if (!english) return;
+    var source = String(item.original || '').trim();
+    delete queued[source];
+    var value = String(item.original || '').replace(source, english);
+    if (item.type === 'title') { document.title = value; return; }
+    if (item.type === 'attr') {
+      if (item.el && item.el.getAttribute(item.attr) !== value) item.el.setAttribute(item.attr, value);
+      return;
+    }
+    if (item.node && item.node.nodeValue !== value) item.node.nodeValue = value;
+  }
+
+  function flushQueue() {
+    timer = null;
+    if (!queue.length || inFlight) return;
+    var items = queue.slice(0, 20);
+    queue = queue.slice(20);
+    var sources = [];
+    items.forEach(function (item) {
+      var source = String(item.original || '').trim();
+      if (sources.indexOf(source) < 0) sources.push(source);
+    });
+    var pending = sources.filter(function (source) { return !translatedCache[source]; });
+    if (!pending.length) {
+      items.forEach(function (item) { applyApi(item, translatedCache[String(item.original || '').trim()]); });
+      if (queue.length) timer = setTimeout(flushQueue, 20);
+      return;
+    }
+    inFlight = true;
+    var finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      inFlight = false;
+      if (queue.length) timer = setTimeout(flushQueue, 20);
+    }
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'omit',
+      body: JSON.stringify({ texts: pending })
+    }).then(function (response) {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.json();
+    }).then(function (payload) {
+      var list = payload && payload.translations;
+      if (!Array.isArray(list)) throw new Error('bad response');
+      pending.forEach(function (source, index) {
+        var value = list[index];
+        if (typeof value === 'string' && value.trim()) translatedCache[source] = value;
+        else failedAt[source] = Date.now();
+      });
+      saveCache();
+      items.forEach(function (item) {
+        var source = String(item.original || '').trim();
+        if (translatedCache[source]) applyApi(item, translatedCache[source]);
+        else delete queued[source];
+      });
+    }).catch(function () {
+      pending.forEach(function (source) { failedAt[source] = Date.now(); });
+      items.forEach(function (item) { delete queued[String(item.original || '').trim()]; });
+    }).then(finish, finish);
   }
 
   function translateText(node) {
     if (!node.nodeValue || !node.nodeValue.trim()) return;
     var parent = node.parentElement;
     if (!parent || /^(SCRIPT|STYLE|NOSCRIPT)$/i.test(parent.tagName)) return;
-    if (isUserContent(parent)) return;
     if (!textOriginals.has(node)) textOriginals.set(node, node.nodeValue);
+    var original = textOriginals.get(node);
     if (lang !== 'en') {
-      node.nodeValue = textOriginals.get(node);
+      if (node.nodeValue !== original) node.nodeValue = original;
       return;
     }
-    var original = textOriginals.get(node);
     var key = original.trim();
-    if (DICT[key]) node.nodeValue = original.replace(key, DICT[key]);
+    if (DICT[key]) {
+      node.nodeValue = original.replace(key, DICT[key]);
+      return;
+    }
+    enqueue({ type: 'text', node: node, original: original });
   }
 
   function translateAttributes(root) {
@@ -527,7 +637,6 @@
     if (root.querySelectorAll) nodes = nodes.concat(Array.prototype.slice.call(root.querySelectorAll('*')));
     nodes.forEach(function (el) {
       if (!el || !el.getAttribute) return;
-      if (isUserContent(el)) return;
       ATTRS.forEach(function (attr) {
         var attrKey = 'data-i18n-orig-' + attr;
         var current = el.getAttribute(attr);
@@ -538,8 +647,13 @@
           if (current !== original) el.setAttribute(attr, original);
           return;
         }
-        var translated = DICT[original.trim()];
-        if (translated && current !== translated) el.setAttribute(attr, original.replace(original.trim(), translated));
+        var key = original.trim();
+        var translated = DICT[key];
+        if (translated) {
+          if (current !== translated) el.setAttribute(attr, original.replace(key, translated));
+          return;
+        }
+        if (ARABIC.test(key)) enqueue({ type: 'attr', el: el, attr: attr, original: original });
       });
     });
   }
@@ -566,28 +680,37 @@
     translateAttributes(root);
   }
 
+  function setLang(next) {
+    saveLang(next);
+    apply(next);
+    window.dispatchEvent(new CustomEvent('neon:langchange', { detail: { lang: next } }));
+  }
+
+  function switchLang() {
+    setLang(lang === 'en' ? 'ar' : 'en');
+  }
+
   function addSwitcher() {
-    if (document.getElementById('neonLangSwitch')) return;
     var header = document.querySelector('.site-header, #siteHeader, header');
-    if (!header) return;
-    var target = header.querySelector('.header-actions') || header;
-    var wrap = document.createElement('div');
-    wrap.id = 'neonLangSwitch';
-    wrap.className = 'neon-lang-switch';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.setAttribute('aria-label', 'Switch language');
-    btn.setAttribute('data-no-i18n', '');
-    btn.textContent = lang === 'en' ? 'ع' : 'EN';
-    btn.title = lang === 'en' ? 'العربية' : 'English';
-    btn.addEventListener('click', function () {
-      var next = lang === 'en' ? 'ar' : 'en';
-      saveLang(next);
-      apply(next);
-      window.dispatchEvent(new CustomEvent('neon:langchange', { detail: { lang: next } }));
+    var target = header && (header.querySelector('.header-actions') || header);
+    if (target && !document.getElementById('neonLangSwitch')) {
+      var wrap = document.createElement('div');
+      wrap.id = 'neonLangSwitch';
+      wrap.className = 'neon-lang-switch';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Switch language');
+      btn.setAttribute('data-no-i18n', '');
+      btn.addEventListener('click', switchLang);
+      wrap.appendChild(btn);
+      target.insertBefore(wrap, target.firstChild);
+    }
+    // نسخة اللغة جوّه قائمة الهامبرجر (الهيدر يبقى أقل زحمة على الموبايل)
+    Array.prototype.forEach.call(document.querySelectorAll('[data-mobile-lang-toggle]'), function (mBtn) {
+      if (mBtn.__neonLangWired) return;
+      mBtn.__neonLangWired = true;
+      mBtn.addEventListener('click', switchLang);
     });
-    wrap.appendChild(btn);
-    target.insertBefore(wrap, target.firstChild);
     addStyles();
   }
 
@@ -601,8 +724,20 @@
       'background:rgba(8,14,26,.72);color:#67e8f9;font-weight:800;font-size:12px;line-height:1;cursor:pointer;' +
       'box-shadow:0 0 12px rgba(34,211,238,.18);transition:transform .2s ease,box-shadow .2s ease}' +
       '.neon-lang-switch button:hover{transform:translateY(-1px);box-shadow:0 0 18px rgba(34,211,238,.35)}' +
-      '[dir="ltr"] .neon-lang-switch{margin-inline-start:auto}';
+      '[dir="ltr"] .neon-lang-switch{margin-inline-start:auto}' +
+      '@media(max-width:399.98px){.neon-lang-switch button{min-width:32px;height:30px;font-size:11px}}';
     document.head.appendChild(css);
+  }
+
+  function translateTitle() {
+    if (originalTitle === null) originalTitle = document.title;
+    if (lang !== 'en') {
+      if (document.title !== originalTitle) document.title = originalTitle;
+      return;
+    }
+    var key = originalTitle.trim();
+    if (DICT[key]) { document.title = originalTitle.replace(key, DICT[key]); return; }
+    if (ARABIC.test(key)) enqueue({ type: 'title', original: originalTitle });
   }
 
   function apply(next) {
@@ -610,32 +745,62 @@
     document.documentElement.setAttribute('lang', lang);
     document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
     document.documentElement.setAttribute('data-lang', lang);
+    translateTitle();
     walk(document.body);
     var btn = document.querySelector('#neonLangSwitch button');
     if (btn) {
       btn.textContent = lang === 'en' ? 'ع' : 'EN';
       btn.title = lang === 'en' ? 'العربية' : 'English';
     }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-mobile-lang-label]'), function (label) {
+      label.textContent = lang === 'en' ? 'ع' : 'EN';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-mobile-theme-label]'), function (label) {
+      label.textContent = lang === 'en' ? 'Theme' : 'الوضع';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-mobile-lang-toggle]'), function (mBtn) {
+      mBtn.setAttribute('title', lang === 'en' ? 'العربية' : 'English');
+      if (!mBtn.__neonLangWired) { mBtn.__neonLangWired = true; mBtn.addEventListener('click', switchLang); }
+    });
   }
 
   function observe() {
     if (!window.MutationObserver) return;
     var observer = new MutationObserver(function (mutations) {
+      if (lang !== 'en') return;
+      var dirty = false;
       mutations.forEach(function (mutation) {
-        if (mutation.addedNodes) {
-          Array.prototype.forEach.call(mutation.addedNodes, function (node) {
-            if (node.nodeType === 1 || node.nodeType === 3) walk(node);
-          });
+        if (mutation.type === 'attributes') {
+          var el = mutation.target;
+          if (skipApi(el)) return;
+          if (ARABIC.test(String(el.getAttribute(mutation.attributeName) || ''))) dirty = true;
+          return;
         }
+        if (mutation.type === 'characterData') {
+          var node = mutation.target;
+          if (node.nodeType === 3 && ARABIC.test(String(node.nodeValue || ''))) dirty = true;
+          return;
+        }
+        if (mutation.addedNodes && mutation.addedNodes.length) dirty = true;
       });
+      if (dirty) walk(document.body);
     });
-    observer.observe(document.body, { childList: true, subtree: true, characterData: false });
+    observer.observe(document.body, {
+      childList: true, subtree: true, characterData: true,
+      attributes: true, attributeFilter: ATTRS
+    });
   }
 
   window.NeonI18n = {
     getLang: getLang,
-    setLang: function (next) { saveLang(next); apply(next); },
-    t: function (text) { return lang === 'en' ? (DICT[String(text || '').trim()] || text) : text; }
+    setLang: setLang,
+    t: function (text) {
+      if (lang !== 'en') return text;
+      var key = String(text || '').trim();
+      return DICT[key] || translatedCache[key] || text;
+    },
+    translateNow: function () { translateTitle(); walk(document.body); flushQueue(); },
+    apiUrl: API_URL
   };
 
   function init() {
@@ -644,9 +809,10 @@
     document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
     document.documentElement.setAttribute('data-lang', lang);
     addSwitcher();
+    translateTitle();
     walk(document.body);
     observe();
-    window.addEventListener('neon:datachange', function () { walk(document.body); });
+    window.addEventListener('neon:datachange', function () { translateTitle(); walk(document.body); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

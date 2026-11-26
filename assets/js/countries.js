@@ -118,7 +118,9 @@
       '.neon-country-switch select{max-width:150px;height:32px;padding:0 10px;border-radius:999px;' +
       'border:1px solid rgba(167,139,250,.45);background:rgba(8,14,26,.72);color:#c4b5fd;' +
       'font-size:12px;font-weight:700;cursor:pointer;outline:none}' +
-      '.neon-country-switch select:focus-visible{box-shadow:0 0 0 2px rgba(167,139,250,.4)}';
+      '.neon-country-switch select:focus-visible{box-shadow:0 0 0 2px rgba(167,139,250,.4)}' +
+      '@media(max-width:575.98px){.neon-country-switch select{max-width:88px;width:88px;padding:0 6px;font-size:11px}}' +
+      '@media(max-width:399.98px){.neon-country-switch select{max-width:74px;width:74px;font-size:10px}}';
     document.head.appendChild(style);
   }
 

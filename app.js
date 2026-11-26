@@ -609,6 +609,7 @@
       mobileMenu.classList.remove('is-open');
       mobileMenu.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('is-loading');
+      document.body.classList.remove('menu-open');
     }
     if (toggle && mobileMenu) {
       toggle.addEventListener('click', function () {
@@ -618,7 +619,9 @@
         mobileMenu.classList.toggle('is-open', open);
         mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
         document.body.classList.toggle('is-loading', open);
+        document.body.classList.toggle('menu-open', open);
       });
+      qsa('[data-menu-close]', mobileMenu).forEach(function (btn) { btn.addEventListener('click', closeMenu); });
       qsa('a', mobileMenu).forEach(function (link) { link.addEventListener('click', closeMenu); });
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') closeMenu();

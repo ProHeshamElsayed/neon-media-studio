@@ -932,21 +932,42 @@ html[data-theme='light'] .icon-btn .sun-icon { display: none; }
 .mobile-menu {
   position: fixed;
   inset: 0;
-  z-index: 1029;
+  z-index: 10055;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 6rem 1.5rem 3rem;
+  justify-content: flex-start;
+  padding: 4.5rem 1.25rem 1.15rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--glass-strong);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 .mobile-menu.is-open { opacity: 1; visibility: visible; }
+/* اللوحة فوق الهيدر: الناف بار يختفي تمامًا أثناء فتح القائمة */
+body.menu-open .site-header { opacity: 0; visibility: hidden; pointer-events: none; }
+.mobile-menu__close {
+  position: absolute;
+  top: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  cursor: pointer;
+}
+.mobile-menu__close:hover { color: var(--accent); border-color: rgba(var(--accent-rgb), 0.5); }
+.mobile-menu__close svg { width: 18px; height: 18px; }
 .mobile-menu__nav {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.1rem;
   max-width: 420px;
   width: 100%;
   margin-inline: auto;
@@ -955,9 +976,9 @@ html[data-theme='light'] .icon-btn .sun-icon { display: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 0;
+  padding: 0.7rem 0;
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--text-soft);
   border-bottom: 1px solid var(--line);
@@ -979,16 +1000,61 @@ html[data-theme='light'] .icon-btn .sun-icon { display: none; }
 .mobile-menu__footer {
   max-width: 420px;
   width: 100%;
-  margin: 1.75rem auto 0;
+  margin: auto auto 0;
+  padding-top: 1rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
   color: var(--muted);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
 }
-.mobile-menu__socials { display: flex; gap: 0.55rem; }
+.mobile-menu__socials { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+.mobile-menu__socials .social-btn { width: 34px; height: 34px; border-radius: 10px; }
+.mobile-menu__socials .social-btn svg { width: 16px; height: 16px; }
+/* أدوات الوضع واللغة جوّه القائمة بدل ما تزحّم الهيدر */
+.mobile-menu__controls {
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto 0.9rem;
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.mobile-menu__control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 38px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mobile-menu__control:hover { border-color: rgba(var(--accent-rgb), 0.45); color: var(--accent); }
+.mobile-menu__control svg { width: 16px; height: 16px; color: var(--accent); }
+.mobile-menu__control .moon-icon { display: none; }
+html[data-theme='light'] .mobile-menu__control .moon-icon { display: block; }
+html[data-theme='light'] .mobile-menu__control .sun-icon { display: none; }
 @keyframes menuIn { to { opacity: 1; transform: none; } }
+/* شاشات قصيرة: كل العناصر (الروابط + الأدوات + السوشيال) تفضل ظاهرة */
+@media (max-height: 720px) {
+  .mobile-menu { padding-top: 3.75rem; padding-bottom: 0.8rem; }
+  .mobile-menu__close { top: 0.6rem; width: 34px; height: 34px; }
+  .mobile-menu__nav a { padding: 0.42rem 0; font-size: 1.1rem; }
+  .mobile-menu__nav a span { font-size: 0.66rem; }
+  .mobile-menu__controls { margin-bottom: 0.5rem; }
+  .mobile-menu__control { min-height: 32px; padding: 0.3rem 0.65rem; font-size: 0.76rem; }
+  .mobile-menu__footer { padding-top: 0.5rem; font-size: 0.72rem; }
+  .mobile-menu__socials .social-btn { width: 30px; height: 30px; border-radius: 9px; }
+  .mobile-menu__socials .social-btn svg { width: 14px; height: 14px; }
+}
 
 /* ----------------------------- Buttons ---------------------------------- */
 .btn {
@@ -1392,42 +1458,50 @@ html.js [data-reveal].is-visible {
 }
 
 /* ----------------------------- Responsive header ------------------------ */
-@media (max-width: 1199.98px) {
-  .nav-links { gap: 0; }
-  .nav-links a { padding-inline: 0.6rem; font-size: 0.84rem; }
+@media (max-width: 1399.98px) {
   .nav-whatsapp span { display: none; }
   .nav-whatsapp { width: 40px; height: 40px; padding: 0; justify-content: center; }
 }
-@media (max-width: 991.98px) {
-  :root { --header-h: 68px; }
-  .aurora { animation: none !important; will-change: auto; }
+@media (max-width: 1199.98px) {
+  :root { --header-h: 72px; }
   .nav-links { display: none; }
   .nav-toggle { display: grid; }
   .header-actions { margin-inline-start: auto; }
   .nav-whatsapp { display: none; }
-  .brand-text strong { font-size: 1.05rem; }
+  /* الوضع واللغة ينتقلوا جوّه قائمة الهامبرجر */
+  .header-actions > [data-theme-toggle],
+  .header-actions > .neon-lang-switch { display: none !important; }
+  .mobile-menu__controls { display: flex; }
+}
+@media (max-width: 991.98px) {
+  :root { --header-h: 68px; }
+  .aurora { animation: none !important; will-change: auto; }
+  .header-actions .account-link { display: none; }
+  .brand-text strong { font-size: 1rem; }
 }
 @media (max-width: 575.98px) {
   body { line-height: 1.75; }
   .container { padding-inline: 1rem; }
-  /* النارب سطر واحد دايمًا — الشعار جنبه الأيقونات (بدون قفز سطر) */
-  .navbar > .container { flex-wrap: nowrap; gap: 0.5rem; }
+  /* الناف بار سطر واحد: الشعار + أدوات مختصرة فقط */
+  .navbar > .container { flex-wrap: nowrap; gap: 0.55rem; }
   .navbar-brand { gap: 0.45rem; }
   .brand-mark { width: 36px; height: 36px; border-radius: 11px; }
   .brand-mark img { width: 26px; height: 26px; }
   .brand-text { gap: 0; }
   .brand-text strong { font-size: 0.95rem; letter-spacing: -0.25px; white-space: nowrap; }
-  .brand-text span { font-size: 0.44rem; letter-spacing: 1.6px; white-space: nowrap; }
+  .brand-text span { display: none; }
   .header-actions { gap: 0.22rem; }
   .header-actions .icon-btn { width: 33px; height: 33px; }
   .header-actions .icon-btn svg { width: 16px; height: 16px; }
-  .nav-toggle { width: 37px; height: 37px; }
-  .brand-mark { width: 40px; height: 40px; border-radius: 12px; }
-  .brand-mark img { width: 29px; height: 29px; }
-  .brand-text span { letter-spacing: 2.4px; font-size: 0.5rem; }
-  .header-actions { gap: 0.3rem; }
-  .icon-btn { width: 37px; height: 37px; }
+  .nav-toggle { width: 35px; height: 35px; }
   .section { padding: 3.8rem 0; }
+}
+@media (max-width: 399.98px) {
+  .brand-text { display: none; }
+  .navbar > .container { gap: 0.35rem; }
+  .header-actions { gap: 0.18rem; }
+  .header-actions .icon-btn, .nav-toggle { width: 32px; height: 32px; }
+  .neon-lang-switch button { min-width: 32px; height: 30px; }
 }
 
 
