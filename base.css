@@ -1459,21 +1459,25 @@ html.js [data-reveal].is-visible {
 }
 
 /* ----------------------------- Responsive header ------------------------ */
-/* زي ما اتفقنا: على شاشات الكمبيوتر (±1399px) زر القائمة يظهر،
-   وأيقونة الوضع + اللغة + الدولة كلها جوّه القائمة، مش في الهيدر. */
-@media (max-width: 1399.98px) {
-  :root { --header-h: 72px; }
-  .nav-links { display: none; }
-  .nav-toggle { display: grid; }
-  .header-actions { margin-inline-start: auto; gap: 0.35rem; }
-  .nav-whatsapp { display: none; }
-  .account-link__label { display: none; }
-  .header-actions .account-link { width: 40px; height: 40px; padding: 0; justify-content: center; }
-  /* الوضع واللغة والدولة ينتقلوا جوّه قائمة الهامبرجر */
-  .header-actions > [data-theme-toggle],
-  .header-actions > .neon-lang-switch,
-  .header-actions > .neon-country-switch { display: none !important; }
-  .mobile-menu__controls { display: flex; }
+/* زي ما اتفقنا: أدوات الوضع واللغة والدولة جوّه القائمة في كل المقاسات،
+   وأيقونة العملة ما بتظهرش في الناف بار خالص. */
+:root { --header-h: 72px; }
+.nav-links { display: none; }
+.nav-toggle { display: grid; }
+.header-actions { margin-inline-start: auto; gap: 0.35rem; }
+.nav-whatsapp { display: none; }
+.account-link__label { display: none; }
+.header-actions .account-link { width: 40px; height: 40px; padding: 0; justify-content: center; }
+.header-actions > [data-theme-toggle],
+.header-actions > .neon-lang-switch,
+.header-actions > .neon-country-switch { display: none !important; }
+.mobile-menu__controls { display: flex; }
+/* الشاشات الكبيرة جدًا: اللينكات تفضل ظاهرة وزر القائمة كمان */
+@media (min-width: 1400px) {
+  .nav-links { display: flex; }
+  .mobile-menu__nav,
+  .mobile-menu__controls,
+  .mobile-menu__footer { max-width: 560px; }
 }
 @media (max-width: 991.98px) {
   :root { --header-h: 68px; }
