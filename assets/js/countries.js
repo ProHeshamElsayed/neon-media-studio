@@ -109,6 +109,11 @@
     return (en ? country.nameEn : country.nameAr) + ' (' + country.symbol + ')';
   }
 
+  /* صيغة مختصرة للهيدر عشان الناف بار يفضل متزن على شاشات الكمبيوتر */
+  function shortLabel(country) {
+    return country.code + ' ' + country.symbol;
+  }
+
   function addStyles() {
     if (document.getElementById('neonCountryStyles')) return;
     var style = document.createElement('style');
@@ -120,8 +125,27 @@
       'font-size:12px;font-weight:700;cursor:pointer;outline:none}' +
       '.neon-country-switch select:focus-visible{box-shadow:0 0 0 2px rgba(167,139,250,.4)}' +
       '@media(max-width:575.98px){.neon-country-switch select{max-width:88px;width:88px;padding:0 6px;font-size:11px}}' +
-      '@media(max-width:399.98px){.neon-country-switch select{max-width:74px;width:74px;font-size:10px}}';
+      '@media(max-width:399.98px){.neon-country-switch select{max-width:74px;width:74px;font-size:10px}}' +
+      '.mobile-menu__country{display:none;align-items:center;gap:.5rem;color:#c4b5fd;font-size:.82rem;font-weight:700}' +
+      '.mobile-menu__country select{max-width:200px;height:34px;padding:0 10px;border-radius:999px;' +
+      'border:1px solid rgba(167,139,250,.45);background:rgba(8,14,26,.72);color:#c4b5fd;' +
+      'font-size:12px;font-weight:700;cursor:pointer;outline:none}' +
+      '@media(max-width:991.98px){.mobile-menu__country{display:flex}}';
     document.head.appendChild(style);
+  }
+
+  function fillSelect(select, current, useShort) {
+    if (!select) return;
+    var list = enabledCountries();
+    select.innerHTML = '';
+    list.forEach(function (c) {
+      var option = document.createElement('option');
+      option.value = c.code;
+      option.textContent = useShort ? shortLabel(c) : label(c);
+      if (c.code === current) option.selected = true;
+      select.appendChild(option);
+    });
+    select.value = current;
   }
 
   function addSwitcher() {
@@ -145,18 +169,29 @@
       select.setAttribute('data-no-i18n', '');
       wrap.appendChild(select);
     }
+    /* نسخة جوّه قائمة الهامبرجر: بتظهر لما الناف بار يتطوى */
+    var mobileWrap = document.getElementById('neonCountrySwitchMobile');
+    var mobileSelect = document.getElementById('neonCountrySelectMobile');
+    var mobileControls = document.querySelector('.mobile-menu__controls');
+    if (mobileControls && !mobileWrap) {
+      mobileWrap = document.createElement('div');
+      mobileWrap.id = 'neonCountrySwitchMobile';
+      mobileWrap.className = 'mobile-menu__country';
+      mobileControls.appendChild(mobileWrap);
+    }
+    if (mobileWrap && !mobileSelect) {
+      mobileSelect = document.createElement('select');
+      mobileSelect.id = 'neonCountrySelectMobile';
+      mobileSelect.setAttribute('aria-label', 'Country / currency');
+      mobileSelect.setAttribute('data-no-i18n', '');
+      mobileWrap.appendChild(mobileSelect);
+    }
     addStyles();
     var current = activeCountry().code;
-    var list = enabledCountries();
-    select.innerHTML = '';
-    list.forEach(function (c) {
-      var option = document.createElement('option');
-      option.value = c.code;
-      option.textContent = label(c);
-      if (c.code === current) option.selected = true;
-      select.appendChild(option);
-    });
+    fillSelect(select, current, true);
+    fillSelect(mobileSelect, current, false);
     select.onchange = function () { applySelection(select.value); };
+    if (mobileSelect) mobileSelect.onchange = function () { applySelection(mobileSelect.value); };
   }
 
   function applySelection(code) {

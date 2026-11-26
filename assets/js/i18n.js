@@ -15,7 +15,7 @@
   var CACHE_KEY = 'neonTranslationCache';
   var ARABIC = /[\u0600-\u06FF]/;
   // عناصر تتولى هي لغتها بنفسها (مفتاح اللغة/الوضع/الدولة) — لا تُرسل للترجمة.
-  var SKIP_API = '#neonLangSwitch button, [data-mobile-lang-label], [data-mobile-theme-label], #neonCountrySelect, script, style, noscript';
+  var SKIP_API = '#neonLangSwitch button, [data-mobile-lang-label], [data-mobile-theme-label], #neonCountrySelect, #neonCountrySelectMobile, script, style, noscript';
   var DICT = {
     "— جميع الحقوق محفوظة.": "— All rights reserved.",
     "> فكرة": "> Idea",

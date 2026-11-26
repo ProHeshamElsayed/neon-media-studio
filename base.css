@@ -806,6 +806,7 @@ html[data-theme='light'] .welcome-gate { background: rgba(240, 246, 255, 0.9); }
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--muted);
+  white-space: nowrap;
   border-radius: 10px;
   transition: color 0.25s ease, background 0.25s ease;
 }
@@ -1458,27 +1459,38 @@ html.js [data-reveal].is-visible {
 }
 
 /* ----------------------------- Responsive header ------------------------ */
+/* الناف بار يفضل متزن زي النسخة الأصلية: لينكات متراصة + أدوات صغيرة */
 @media (max-width: 1399.98px) {
-  .nav-whatsapp span { display: none; }
-  .nav-whatsapp { width: 40px; height: 40px; padding: 0; justify-content: center; }
+  /* منع النزول لسطر تاني: اللينكات + الأدوات في نفس السطر زي الأصل */
+  .navbar > .container { flex-wrap: nowrap; gap: 0.5rem; }
+  .nav-links { gap: 0; margin-inline: 0; }
+  .nav-links a { padding-inline: 0.45rem; font-size: 0.82rem; }
+  .header-actions { gap: 0.35rem; }
+  .neon-country-switch select { max-width: 74px; width: 74px; padding: 0 5px; font-size: 10px; }
 }
 @media (max-width: 1199.98px) {
-  :root { --header-h: 72px; }
-  .nav-links { display: none; }
-  .nav-toggle { display: grid; }
-  .header-actions { margin-inline-start: auto; }
-  .nav-whatsapp { display: none; }
-  /* الوضع واللغة ينتقلوا جوّه قائمة الهامبرجر */
-  .header-actions > [data-theme-toggle],
-  .header-actions > .neon-lang-switch { display: none !important; }
-  .mobile-menu__controls { display: flex; }
+  .nav-whatsapp span { display: none; }
+  .nav-whatsapp { width: 40px; height: 40px; padding: 0; justify-content: center; }
+  /* زر الحساب يبقى أيقونة فقط زي باقي الأدوات */
+  .account-link__label { display: none; }
+  .header-actions .account-link { width: 40px; height: 40px; padding: 0; justify-content: center; }
+  .brand-text strong { font-size: 1rem; }
 }
 @media (max-width: 991.98px) {
   :root { --header-h: 68px; }
   .aurora { animation: none !important; will-change: auto; }
-  .header-actions .account-link { display: none; }
-  .brand-text strong { font-size: 1rem; }
+  .nav-links { display: none; }
+  .nav-toggle { display: grid; }
+  .header-actions { margin-inline-start: auto; }
+  .nav-whatsapp { display: none; }
+  .brand-text strong { font-size: 1.05rem; }
+  /* الوضع واللغة والدولة ينتقلوا جوّه قائمة الهامبرجر */
+  .header-actions > [data-theme-toggle],
+  .header-actions > .neon-lang-switch,
+  .header-actions > .neon-country-switch { display: none !important; }
+  .mobile-menu__controls { display: flex; }
 }
+
 @media (max-width: 575.98px) {
   body { line-height: 1.75; }
   .container { padding-inline: 1rem; }
